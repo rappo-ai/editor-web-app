@@ -58,13 +58,13 @@
       "prettier --write",
       "git add --force"
     ]
-  }, 
+  },
   "resolutions": {
     "babel-core": "7.0.0-bridge.0"
   },
   "dependencies": {
     "@babel/polyfill": "7.4.3",
-    "@google-cloud/firestore": "^4.5.0",
+    "@google-cloud/firestore": "^4.6.1",
     "body-parser": "^1.19.0",
     "chalk": "^2.4.2",
     "compression": "1.7.4",
@@ -84,7 +84,7 @@
     "lodash": "4.17.11",
     "minimist": "1.2.0",
     "morgan": "^1.10.0",
-    "nanoid": "^3.1.15",
+    "nanoid": "^3.1.16",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
     "passport-http-bearer": "^1.0.1",
