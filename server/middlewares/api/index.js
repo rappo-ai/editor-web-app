@@ -30,7 +30,7 @@ router.use(
 );
 
 router.get('/userinfo', async (req, res) => {
-  const user = req.user;
+  const { user } = req;
   if (!user || !user.id) {
     res.status(500);
   } else {

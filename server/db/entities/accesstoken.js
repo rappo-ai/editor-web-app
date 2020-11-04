@@ -1,5 +1,5 @@
-const { Entity, Collection } = require('./_base');
 const { nanoid } = require('nanoid');
+const { Entity } = require('./_base');
 
 class AccessToken extends Entity {
   constructor() {
@@ -9,6 +9,6 @@ class AccessToken extends Entity {
 }
 
 module.exports = {
-  class: AccessToken,
+  Class: AccessToken,
   AccessToken,
 };

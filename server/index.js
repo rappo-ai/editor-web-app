@@ -4,9 +4,9 @@ require('dotenv').config();
 const express = require('express');
 const passport = require('passport');
 const morgan = require('morgan')('combined');
-const cookie_parser = require('cookie-parser');
-const body_parser = require('body-parser');
-const express_session = require('express-session');
+const cookieparser = require('cookie-parser');
+const bodyparser = require('body-parser');
+const expresssession = require('express-session');
 const logger = require('./logger');
 const api = require('./middlewares/api');
 const login = require('./middlewares/login');
@@ -24,10 +24,10 @@ const app = express();
 // Use application-level middleware for common functionality, including
 // logging, parsing, and session handling.
 app.use(morgan);
-app.use(cookie_parser());
-app.use(body_parser.urlencoded({ extended: true }));
+app.use(cookieparser());
+app.use(bodyparser.urlencoded({ extended: true }));
 app.use(
-  express_session({
+  expresssession({
     secret: 'keyboard cat',
     resave: true,
     saveUninitialized: true,

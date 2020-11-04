@@ -1,4 +1,4 @@
-const { Entity, Collection } = require('./_base');
+const { Entity } = require('./_base');
 
 class GoogleUser extends Entity {
   constructor() {
@@ -7,6 +7,6 @@ class GoogleUser extends Entity {
 }
 
 module.exports = {
-  class: GoogleUser,
+  Class: GoogleUser,
   GoogleUser,
 };

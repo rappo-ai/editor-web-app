@@ -1,6 +1,5 @@
+/* eslint-disable no-unused-vars */
 class DBEngine {
-  constructor() {}
-
   async create(collection, entity) {
     throw new Error('Override not implemented');
   }

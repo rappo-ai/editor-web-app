@@ -1,9 +1,10 @@
-const { DBEngine } = require('./_base');
+/* eslint-disable no-param-reassign */
 const { Firestore } = require('@google-cloud/firestore');
-const { pojoClone } = require('../../utils');
+const { DBEngine } = require('./_base');
+const { pojoClone, cloneFromPojo } = require('../../utils');
 
 class FirestoreDBEngine extends DBEngine {
-  constructor(factory) {
+  constructor(entityFactory) {
     super();
     this.firestore = new Firestore();
     this.converter = {
@@ -12,19 +13,15 @@ class FirestoreDBEngine extends DBEngine {
       },
       fromFirestore(snapshot) {
         const data = snapshot.data();
-        const obj = factory.create(data.collection);
-        for (const key in data) {
-          obj[key] = data[key];
-        }
-        return obj;
+        const entity = entityFactory.create(data.collection);
+        cloneFromPojo(entity, data);
+        return entity;
       },
     };
   }
 
   async create(collection, entity) {
-    return this.set(collection, entity).then(() => {
-      return entity;
-    });
+    return this.set(collection, entity).then(() => entity);
   }
 
   async get(collection, query) {
@@ -35,17 +32,14 @@ class FirestoreDBEngine extends DBEngine {
         .withConverter(this.converter)
         .doc(id)
         .get()
-        .then(snapshot => {
-          return snapshot.data();
-        });
-    } else {
-      return this.query(collection, query).then(results => {
-        if (results.length === 0) {
-          return null;
-        }
-        return results[0];
-      });
+        .then(snapshot => snapshot.data());
     }
+    return this.query(collection, query).then(results => {
+      if (results.length === 0) {
+        return null;
+      }
+      return results[0];
+    });
   }
 
   async query(collection, query) {
@@ -72,9 +66,7 @@ class FirestoreDBEngine extends DBEngine {
       .withConverter(this.converter)
       .doc(entity.id)
       .set(entity)
-      .then(() => {
-        return entity;
-      });
+      .then(() => entity);
   }
 }
 

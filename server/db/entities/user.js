@@ -7,6 +7,6 @@ class User extends Entity {
 }
 
 module.exports = {
-  class: User,
+  Class: User,
   User,
 };

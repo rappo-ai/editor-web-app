@@ -1,14 +1,13 @@
+/* eslint-disable guard-for-in, no-restricted-syntax, no-param-reassign */
 function pojoClone(object) {
   const cloned = {};
   for (const key in object) {
     switch (typeof object[key]) {
       case 'object':
-        {
-          if (object[key]) {
-            cloned[key] = pojoClone(object[key]);
-          } else {
-            cloned[key] = null;
-          }
+        if (object[key]) {
+          cloned[key] = pojoClone(object[key]);
+        } else {
+          cloned[key] = null;
         }
         break;
       case 'undefined':
@@ -25,6 +24,12 @@ function pojoClone(object) {
   return cloned;
 }
 
+function cloneFromPojo(entity, pojo) {
+  for (const key in pojo) {
+    entity[key] = pojo[key];
+  }
+}
 module.exports = {
   pojoClone,
+  cloneFromPojo,
 };
