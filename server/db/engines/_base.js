@@ -1,15 +1,15 @@
 class DBEngine {
   constructor() {}
 
-  findById(collection, id) {
+  async create(collection, entity) {
     throw new Error('Override not implemented');
   }
 
-  findByProperty(collection, property, value) {
+  async get(collection, query) {
     throw new Error('Override not implemented');
   }
 
-  add(collection, item) {
+  async set(collection, entity) {
     throw new Error('Override not implemented');
   }
 }

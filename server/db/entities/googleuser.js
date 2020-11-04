@@ -1,28 +1,12 @@
 const { Entity, Collection } = require('./_base');
 
 class GoogleUser extends Entity {
-  constructor(userId, profile) {
-    super('googleuser');
-    this.id = profile && profile.id;
-    this.userId = userId;
-    this.profile = profile;
-  }
-}
-
-class GoogleUserCollection extends Collection {
   constructor() {
-    super('googleusers', GoogleUser);
-  }
-
-  async findByUserId(id) {
-    return await super.findByProperty('userid', id);
+    super('googleuser');
   }
 }
-
-const googleUsers = new GoogleUserCollection();
 
 module.exports = {
+  class: GoogleUser,
   GoogleUser,
-  GoogleUserCollection,
-  googleUsers,
 };

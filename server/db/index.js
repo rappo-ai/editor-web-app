@@ -1,13 +1,30 @@
-const { User, users } = require('./entities/user');
-const { GoogleUser, googleUsers } = require('./entities/googleuser');
-const { AccessToken, accessTokens } = require('./entities/accesstoken');
-const { Collection } = require('./entities/_base');
-const { factory } = require('./factory');
+const factory = require('./factory');
+const fs = require('fs');
+const path = require('path');
+const assert = require('assert');
+const { Entity } = require('./entities/_base');
 
-function setupFactory() {
-  factory.register('user', () => new User());
-  factory.register('googleuser', () => new GoogleUser());
-  factory.register('accesstoken', () => new AccessToken());
+function loadEntities(entitiesDir) {
+  let entities = {};
+  let files = fs.readdirSync(entitiesDir);
+
+  files.forEach(file => {
+    const filename = path.basename(file, path.extname(file));
+    if (filename === '_base') {
+      return;
+    }
+    const name = filename;
+    assert(entities[name] === undefined);
+
+    const entity = require(path.resolve(__dirname, entitiesDir, file));
+    assert(entity.class !== undefined);
+
+    factory.register(name, () => new entity.class());
+
+    entities[name] = entity;
+  });
+
+  return entities;
 }
 
 function init(options) {
@@ -17,22 +34,36 @@ function init(options) {
   if (!options.dbengine) {
     options.dbengine = 'firestore';
   }
+  let db = {};
   switch (options.dbengine) {
     case 'firestore':
       const { FirestoreDBEngine } = require('./engines/firestore');
-      Collection.dbengine = new FirestoreDBEngine();
+      db.engine = new FirestoreDBEngine(factory);
       break;
     default:
       throw new Error(`Engine ${options.dbengine} not implemented`);
   }
 
-  // tbd loop through all entities and load their objects into the db object automatically
-  setupFactory();
+  db.entities = loadEntities(path.resolve(__dirname, './entities'));
+
+  db.create = async function(collection) {
+    const entity = factory.create(collection);
+    return db.engine.create(collection, entity);
+  };
+
+  db.get = async function(collection, query) {
+    return db.engine.get(collection, query);
+  };
+
+  db.set = async function(collection, entity) {
+    return db.engine.set(collection, entity);
+  };
+
+  Entity.db = db;
+
+  return db;
 }
 
-module.exports = {
-  init,
-  users,
-  googleUsers,
-  accessTokens,
-};
+const db = init();
+
+module.exports = db;

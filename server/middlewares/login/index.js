@@ -2,24 +2,33 @@ const express = require('express');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const db = require('../../db');
-const { serialize, deserialize } = require('../../utils');
-const { User } = require('../../db/entities/user');
-const { GoogleUser } = require('../../db/entities/googleuser');
-const { AccessToken } = require('../../db/entities/accesstoken');
+const { pojoClone } = require('../../utils');
 const router = express.Router();
 
 async function addGoogleUser(profile) {
-  let googleUser = await db.googleUsers.findById(profile.id);
-  let user = googleUser ? await db.users.findById(googleUser.userId) : null;
+  let googleUser = await db.get('googleuser', {
+    property: 'profile.id',
+    value: profile.id,
+  });
+  let user = googleUser ? await db.get('user', googleUser.userid) : null;
   if (!user) {
-    user = new User();
-    const mytoken = new AccessToken(user.id);
-    await db.tokens.add(mytoken);
-    user.accessTokenId = mytoken.id;
-    await db.users.add(user);
-    googleUser = new GoogleUser(user.id, profile);
-    await db.googleUsers.add(googleUser);
+    user = await db.create('user');
   }
+  if (!googleUser) {
+    googleUser = await db.create('googleuser');
+    googleUser.set('userid', user.id);
+    googleUser.set('profile', profile);
+  }
+  let accessToken = await db.get('accesstoken', {
+    property: 'userid',
+    value: user.id,
+  });
+  if (!accessToken) {
+    accessToken = await db.create('accesstoken');
+    accessToken.set('userid', user.id);
+    user.set('accesstokenid', accessToken.id);
+  }
+
   return user;
 }
 
@@ -37,11 +46,11 @@ passport.use(
 );
 
 passport.serializeUser(function(user, cb) {
-  cb(null, serialize(user));
+  cb(null, user.id);
 });
 
 passport.deserializeUser(async function(id, cb) {
-  cb(null, await deserialize(id));
+  cb(null, pojoClone(await db.get('user', id)));
 });
 
 router.get(
@@ -51,12 +60,15 @@ router.get(
   }),
 );
 
-router.get('/google/redirect', passport.authenticate('google'), function(
+router.get('/google/redirect', passport.authenticate('google'), async function(
   req,
   res,
 ) {
-  if (req.user) {
-    res.cookie('at', req.user.accessToken);
+  if (req.user && req.user.accesstokenid) {
+    const accessToken = await db.get('accesstoken', req.user.accesstokenid);
+    if (accessToken) {
+      res.cookie('at', accessToken.value);
+    }
   }
   res.redirect('/');
 });

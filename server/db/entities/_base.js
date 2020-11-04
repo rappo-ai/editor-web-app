@@ -1,32 +1,16 @@
 const { nanoid } = require('nanoid');
 
 class Entity {
-  constructor(type) {
+  constructor(collection) {
     this.id = nanoid();
-    this.type = type;
+    this.collection = collection;
   }
-}
-
-class Collection {
-  constructor(name, type) {
-    this.name = name;
-    this.type = type;
-  }
-
-  async findById(id) {
-    return await Collection.dbengine.findById(this.name, id);
-  }
-
-  async findByProperty(property, value) {
-    return await Collection.dbengine.findByProperty(this.name, property, value);
-  }
-
-  async add(item) {
-    return await Collection.dbengine.add(this.name, item);
+  set(property, value) {
+    this[property] = value;
+    return Entity.db.set(this.collection, this);
   }
 }
 
 module.exports = {
   Entity,
-  Collection,
 };

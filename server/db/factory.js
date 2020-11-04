@@ -1,18 +1,16 @@
 class Factory {
   constructor() {
-    this.creators = {};
+    this.builders = {};
   }
 
-  register(type, creator) {
-    this.creators[type] = creator;
+  register(collection, builder) {
+    this.builders[collection] = builder;
   }
 
-  get(type) {
-    return this.creators[type]();
+  create(collection) {
+    return this.builders[collection]();
   }
 }
 const factory = new Factory();
 
-module.exports = {
-  factory,
-};
+module.exports = factory;

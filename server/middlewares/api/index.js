@@ -2,13 +2,15 @@ const express = require('express');
 const passport = require('passport');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const db = require('../../db');
-const { deserialize } = require('../../utils');
 const router = express.Router();
 
 passport.use(
   new BearerStrategy(async function(token, done) {
-    const mytoken = await db.tokens.findByValue(token);
-    const user = mytoken ? await deserialize(mytoken.userId) : null;
+    const mytoken = await db.get('accesstoken', {
+      property: 'value',
+      value: token,
+    });
+    const user = mytoken ? await db.get('user', mytoken.userid) : null;
     if (!user) {
       return done(null, false);
     }
@@ -27,8 +29,20 @@ router.use(
   },
 );
 
-router.get('/userinfo', (req, res) => {
-  res.json(req.user);
+router.get('/userinfo', async (req, res) => {
+  const user = req.user;
+  if (!user || !user.id) {
+    res.status(500);
+  } else {
+    const googleUser = await db.get('googleuser', {
+      property: 'userid',
+      value: user.id,
+    });
+    res.json({
+      ...user,
+      googleProfile: googleUser,
+    });
+  }
 });
 
 module.exports = router;

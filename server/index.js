@@ -20,8 +20,6 @@ const ngrok =
     : false;
 const { resolve } = require('path');
 const app = express();
-const db = require('./db');
-db.init();
 
 // Use application-level middleware for common functionality, including
 // logging, parsing, and session handling.
