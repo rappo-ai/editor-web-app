@@ -58,8 +58,7 @@
       "prettier --write",
       "git add --force"
     ]
-  },
-  "pre-commit": "lint:staged",
+  }, 
   "resolutions": {
     "babel-core": "7.0.0-bridge.0"
   },
