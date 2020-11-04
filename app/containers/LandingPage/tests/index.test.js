@@ -1,5 +1,5 @@
 /**
- * Test the HomePage
+ * Test the LandingPage
  */
 
 import React from 'react';
@@ -8,12 +8,10 @@ import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import { browserHistory } from 'react-router-dom';
 
-import { HomePage, mapDispatchToProps } from '../index';
-import { changeUsername } from '../actions';
-import { loadRepos } from '../../App/actions';
+import { LandingPage, mapDispatchToProps } from '../index';
 import configureStore from '../../../configureStore';
 
-describe('<HomePage />', () => {
+describe('<LandingPage />', () => {
   let store;
 
   beforeAll(() => {
@@ -26,7 +24,7 @@ describe('<HomePage />', () => {
     } = render(
       <Provider store={store}>
         <IntlProvider locale="en">
-          <HomePage loading={false} error={false} repos={[]} />
+          <LandingPage loading={false} error={false} repos={[]} />
         </IntlProvider>
       </Provider>,
     );
@@ -38,11 +36,7 @@ describe('<HomePage />', () => {
     render(
       <Provider store={store}>
         <IntlProvider locale="en">
-          <HomePage
-            username="Not Empty"
-            onChangeUsername={() => {}}
-            onSubmitForm={submitSpy}
-          />
+          <LandingPage username="Not Empty" onSubmitForm={submitSpy} />
         </IntlProvider>
       </Provider>,
     );
@@ -54,7 +48,7 @@ describe('<HomePage />', () => {
     render(
       <Provider store={store}>
         <IntlProvider locale="en">
-          <HomePage onChangeUsername={() => {}} onSubmitForm={submitSpy} />
+          <LandingPage onSubmitForm={submitSpy} />
         </IntlProvider>
       </Provider>,
     );
@@ -66,11 +60,7 @@ describe('<HomePage />', () => {
     render(
       <Provider store={store}>
         <IntlProvider locale="en">
-          <HomePage
-            username=""
-            onChangeUsername={() => {}}
-            onSubmitForm={submitSpy}
-          />
+          <LandingPage username="" onSubmitForm={submitSpy} />
         </IntlProvider>
       </Provider>,
     );
@@ -78,34 +68,11 @@ describe('<HomePage />', () => {
   });
 
   describe('mapDispatchToProps', () => {
-    describe('onChangeUsername', () => {
-      it('should be injected', () => {
-        const dispatch = jest.fn();
-        const result = mapDispatchToProps(dispatch);
-        expect(result.onChangeUsername).toBeDefined();
-      });
-
-      it('should dispatch changeUsername when called', () => {
-        const dispatch = jest.fn();
-        const result = mapDispatchToProps(dispatch);
-        const username = 'mxstbr';
-        result.onChangeUsername({ target: { value: username } });
-        expect(dispatch).toHaveBeenCalledWith(changeUsername(username));
-      });
-    });
-
     describe('onSubmitForm', () => {
       it('should be injected', () => {
         const dispatch = jest.fn();
         const result = mapDispatchToProps(dispatch);
         expect(result.onSubmitForm).toBeDefined();
-      });
-
-      it('should dispatch loadRepos when called', () => {
-        const dispatch = jest.fn();
-        const result = mapDispatchToProps(dispatch);
-        result.onSubmitForm();
-        expect(dispatch).toHaveBeenCalledWith(loadRepos());
       });
 
       it('should preventDefault if called with event', () => {
