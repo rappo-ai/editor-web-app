@@ -1,6 +1,6 @@
 /*
  *
- * LandingPage actions
+ * BotEditorPage actions
  *
  */
 

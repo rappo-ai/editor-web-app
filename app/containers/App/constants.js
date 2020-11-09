@@ -9,6 +9,9 @@
  * export const YOUR_ACTION_CONSTANT = 'yourproject/YourContainer/YOUR_ACTION_CONSTANT';
  */
 
-export const LOAD_REPOS = 'boilerplate/App/LOAD_REPOS';
-export const LOAD_REPOS_SUCCESS = 'boilerplate/App/LOAD_REPOS_SUCCESS';
-export const LOAD_REPOS_ERROR = 'boilerplate/App/LOAD_REPOS_ERROR';
+export const LOAD_COOKIES = 'rappoweb/App/LOAD_COOKIES';
+export const LOAD_COOKIES_SUCCESS = 'rappoweb/App/LOAD_COOKIES_SUCCESS';
+export const LOAD_USER_PROFILE = 'rappoweb/App/LOAD_USER_PROFILE';
+export const LOAD_USER_PROFILE_SUCCESS =
+  'rappoweb/App/LOAD_USER_PROFILE_SUCCESS';
+export const LOAD_USER_PROFILE_ERROR = 'rappoweb/App/LOAD_USER_PROFILE_ERROR';

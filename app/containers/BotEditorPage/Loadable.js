@@ -1,6 +1,6 @@
 /**
  *
- * Asynchronously loads the component for LandingPage
+ * Asynchronously loads the component for BotEditorPage
  *
  */
 

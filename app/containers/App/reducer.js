@@ -8,15 +8,30 @@
  */
 
 import produce from 'immer';
-import { LOAD_REPOS_SUCCESS, LOAD_REPOS, LOAD_REPOS_ERROR } from './constants';
+import {
+  LOAD_COOKIES,
+  LOAD_COOKIES_SUCCESS,
+  LOAD_USER_PROFILE,
+  LOAD_USER_PROFILE_SUCCESS,
+  LOAD_USER_PROFILE_ERROR,
+} from './constants';
 
 // The initial state of the App
 export const initialState = {
   loading: false,
   error: false,
-  currentUser: false,
-  userData: {
-    repositories: false,
+  cookies: {
+    at: '',
+  },
+  session: {
+    isLoggedIn: false,
+  },
+  user: {
+    profile: {
+      displayName: '',
+      profilePic: '',
+    },
+    bots: false,
   },
 };
 
@@ -24,19 +39,31 @@ export const initialState = {
 const appReducer = (state = initialState, action) =>
   produce(state, draft => {
     switch (action.type) {
-      case LOAD_REPOS:
+      case LOAD_COOKIES:
         draft.loading = true;
         draft.error = false;
-        draft.userData.repositories = false;
+        draft.cookies = initialState.cookies;
         break;
 
-      case LOAD_REPOS_SUCCESS:
-        draft.userData.repositories = action.repos;
+      case LOAD_COOKIES_SUCCESS:
+        draft.cookies = action.cookies;
         draft.loading = false;
-        draft.currentUser = action.username;
         break;
 
-      case LOAD_REPOS_ERROR:
+      case LOAD_USER_PROFILE:
+        draft.loading = true;
+        draft.error = false;
+        draft.session.isLoggedIn = initialState.session.isLoggedIn;
+        draft.user.profile = initialState.user.profile;
+        break;
+
+      case LOAD_USER_PROFILE_SUCCESS:
+        draft.session.isLoggedIn = true;
+        draft.user.profile = action.profile;
+        draft.loading = false;
+        break;
+
+      case LOAD_USER_PROFILE_ERROR:
         draft.error = action.error;
         draft.loading = false;
         break;

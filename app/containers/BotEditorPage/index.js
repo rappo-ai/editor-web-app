@@ -1,6 +1,6 @@
 /**
  *
- * LandingPage
+ * BotEditorPage
  *
  */
 
@@ -14,32 +14,32 @@ import { compose } from 'redux';
 
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
-import makeSelectLandingPage from './selectors';
+import makeSelectBotEditorPage from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 import messages from './messages';
 
-export function LandingPage() {
-  useInjectReducer({ key: 'landingPage', reducer });
-  useInjectSaga({ key: 'landingPage', saga });
+export function BotEditorPage() {
+  useInjectReducer({ key: 'botEditorPage', reducer });
+  useInjectSaga({ key: 'botEditorPage', saga });
 
   return (
     <div>
       <Helmet>
-        <title>rappo.ai</title>
-        <meta name="description" content="Friendly bots for your business." />
+        <title>BotEditorPage</title>
+        <meta name="description" content="Description of BotEditorPage" />
       </Helmet>
       <FormattedMessage {...messages.header} />
     </div>
   );
 }
 
-LandingPage.propTypes = {
+BotEditorPage.propTypes = {
   dispatch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
-  landingPage: makeSelectLandingPage(),
+  botEditorPage: makeSelectBotEditorPage(),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -53,4 +53,4 @@ const withConnect = connect(
   mapDispatchToProps,
 );
 
-export default compose(withConnect)(LandingPage);
+export default compose(withConnect)(BotEditorPage);

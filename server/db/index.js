@@ -18,7 +18,7 @@ function loadEntities(entitiesDir) {
     assert(entities[name] === undefined);
 
     const entity = require(path.resolve(__dirname, entitiesDir, file));
-    assert(entity.class !== undefined);
+    assert(entity.Class !== undefined);
 
     entityFactory.register(name, () => new entity.Class());
 
