@@ -45,4 +45,34 @@ router.get('/userinfo', async (req, res) => {
   }
 });
 
+router.get('/bots', async (req, res) => {
+  const { user } = req;
+  if (!user || !user.id) {
+    res.status(500);
+  } else {
+    const bots = await db.query('bot', {
+      property: 'userid',
+      value: user.id,
+    });
+    res.json({
+      bots,
+    });
+  }
+});
+
+router.post('/bots', async (req, res) => {
+  const { user } = req;
+  if (!user || !user.id) {
+    res.status(500);
+  } else {
+    const name = req.body.name || 'Untitled bot';
+    const bot = await db.create('bot');
+    await bot.set('userid', user.id);
+    await bot.set('name', name);
+    res.json({
+      bot,
+    });
+  }
+});
+
 module.exports = router;

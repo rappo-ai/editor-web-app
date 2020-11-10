@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import NormalA from 'components/A';
 
-const RepoLink = styled(NormalA)`
+const BotLink = styled(NormalA)`
   height: 100%;
   color: black;
   display: flex;
@@ -9,4 +9,4 @@ const RepoLink = styled(NormalA)`
   width: 100%;
 `;
 
-export default RepoLink;
+export default BotLink;

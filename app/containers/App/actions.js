@@ -86,3 +86,26 @@ export function userProfileLoadError(error) {
     error,
   };
 }
+
+/**
+ * Loads the user's bots from DB.
+ *
+ * @return {object} An action object with a type of LOAD_BOTS
+ */
+export function loadBots() {
+  return {
+    type: 'LOAD_BOTS',
+  };
+}
+
+/**
+ * Add a new bot to the DB.
+ *
+ * @return {object} An action object with a type of ADD_BOT
+ */
+export function createBot(name = 'Untitled ...') {
+  return {
+    type: 'CREATE_BOT',
+    name,
+  };
+}

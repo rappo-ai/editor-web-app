@@ -1,12 +1,19 @@
+/**
+ *
+ * BotsList
+ *
+ */
+
 import React from 'react';
 import PropTypes from 'prop-types';
+// import styled from 'styled-components';
 
 import List from 'components/List';
 import ListItem from 'components/ListItem';
 import LoadingIndicator from 'components/LoadingIndicator';
-import RepoListItem from 'containers/BotListItem';
+import BotListItem from 'containers/BotListItem';
 
-function ReposList({ loading, error, repos }) {
+function BotsList({ loading, error, bots }) {
   if (loading) {
     return <List component={LoadingIndicator} />;
   }
@@ -18,17 +25,17 @@ function ReposList({ loading, error, repos }) {
     return <List component={ErrorComponent} />;
   }
 
-  if (repos !== false) {
-    return <List items={repos} component={RepoListItem} />;
+  if (bots !== false) {
+    return <List items={bots} component={BotListItem} />;
   }
 
   return null;
 }
 
-ReposList.propTypes = {
+BotsList.propTypes = {
   loading: PropTypes.bool,
   error: PropTypes.any,
-  repos: PropTypes.any,
+  bots: PropTypes.oneOfType([PropTypes.bool, PropTypes.array]),
 };
 
-export default ReposList;
+export default BotsList;

@@ -25,7 +25,7 @@ const app = express();
 // logging, parsing, and session handling.
 app.use(morgan);
 app.use(cookieparser());
-app.use(bodyparser.urlencoded({ extended: true }));
+app.use(bodyparser.json());
 app.use(
   expresssession({
     secret: 'keyboard cat',

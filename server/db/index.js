@@ -56,6 +56,10 @@ function init(options) {
     return db.engine.get(collection, query);
   };
 
+  db.query = async function(collection, query) {
+    return db.engine.query(collection, query);
+  };
+
   db.set = async function(collection, entity) {
     return db.engine.set(collection, entity);
   };

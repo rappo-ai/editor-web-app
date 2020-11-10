@@ -31,8 +31,8 @@ export const initialState = {
       displayName: '',
       profilePic: '',
     },
-    bots: false,
   },
+  bots: false,
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -66,6 +66,40 @@ const appReducer = (state = initialState, action) =>
       case LOAD_USER_PROFILE_ERROR:
         draft.error = action.error;
         draft.loading = false;
+        break;
+
+      case 'LOAD_BOTS':
+        draft.loading = true;
+        draft.error = false;
+        break;
+
+      case 'LOAD_BOTS_SUCCESS':
+        draft.loading = false;
+        draft.bots = action.bots;
+        break;
+
+      case 'LOAD_BOTS_ERROR':
+        draft.loading = false;
+        draft.error = action.error;
+        break;
+
+      case 'CREATE_BOT':
+        draft.loading = true;
+        draft.error = false;
+        break;
+
+      case 'CREATE_BOT_SUCCESS':
+        draft.loading = false;
+        if (draft.bots) {
+          draft.bots.push(action.bot);
+        } else {
+          draft.bots = [action.bot];
+        }
+        break;
+
+      case 'CREATE_BOT_ERROR':
+        draft.loading = false;
+        draft.error = action.error;
         break;
     }
   });
