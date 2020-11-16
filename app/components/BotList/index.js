@@ -11,9 +11,9 @@ import PropTypes from 'prop-types';
 import List from 'components/List';
 import ListItem from 'components/ListItem';
 import LoadingIndicator from 'components/LoadingIndicator';
-import BotListItem from 'containers/BotListItem';
+import BotListItem from 'components/BotListItem';
 
-function BotsList({ loading, error, bots }) {
+function BotList({ loading, error, bots }) {
   if (loading) {
     return <List component={LoadingIndicator} />;
   }
@@ -32,10 +32,10 @@ function BotsList({ loading, error, bots }) {
   return null;
 }
 
-BotsList.propTypes = {
+BotList.propTypes = {
   loading: PropTypes.bool,
   error: PropTypes.any,
   bots: PropTypes.oneOfType([PropTypes.bool, PropTypes.array]),
 };
 
-export default BotsList;
+export default BotList;

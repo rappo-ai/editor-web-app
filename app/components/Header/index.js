@@ -1,18 +1,22 @@
 import React from 'react';
+import styled from 'styled-components';
 
-import H1 from './H1';
 import NavBar from './NavBar';
 import HeaderLink from './HeaderLink';
 
 function Header() {
+  const Container = styled.div`
+    height: 75px;
+    min-height: 75px;
+  `;
   return (
-    <div>
+    <Container>
       <NavBar>
         <HeaderLink to="/">
-          <H1>rappo.ai</H1>
+          <h2>rappo.ai</h2>
         </HeaderLink>
       </NavBar>
-    </div>
+    </Container>
   );
 }
 

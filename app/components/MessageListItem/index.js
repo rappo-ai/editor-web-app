@@ -8,23 +8,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import ListItem from 'components/ListItem';
-import BotLink from './BotLink';
+import MessageBubble from 'components/MessageBubble';
 import Wrapper from './Wrapper';
 
-export function BotListItem({ item }) {
+export function MessageListItem({ item }) {
   // Put together the content of the repository
   const content = (
     <Wrapper>
-      <BotLink href={`/bots/${item.id}`}>{item.name}</BotLink>
+      <MessageBubble text={item.text} user={item.user} />
     </Wrapper>
   );
 
   // Render the content into a list item
-  return <ListItem key={`bot-list-item-${item.id}`} item={content} />;
+  return <ListItem key={`message-list-item-${item.id}`} item={content} />;
 }
 
-BotListItem.propTypes = {
+MessageListItem.propTypes = {
   item: PropTypes.object,
 };
 
-export default BotListItem;
+export default MessageListItem;

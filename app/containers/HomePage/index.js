@@ -17,7 +17,7 @@ import {
   makeSelectError,
   makeSelectBots,
 } from 'containers/App/selectors';
-import BotsList from 'components/BotsList';
+import BotList from 'components/BotList';
 import Section from './Section';
 
 // const key = 'home';
@@ -30,7 +30,7 @@ export function HomePage({ bots, loading, error, onLoadBots }) {
     onLoadBots();
   }, []);
 
-  const botsListProps = {
+  const botListProps = {
     loading,
     error,
     bots,
@@ -47,7 +47,7 @@ export function HomePage({ bots, loading, error, onLoadBots }) {
       </Helmet>
       <div>
         <Section>
-          <BotsList {...botsListProps} />
+          <BotList {...botListProps} />
         </Section>
       </div>
     </article>

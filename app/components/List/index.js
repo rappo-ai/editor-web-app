@@ -19,7 +19,7 @@ function List(props) {
   }
 
   return (
-    <Wrapper>
+    <Wrapper className={props.className}>
       <Ul>{content}</Ul>
     </Wrapper>
   );
@@ -28,6 +28,7 @@ function List(props) {
 List.propTypes = {
   component: PropTypes.elementType.isRequired,
   items: PropTypes.array,
+  className: PropTypes.string,
 };
 
 export default List;
