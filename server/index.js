@@ -10,6 +10,7 @@ const expresssession = require('express-session');
 const logger = require('./logger');
 const api = require('./middlewares/api');
 const login = require('./middlewares/login');
+const logout = require('./middlewares/logout');
 const argv = require('./argv');
 const port = require('./port');
 const setup = require('./middlewares/frontendMiddleware');
@@ -42,6 +43,7 @@ app.use(passport.session());
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 app.use('/api', api);
 app.use('/login', login);
+app.use('/logout', logout);
 
 app.use('*', (req, res, next) => {
   if (req.user) {

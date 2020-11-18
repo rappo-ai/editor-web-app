@@ -16,8 +16,8 @@ async function addGoogleUser(profile) {
   }
   if (!googleUser) {
     googleUser = await db.create('googleuser');
-    googleUser.set('userid', user.id);
-    googleUser.set('profile', profile);
+    await googleUser.set('userid', user.id);
+    await googleUser.set('profile', profile);
   }
   let accessToken = await db.get('accesstoken', {
     property: 'userid',
@@ -25,7 +25,7 @@ async function addGoogleUser(profile) {
   });
   if (!accessToken) {
     accessToken = await db.create('accesstoken');
-    accessToken.set('userid', user.id);
+    await accessToken.set('userid', user.id);
     user.set('accesstokenid', accessToken.id);
   }
 
