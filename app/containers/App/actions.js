@@ -109,3 +109,20 @@ export function createBot(name = 'Untitled ...') {
     name,
   };
 }
+
+/**
+ * Setup the header state.
+ *
+ * @return {object} An action object with a type of LOAD_BOTS
+ */
+export function setupHeader(title, avatarImage, menuItems, actionButtons) {
+  return {
+    type: 'SETUP_HEADER',
+    payload: {
+      title,
+      avatarImage,
+      menuItems,
+      actionButtons,
+    },
+  };
+}

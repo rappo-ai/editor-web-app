@@ -6,7 +6,7 @@ import Wrapper from './Wrapper';
 
 function ListItem(props) {
   return (
-    <Wrapper>
+    <Wrapper className={props.className || 'ListItem'}>
       <Item>{props.item}</Item>
     </Wrapper>
   );
@@ -14,6 +14,7 @@ function ListItem(props) {
 
 ListItem.propTypes = {
   item: PropTypes.any,
+  className: PropTypes.string,
 };
 
 export default ListItem;

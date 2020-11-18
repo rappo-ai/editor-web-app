@@ -21,6 +21,12 @@ const makeSelectSession = () =>
     globalState => globalState.session,
   );
 
+const makeSelectHeader = () =>
+  createSelector(
+    selectGlobal,
+    globalState => globalState.header,
+  );
+
 const makeSelectBots = () =>
   createSelector(
     selectGlobal,
@@ -55,6 +61,7 @@ export {
   selectGlobal,
   makeSelectCookies,
   makeSelectSession,
+  makeSelectHeader,
   makeSelectBots,
   makeSelectUserProfile,
   makeSelectLoading,

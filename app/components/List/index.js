@@ -19,7 +19,7 @@ function List(props) {
   }
 
   return (
-    <Wrapper className={props.className}>
+    <Wrapper className={props.className || 'List'}>
       <Ul>{content}</Ul>
     </Wrapper>
   );

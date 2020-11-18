@@ -30,10 +30,6 @@ function* apiBuilder(
   const options = {
     headers: {
       Authorization: `Bearer ${cookies.at}`,
-      // 'Cache-Control': 'no-cache',
-      // Accept: '*/*',
-      // 'Accept-Encoding': 'gzip, deflate, br',
-      // Connection: 'keep-alive',
       ...headers,
     },
     method,
@@ -52,7 +48,7 @@ function* apiBuilder(
 /**
  * Read cookies and store the state
  */
-export function* loadCookies() {
+function* loadCookies() {
   const cookies = Cookies.get();
   yield put(cookiesLoaded(cookies));
 }
@@ -60,7 +56,7 @@ export function* loadCookies() {
 /**
  * Load the user profile if logged in
  */
-export function* loadUserProfile() {
+function* loadUserProfile() {
   try {
     const { url, options } = yield call(apiBuilder, '/userinfo');
     // Call our request helper (see 'utils/request')
@@ -80,7 +76,7 @@ export function* loadUserProfile() {
 /**
  * Load the bots for the logged in user
  */
-export function* loadBots() {
+function* loadBots() {
   try {
     const { url, options } = yield call(apiBuilder, '/bots');
     // Call our request helper (see 'utils/request')
@@ -108,7 +104,7 @@ export function* loadBots() {
 /**
  * Create a new bot
  */
-export function* createBot(action) {
+function* createBot(action) {
   try {
     const { url, options } = yield call(apiBuilder, '/bots', {
       method: 'POST',

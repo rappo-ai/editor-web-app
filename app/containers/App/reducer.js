@@ -26,6 +26,12 @@ export const initialState = {
   session: {
     isLoggedIn: false,
   },
+  header: {
+    title: 'Bots',
+    avatarImage: '',
+    menuItems: [],
+    actionsButtons: [],
+  },
   user: {
     profile: {
       displayName: '',
@@ -101,6 +107,12 @@ const appReducer = (state = initialState, action) =>
         draft.loading = false;
         draft.error = action.error;
         break;
+
+      case 'SETUP_HEADER':
+        draft.header.title = action.payload.title;
+        draft.header.avatarImage = action.payload.avatarImage;
+        draft.header.menuItems = action.payload.menuItems;
+        draft.header.actionsButtons = action.payload.actionButtons;
     }
   });
 

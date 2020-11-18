@@ -11,23 +11,46 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
-import { loadBots } from 'containers/App/actions';
+import { loadBots, setupHeader } from 'containers/App/actions';
 import {
   makeSelectLoading,
   makeSelectError,
   makeSelectBots,
+  makeSelectUserProfile,
 } from 'containers/App/selectors';
 import BotList from 'components/BotList';
 import Section from './Section';
 
 // const key = 'home';
 
-export function HomePage({ bots, loading, error, onLoadBots }) {
+export function HomePage({
+  userProfile,
+  bots,
+  loading,
+  error,
+  onLoadBots,
+  onSetupHeader,
+}) {
   // useInjectReducer({ key, reducer });
   // useInjectSaga({ key, saga });
 
   useEffect(() => {
     onLoadBots();
+  }, []);
+
+  useEffect(() => {
+    onSetupHeader('My Bots', userProfile.profilePic, [
+      {
+        name: 'Home',
+        // eslint-disable-next-line no-return-assign
+        click: () => (window.location.href = '/'),
+      },
+      {
+        name: 'Logout',
+        // eslint-disable-next-line no-return-assign
+        click: () => (window.location.href = '/logout'),
+      },
+    ]);
   }, []);
 
   const botListProps = {
@@ -55,13 +78,16 @@ export function HomePage({ bots, loading, error, onLoadBots }) {
 }
 
 HomePage.propTypes = {
+  userProfile: PropTypes.object,
   bots: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   onLoadBots: PropTypes.func,
+  onSetupHeader: PropTypes.func,
 };
 
 const mapStateToProps = createStructuredSelector({
+  userProfile: makeSelectUserProfile(),
   bots: makeSelectBots(),
   loading: makeSelectLoading(),
   error: makeSelectError(),
@@ -70,6 +96,8 @@ const mapStateToProps = createStructuredSelector({
 export function mapDispatchToProps(dispatch) {
   return {
     onLoadBots: () => dispatch(loadBots()),
+    onSetupHeader: (title, avatarImage, menuItems) =>
+      dispatch(setupHeader(title, avatarImage, menuItems)),
   };
 }
 
