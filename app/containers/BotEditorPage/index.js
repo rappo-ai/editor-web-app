@@ -22,6 +22,7 @@ import { useInjectReducer } from 'utils/injectReducer';
 
 import List from 'components/List';
 import ListItem from 'components/ListItem';
+import { goToRoute } from 'utils/webapi';
 
 import makeSelectBotEditorPage from './selectors';
 import reducer from './reducer';
@@ -80,13 +81,11 @@ export function BotEditorPage({ loading, error, onSetupHeader }) {
     onSetupHeader(bot.name, bot.profilePic, [
       {
         name: 'Home',
-        // eslint-disable-next-line no-return-assign
-        click: () => (window.location.href = '/'),
+        click: () => goToRoute('/'),
       },
       {
         name: 'Logout',
-        // eslint-disable-next-line no-return-assign
-        click: () => (window.location.href = '/logout'),
+        click: () => goToRoute('/logout'),
       },
     ]);
   }, []);

@@ -19,6 +19,7 @@ import {
   makeSelectUserProfile,
 } from 'containers/App/selectors';
 import BotList from 'components/BotList';
+import { goToRoute } from 'utils/webapi';
 import Section from './Section';
 
 // const key = 'home';
@@ -42,13 +43,11 @@ export function HomePage({
     onSetupHeader('My Bots', userProfile.profilePic, [
       {
         name: 'Home',
-        // eslint-disable-next-line no-return-assign
-        click: () => (window.location.href = '/'),
+        click: () => goToRoute('/'),
       },
       {
         name: 'Logout',
-        // eslint-disable-next-line no-return-assign
-        click: () => (window.location.href = '/logout'),
+        click: () => goToRoute('/logout'),
       },
     ]);
   }, []);
