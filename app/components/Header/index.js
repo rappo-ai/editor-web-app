@@ -51,7 +51,7 @@ const MenuIcon = styled.div`
 `;
 
 const ActionButtonIcon = styled.i`
-  margin-left: 10px;
+  margin: 0 5px;
   cursor: pointer;
   color: #777777;
 `;
