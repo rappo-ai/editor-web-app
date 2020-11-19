@@ -36,22 +36,40 @@ const StyledGoogleSignInButton = styled.button`
   padding: 2px;
 `;
 
-const GoogleLogo = styled.img`
+const GoogleLogoContainer = styled.div`
   width: 36px;
   height: 36px;
   background-color: white;
   border-radius: 4px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
 `;
+
+const GoogleLogoImage = styled.img`
+  width: 20px;
+  height: 20px;
+`;
+
+function GoogleLogo() {
+  return (
+    <GoogleLogoContainer>
+      <GoogleLogoImage
+        src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+        alt="google icon"
+      />
+    </GoogleLogoContainer>
+  );
+}
+
 function GoogleSignInButton() {
   function onClick() {
     window.location.href = '/login/google';
   }
   return (
     <StyledGoogleSignInButton type="button" onClick={onClick}>
-      <GoogleLogo
-        src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-        alt="google icon"
-      />
+      <GoogleLogo />
       &ensp;Sign In with Google&ensp;
     </StyledGoogleSignInButton>
   );
@@ -87,7 +105,7 @@ export function LandingPage() {
       </Helmet>
       <LandingPageSection position="top" direction="column" />
       <LandingPageSection position="center" direction="column">
-        <Para>Create powerful bots instantly</Para>
+        <Para>Create powerful bots instantly.</Para>
       </LandingPageSection>
       <LandingPageSection position="bottom" direction="column">
         <GoogleSignInButton />
