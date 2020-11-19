@@ -20,7 +20,7 @@ const NavSection = styled.section`
       right: 'flex-end',
     };
     return map[props.position];
-  }}
+  }};
   flex-grow: ${props => {
     const map = {
       left: '1',
@@ -28,7 +28,7 @@ const NavSection = styled.section`
       right: '1',
     };
     return map[props.position];
-  }}
+  }};
   flex-basis: ${props => {
     const map = {
       left: '0',
@@ -36,7 +36,7 @@ const NavSection = styled.section`
       right: '0',
     };
     return map[props.position];
-  }}
+  }};
 `;
 
 function LogoHeader() {
