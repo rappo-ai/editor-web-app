@@ -8,6 +8,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
+import { PRIMARY_COLOR } from 'utils/constants';
+
 function MessageBubble({ text, user }) {
   const Container = styled.div`
     width: 100%;
@@ -20,7 +22,7 @@ function MessageBubble({ text, user }) {
     padding: 10px;
     border-radius: 10px;
     color: white;
-    background: ${user === 'bot' ? 'pink' : 'gray'};
+    background: ${user === 'bot' ? PRIMARY_COLOR : 'gray'};
   `;
   return (
     <Container>

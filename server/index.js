@@ -45,14 +45,6 @@ app.use('/api', api);
 app.use('/login', login);
 app.use('/logout', logout);
 
-app.use('*', (req, res, next) => {
-  if (req.user) {
-    next();
-  } else {
-    res.redirect('/login/google');
-  }
-});
-
 // In production we need to pass these values in instead of relying on webpack
 setup(app, {
   outputPath: resolve(process.cwd(), 'build'),

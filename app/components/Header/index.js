@@ -5,38 +5,27 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
+import { PRIMARY_COLOR } from 'utils/constants';
+import {
+  TripleSectionContainer,
+  TripleSection,
+} from 'components/TripleSection';
 import { makeSelectSession, makeSelectHeader } from 'containers/App/selectors';
-import NavBar from './NavBar';
 import HeaderLink from './HeaderLink';
 import Logo from './Logo';
 
-const NavSection = styled.section`
-  display: flex;
+const NavBar = styled(TripleSectionContainer)`
+  height: 60px;
+  min-height: 60px;
   flex-direction: row;
-  justify-content: ${props => {
-    const map = {
-      left: 'flex-start',
-      center: 'center',
-      right: 'flex-end',
-    };
-    return map[props.position];
-  }};
-  flex-grow: ${props => {
-    const map = {
-      left: '1',
-      center: 'initial',
-      right: '1',
-    };
-    return map[props.position];
-  }};
-  flex-basis: ${props => {
-    const map = {
-      left: '0',
-      center: 'auto',
-      right: '0',
-    };
-    return map[props.position];
-  }};
+  align-items: center;
+  justify-content: space-around;
+  background: ${props => props.background || 'rgba(0,0,0,0)'};
+  padding: 0 10px;
+`;
+
+const NavSection = styled(TripleSection)`
+  flex-direction: row;
 `;
 
 function LogoHeader() {
@@ -53,20 +42,11 @@ function LogoHeader() {
 
 const MenuIcon = styled.div`
   background-image: url('${props => props.image}');
-    
-  /* make a square container */
   width: 40px;
   height: 40px;
-
-  /* fill the container, preserving aspect ratio, and cropping to fit */
   background-size: cover;
-
-  /* center the image vertically and horizontally */
   background-position: top center;
-
-  /* round the edges to a circle with border radius 1/2 container size */
   border-radius: 50%;
-
   cursor: pointer;
 `;
 
@@ -114,7 +94,7 @@ function PopupMenu({ items, onClickOut }) {
     padding-top: 5px;
     cursor: pointer;
     :hover {
-      color: pink;
+      color: ${PRIMARY_COLOR};
     }
     user-select: none;
   `;

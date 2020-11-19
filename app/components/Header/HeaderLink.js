@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { PRIMARY_COLOR } from 'utils/constants';
 
 export default styled(Link)`
   display: inline-flex;
@@ -12,5 +13,5 @@ export default styled(Link)`
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: bold;
   font-size: 12px;
-  color: pink;
+  color: ${PRIMARY_COLOR};
 `;
