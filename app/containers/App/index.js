@@ -40,7 +40,6 @@ const AppWrapper = styled.div`
   min-height: 100%;
   max-height: 100%;
   height: 100%;
-  padding: 0 16px;
   flex-direction: column;
 `;
 
