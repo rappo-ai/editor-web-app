@@ -15,7 +15,7 @@ import Wrapper from './Wrapper';
 function BotListItem({ item }) {
   const content = (
     <Wrapper>
-      <BotLink href={`/bots/${item.id}`}>{item.name}</BotLink>
+      <BotLink href={`/bot/${item.id}`}>{item.name}</BotLink>
     </Wrapper>
   );
 

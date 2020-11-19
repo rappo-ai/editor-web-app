@@ -78,7 +78,7 @@ function* loadUserProfile() {
  */
 function* loadBots() {
   try {
-    const { url, options } = yield call(apiBuilder, '/bots');
+    const { url, options } = yield call(apiBuilder, '/bot');
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
     yield put({
@@ -99,7 +99,7 @@ function* loadBots() {
  */
 function* createBot(action) {
   try {
-    const { url, options } = yield call(apiBuilder, '/bots', {
+    const { url, options } = yield call(apiBuilder, '/bot', {
       method: 'POST',
       body: {
         name: action.name,
@@ -112,7 +112,7 @@ function* createBot(action) {
       bot: response.bot,
     });
 
-    yield call(history.push, `/bots/${response.bot.id}`);
+    yield call(history.push, `/bot/${response.bot.id}`);
   } catch (err) {
     console.error(err);
     yield put({

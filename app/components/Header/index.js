@@ -6,6 +6,7 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
 import { PRIMARY_COLOR } from 'utils/constants';
+import history from 'utils/history';
 import {
   TripleSectionContainer,
   TripleSection,
@@ -22,6 +23,7 @@ const NavBar = styled(TripleSectionContainer)`
   justify-content: space-around;
   background: ${props => props.background || 'rgba(0,0,0,0)'};
   padding: 0 10px;
+  z-index: 1;
 `;
 
 const NavSection = styled(TripleSection)`
@@ -58,10 +60,12 @@ const ActionButtonIcon = styled.i`
 function ActionButtonBar({ buttons }) {
   return (
     <>
-      {buttons.map(button => {
+      {buttons.map((button, index) => {
         const className = `fa fa-2x ${button.faClass}`;
         return (
           <ActionButtonIcon
+            // eslint-disable-next-line react/no-array-index-key
+            key={index}
             className={className}
             aria-hidden="true"
             onClick={button.click}
@@ -146,6 +150,13 @@ const Title = styled.h3`
   color: #333333;
   user-select: none;
 `;
+
+const BackButton = styled.p`
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #333333;
+  cursor: pointer;
+`;
+
 function EditorHeader({ header }) {
   const [isPopupMenu, setIsPopupMenu] = useState(false);
 
@@ -153,10 +164,15 @@ function EditorHeader({ header }) {
     <>
       <NavBar background="#d9d9d9">
         <NavSection position="left">
-          <MenuIcon
-            image={header.menuIcon}
-            onClick={() => setIsPopupMenu(!isPopupMenu)}
-          />
+          {header.showBackButton && (
+            <BackButton onClick={() => history.goBack()}>&lt; Back</BackButton>
+          )}
+          {header.menuIcon && (
+            <MenuIcon
+              image={header.menuIcon}
+              onClick={() => setIsPopupMenu(!isPopupMenu)}
+            />
+          )}
         </NavSection>
         <NavSection position="center">
           <Title unselectable="on">{header.title}</Title>

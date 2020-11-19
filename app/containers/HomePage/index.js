@@ -6,6 +6,7 @@
 
 import React, { useEffect, memo } from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -19,12 +20,23 @@ import {
   makeSelectUserProfile,
 } from 'containers/App/selectors';
 import BotList from 'components/BotList';
+import {
+  TripleSectionContainer,
+  TripleSection,
+} from 'components/TripleSection';
 import { Para } from 'components/common/Para';
 import { goToRoute } from 'utils/webapi';
-import Section from './Section';
-import CenteredSection from './CenteredSection';
 
-// const key = 'home';
+const HomePageSectionContainer = styled(TripleSectionContainer)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 60px 0;
+`;
+
+const HomePageSection = styled(TripleSection)``;
 
 export function HomePage({
   userProfile,
@@ -43,8 +55,8 @@ export function HomePage({
 
   useEffect(() => {
     const title = 'My Bots';
-    const { profilePic } = userProfile;
-    const menuActions = [
+    const menuIcon = userProfile.profilePic;
+    const menuItems = [
       {
         name: 'Home',
         click: () => goToRoute('/'),
@@ -57,10 +69,10 @@ export function HomePage({
     const actionButtons = [
       {
         faClass: 'fa-plus',
-        click: () => console.log('+ clicked'),
+        click: () => goToRoute('/bot/new'),
       },
     ];
-    onSetupHeader(title, profilePic, menuActions, actionButtons);
+    onSetupHeader({ title, menuIcon, menuItems, actionButtons });
   }, []);
 
   const botListProps = {
@@ -72,7 +84,7 @@ export function HomePage({
   const hasBots = !!(bots && Array.isArray(bots) && bots.length);
 
   return (
-    <article>
+    <HomePageSectionContainer direction="column">
       <Helmet>
         <title>Home Page</title>
         <meta
@@ -80,24 +92,22 @@ export function HomePage({
           content="A React.js Boilerplate application homepage"
         />
       </Helmet>
-      <div>
-        {hasBots && (
-          <Section>
-            <BotList {...botListProps} />
-          </Section>
-        )}
-        {!hasBots && (
-          <CenteredSection>
-            <Para>
-              You do not have any bots.
-              <br />
-              <br />
-              Click + to create one.
-            </Para>
-          </CenteredSection>
-        )}
-      </div>
-    </article>
+      {hasBots && (
+        <HomePageSection position="top" direction="column">
+          <BotList {...botListProps} />
+        </HomePageSection>
+      )}
+      {!hasBots && (
+        <HomePageSection position="center" direction="column">
+          <Para>
+            You do not have any bots.
+            <br />
+            <br />
+            Click + to create one.
+          </Para>
+        </HomePageSection>
+      )}
+    </HomePageSectionContainer>
   );
 }
 
@@ -120,8 +130,8 @@ const mapStateToProps = createStructuredSelector({
 export function mapDispatchToProps(dispatch) {
   return {
     onLoadBots: () => dispatch(loadBots()),
-    onSetupHeader: (title, menuIcon, menuItems, actionButtons) =>
-      dispatch(setupHeader(title, menuIcon, menuItems, actionButtons)),
+    onSetupHeader: ({ title, menuIcon, menuItems, actionButtons }) =>
+      dispatch(setupHeader({ title, menuIcon, menuItems, actionButtons })),
   };
 }
 

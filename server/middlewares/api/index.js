@@ -45,7 +45,7 @@ router.get('/userinfo', async (req, res) => {
   }
 });
 
-router.get('/bots', async (req, res) => {
+router.get('/bot', async (req, res) => {
   const { user } = req;
   if (!user || !user.id) {
     res.status(500);
@@ -60,7 +60,7 @@ router.get('/bots', async (req, res) => {
   }
 });
 
-router.post('/bots', async (req, res) => {
+router.post('/bot', async (req, res) => {
   const { user } = req;
   if (!user || !user.id) {
     res.status(500);

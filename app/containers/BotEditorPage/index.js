@@ -79,8 +79,8 @@ export function BotEditorPage({ loading, error, onSetupHeader }) {
 
   useEffect(() => {
     const title = bot.name;
-    const { profilePic } = bot.profilePic;
-    const menuActions = [
+    const menuIcon = bot.profilePic;
+    const menuItems = [
       {
         name: 'Home',
         click: () => goToRoute('/'),
@@ -90,8 +90,7 @@ export function BotEditorPage({ loading, error, onSetupHeader }) {
         click: () => goToRoute('/logout'),
       },
     ];
-    const actionButtons = [];
-    onSetupHeader(title, profilePic, menuActions, actionButtons);
+    onSetupHeader({ title, menuIcon, menuItems });
   }, []);
 
   const messages = [
@@ -151,7 +150,6 @@ export function BotEditorPage({ loading, error, onSetupHeader }) {
 }
 
 BotEditorPage.propTypes = {
-  dispatch: PropTypes.func.isRequired,
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   onSetupHeader: PropTypes.func,
@@ -165,8 +163,8 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch) {
   return {
-    onSetupHeader: (title, menuIcon, menuItems, actionButtons) =>
-      dispatch(setupHeader(title, menuIcon, menuItems, actionButtons)),
+    onSetupHeader: ({ title, menuIcon, menuItems }) =>
+      dispatch(setupHeader({ title, menuIcon, menuItems })),
   };
 }
 

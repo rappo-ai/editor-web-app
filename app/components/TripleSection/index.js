@@ -2,13 +2,13 @@ import styled from 'styled-components';
 
 export const TripleSectionContainer = styled.section`
   display: flex;
-  flex-direction: ${props => props.direction || 'row'};
+  flex-direction: ${props => props.direction || 'column'};
   justify-content: space-around;
 `;
 
 export const TripleSection = styled.section`
   display: flex;
-  flex-direction: ${props => props.direction || 'row'};
+  flex-direction: ${props => props.direction || 'column'};
   align-items: center;
   justify-content: ${props => {
     const map = {

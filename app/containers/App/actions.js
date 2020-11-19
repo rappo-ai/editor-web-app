@@ -115,7 +115,13 @@ export function createBot(name = 'Untitled ...') {
  *
  * @return {object} An action object with a type of LOAD_BOTS
  */
-export function setupHeader(title, menuIcon, menuItems, actionButtons) {
+export function setupHeader({
+  title = '',
+  menuIcon = '',
+  menuItems = [],
+  actionButtons = [],
+  showBackButton = false,
+} = {}) {
   return {
     type: 'SETUP_HEADER',
     payload: {
@@ -123,6 +129,7 @@ export function setupHeader(title, menuIcon, menuItems, actionButtons) {
       menuIcon,
       menuItems,
       actionButtons,
+      showBackButton,
     },
   };
 }

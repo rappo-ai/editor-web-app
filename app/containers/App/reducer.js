@@ -31,6 +31,7 @@ export const initialState = {
     menuIcon: '',
     menuItems: [],
     actionButtons: [],
+    showBackButton: false,
   },
   user: {
     profile: {
@@ -113,6 +114,7 @@ const appReducer = (state = initialState, action) =>
         draft.header.menuIcon = action.payload.menuIcon;
         draft.header.menuItems = action.payload.menuItems;
         draft.header.actionButtons = action.payload.actionButtons;
+        draft.header.showBackButton = action.payload.showBackButton;
     }
   });
 
