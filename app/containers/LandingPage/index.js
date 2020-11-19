@@ -101,11 +101,14 @@ export function LandingPage() {
     <LandingPageSectionContainer direction="column">
       <Helmet>
         <title>rappo.ai</title>
-        <meta name="description" content="Create powerful bots instantly" />
+        <meta name="description" content="Create powerful bots naturally" />
       </Helmet>
       <LandingPageSection position="top" direction="column" />
       <LandingPageSection position="center" direction="column">
-        <Para>Create powerful bots instantly.</Para>
+        <Para>
+          <strong>Rappo</strong> is a natural language interface for easily
+          building powerful chatbots.
+        </Para>
       </LandingPageSection>
       <LandingPageSection position="bottom" direction="column">
         <GoogleSignInButton />
