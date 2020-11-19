@@ -88,7 +88,7 @@ function PopupMenu({ items, onClickOut }) {
       window.removeEventListener('click', onWindowClick);
     };
   });
-  const myContainer = styled.section`
+  const PopupContainer = styled.section`
     position: absolute;
     top: 60px;
     margin-left: 10px;
@@ -98,12 +98,12 @@ function PopupMenu({ items, onClickOut }) {
     z-index: 1;
     box-shadow: 0 2px 12px rgba(53, 53, 53, 0.5);
   `;
-  const myUl = styled.ul`
+  const PopupUl = styled.ul`
     list-style-type: none;
     padding: 0;
     margin: 10px 20px;
   `;
-  const myLi = styled.li`
+  const PopupLi = styled.li`
     border-top: 1px solid gray;
     &:first-child {
       border-top: none;
@@ -120,16 +120,16 @@ function PopupMenu({ items, onClickOut }) {
   `;
 
   return (
-    <myContainer ref={containerRef}>
-      <myUl>
+    <PopupContainer ref={containerRef}>
+      <PopupUl>
         {items.map((item, index) => (
           // eslint-disable-next-line react/no-array-index-key
-          <myLi unselectable="on" key={index} onClick={item.click}>
+          <PopupLi unselectable="on" key={index} onClick={item.click}>
             {item.name}
-          </myLi>
+          </PopupLi>
         ))}
-      </myUl>
-    </myContainer>
+      </PopupUl>
+    </PopupContainer>
   );
 }
 
