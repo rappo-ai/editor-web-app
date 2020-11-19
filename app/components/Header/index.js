@@ -42,8 +42,8 @@ function LogoHeader() {
 
 const MenuIcon = styled.div`
   background-image: url('${props => props.image}');
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   background-size: cover;
   background-position: top center;
   border-radius: 50%;
