@@ -12,6 +12,7 @@ import { Helmet } from 'react-helmet';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
+import { Para } from 'components/common/Para';
 import {
   TripleSectionContainer,
   TripleSection,
@@ -85,13 +86,6 @@ const LandingPageSectionContainer = styled(TripleSectionContainer)`
 `;
 
 const LandingPageSection = styled(TripleSection)``;
-
-const Para = styled.p`
-  color: #545454;
-  font-size: 18px;
-  text-align: center;
-  padding: 0 100px;
-`;
 
 export function LandingPage() {
   useInjectReducer({ key: 'landingPage', reducer });

@@ -27,10 +27,10 @@ export const initialState = {
     isLoggedIn: false,
   },
   header: {
-    title: 'Bots',
-    avatarImage: '',
+    title: '',
+    menuIcon: '',
     menuItems: [],
-    actionsButtons: [],
+    actionButtons: [],
   },
   user: {
     profile: {
@@ -110,9 +110,9 @@ const appReducer = (state = initialState, action) =>
 
       case 'SETUP_HEADER':
         draft.header.title = action.payload.title;
-        draft.header.avatarImage = action.payload.avatarImage;
+        draft.header.menuIcon = action.payload.menuIcon;
         draft.header.menuItems = action.payload.menuItems;
-        draft.header.actionsButtons = action.payload.actionButtons;
+        draft.header.actionButtons = action.payload.actionButtons;
     }
   });
 

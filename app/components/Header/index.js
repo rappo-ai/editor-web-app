@@ -50,9 +50,31 @@ const MenuIcon = styled.div`
   cursor: pointer;
 `;
 
-function ActionButtonBar() {
-  return <div />;
+const ActionButtonIcon = styled.i`
+  margin-left: 10px;
+  cursor: pointer;
+  color: #777777;
+`;
+function ActionButtonBar({ buttons }) {
+  return (
+    <>
+      {buttons.map(button => {
+        const className = `fa fa-2x ${button.faClass}`;
+        return (
+          <ActionButtonIcon
+            className={className}
+            aria-hidden="true"
+            onClick={button.click}
+          />
+        );
+      })}
+    </>
+  );
 }
+
+ActionButtonBar.propTypes = {
+  buttons: PropTypes.array,
+};
 
 function PopupMenu({ items, onClickOut }) {
   const containerRef = useRef(null);
@@ -132,7 +154,7 @@ function EditorHeader({ header }) {
       <NavBar background="#d9d9d9">
         <NavSection position="left">
           <MenuIcon
-            image={header.avatarImage}
+            image={header.menuIcon}
             onClick={() => setIsPopupMenu(!isPopupMenu)}
           />
         </NavSection>

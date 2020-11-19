@@ -85,13 +85,6 @@ function* loadBots() {
       type: 'LOAD_BOTS_SUCCESS',
       bots: response.bots,
     });
-
-    if (!response.bots || response.bots.length === 0) {
-      yield put({
-        type: 'CREATE_BOT',
-        name: 'Untitled bot ...',
-      });
-    }
   } catch (err) {
     console.error(err);
     yield put({

@@ -19,8 +19,10 @@ import {
   makeSelectUserProfile,
 } from 'containers/App/selectors';
 import BotList from 'components/BotList';
+import { Para } from 'components/common/Para';
 import { goToRoute } from 'utils/webapi';
 import Section from './Section';
+import CenteredSection from './CenteredSection';
 
 // const key = 'home';
 
@@ -40,7 +42,9 @@ export function HomePage({
   }, []);
 
   useEffect(() => {
-    onSetupHeader('My Bots', userProfile.profilePic, [
+    const title = 'My Bots';
+    const { profilePic } = userProfile;
+    const menuActions = [
       {
         name: 'Home',
         click: () => goToRoute('/'),
@@ -49,7 +53,14 @@ export function HomePage({
         name: 'Logout',
         click: () => goToRoute('/logout'),
       },
-    ]);
+    ];
+    const actionButtons = [
+      {
+        faClass: 'fa-plus',
+        click: () => console.log('+ clicked'),
+      },
+    ];
+    onSetupHeader(title, profilePic, menuActions, actionButtons);
   }, []);
 
   const botListProps = {
@@ -57,6 +68,8 @@ export function HomePage({
     error,
     bots,
   };
+
+  const hasBots = !!(bots && Array.isArray(bots) && bots.length);
 
   return (
     <article>
@@ -68,9 +81,21 @@ export function HomePage({
         />
       </Helmet>
       <div>
-        <Section>
-          <BotList {...botListProps} />
-        </Section>
+        {hasBots && (
+          <Section>
+            <BotList {...botListProps} />
+          </Section>
+        )}
+        {!hasBots && (
+          <CenteredSection>
+            <Para>
+              You do not have any bots.
+              <br />
+              <br />
+              Click + to create one.
+            </Para>
+          </CenteredSection>
+        )}
       </div>
     </article>
   );
@@ -95,8 +120,8 @@ const mapStateToProps = createStructuredSelector({
 export function mapDispatchToProps(dispatch) {
   return {
     onLoadBots: () => dispatch(loadBots()),
-    onSetupHeader: (title, avatarImage, menuItems) =>
-      dispatch(setupHeader(title, avatarImage, menuItems)),
+    onSetupHeader: (title, menuIcon, menuItems, actionButtons) =>
+      dispatch(setupHeader(title, menuIcon, menuItems, actionButtons)),
   };
 }
 

@@ -78,7 +78,9 @@ export function BotEditorPage({ loading, error, onSetupHeader }) {
   }&background=fff`;
 
   useEffect(() => {
-    onSetupHeader(bot.name, bot.profilePic, [
+    const title = bot.name;
+    const { profilePic } = bot.profilePic;
+    const menuActions = [
       {
         name: 'Home',
         click: () => goToRoute('/'),
@@ -87,7 +89,9 @@ export function BotEditorPage({ loading, error, onSetupHeader }) {
         name: 'Logout',
         click: () => goToRoute('/logout'),
       },
-    ]);
+    ];
+    const actionButtons = [];
+    onSetupHeader(title, profilePic, menuActions, actionButtons);
   }, []);
 
   const messages = [
@@ -161,8 +165,8 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch) {
   return {
-    onSetupHeader: (title, avatarImage, menuItems) =>
-      dispatch(setupHeader(title, avatarImage, menuItems)),
+    onSetupHeader: (title, menuIcon, menuItems, actionButtons) =>
+      dispatch(setupHeader(title, menuIcon, menuItems, actionButtons)),
   };
 }
 
