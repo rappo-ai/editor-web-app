@@ -3,10 +3,10 @@ import NormalA from 'components/A';
 
 const BotLink = styled(NormalA)`
   height: 100%;
-  color: black;
+  color: #535353;
+  text-decoration: none;
   display: flex;
   align-items: center;
-  width: 100%;
 `;
 
 export default BotLink;

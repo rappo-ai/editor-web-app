@@ -15,14 +15,12 @@ import {
   TripleSectionContainer,
   TripleSection,
 } from 'components/TripleSection';
-import { Para } from 'components/common/Para';
+import { Para } from 'components/common';
 import { createBot, setupHeader } from 'containers/App/actions';
 
 const NewBotPageSectionContainer = styled(TripleSectionContainer)`
-  position: relative;
   width: 100%;
-  height: 100vh;
-  top: -60px;
+  height: 100%;
   padding: 150px 0;
 `;
 

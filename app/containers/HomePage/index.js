@@ -24,19 +24,18 @@ import {
   TripleSectionContainer,
   TripleSection,
 } from 'components/TripleSection';
-import { Para } from 'components/common/Para';
+import { Para } from 'components/common';
 import { goToRoute } from 'utils/webapi';
 
 const HomePageSectionContainer = styled(TripleSectionContainer)`
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  padding: 60px 0;
+  flex-grow: 1;
+  overflow: hidden;
 `;
 
-const HomePageSection = styled(TripleSection)``;
+const HomePageSection = styled(TripleSection)`
+  height: 100%;
+`;
 
 export function HomePage({
   userProfile,

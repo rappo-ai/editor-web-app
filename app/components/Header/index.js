@@ -11,6 +11,7 @@ import {
   TripleSectionContainer,
   TripleSection,
 } from 'components/TripleSection';
+import { CircleImage as MenuIcon } from 'components/common';
 import { makeSelectSession, makeSelectHeader } from 'containers/App/selectors';
 import HeaderLink from './HeaderLink';
 import Logo from './Logo';
@@ -41,16 +42,6 @@ function LogoHeader() {
     </NavBar>
   );
 }
-
-const MenuIcon = styled.div`
-  background-image: url('${props => props.image}');
-  width: 50px;
-  height: 50px;
-  background-size: cover;
-  background-position: top center;
-  border-radius: 50%;
-  cursor: pointer;
-`;
 
 const ActionButtonIcon = styled.i`
   margin: 0 5px;
@@ -169,6 +160,9 @@ function EditorHeader({ header }) {
           )}
           {header.menuIcon && (
             <MenuIcon
+              pointer
+              width="50px"
+              height="50px"
               image={header.menuIcon}
               onClick={() => setIsPopupMenu(!isPopupMenu)}
             />

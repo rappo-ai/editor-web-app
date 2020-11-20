@@ -12,7 +12,7 @@ import { Helmet } from 'react-helmet';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
-import { Para } from 'components/common/Para';
+import { Para } from 'components/common';
 import {
   TripleSectionContainer,
   TripleSection,
