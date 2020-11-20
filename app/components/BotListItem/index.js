@@ -6,13 +6,22 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 import { CircleImage as Avatar } from 'components/common';
 import ListItem from 'components/ListItem';
 import { PRIMARY_COLOR } from 'utils/constants';
 import history from 'utils/history';
-import BotLink from './BotLink';
 import Wrapper from './Wrapper';
+
+const BotLink = styled.p`
+  height: 100%;
+  color: #535353;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+`;
 
 function BotListItem({ item }) {
   const content = (
