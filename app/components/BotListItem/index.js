@@ -10,13 +10,13 @@ import PropTypes from 'prop-types';
 import { CircleImage as Avatar } from 'components/common';
 import ListItem from 'components/ListItem';
 import { PRIMARY_COLOR } from 'utils/constants';
-import { goToRoute } from 'utils/webapi';
+import history from 'utils/history';
 import BotLink from './BotLink';
 import Wrapper from './Wrapper';
 
 function BotListItem({ item }) {
   const content = (
-    <Wrapper onClick={() => goToRoute(`/bot/${item.id}`)}>
+    <Wrapper onClick={() => history.push(`/bot/${item.id}`)}>
       <Avatar
         image={`https://ui-avatars.com/api/?name=${
           item.name

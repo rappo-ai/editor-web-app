@@ -22,7 +22,7 @@ import { useInjectReducer } from 'utils/injectReducer';
 
 import List from 'components/List';
 import ListItem from 'components/ListItem';
-import { goToRoute } from 'utils/webapi';
+import history from 'utils/history';
 
 import makeSelectBotEditorPage from './selectors';
 import reducer from './reducer';
@@ -83,11 +83,13 @@ export function BotEditorPage({ loading, error, onSetupHeader }) {
     const menuItems = [
       {
         name: 'Home',
-        click: () => goToRoute('/'),
+        click: () => history.push('/'),
       },
       {
         name: 'Logout',
-        click: () => goToRoute('/logout'),
+        click: () => {
+          window.location.href = '/logout';
+        },
       },
     ];
     onSetupHeader({ title, menuIcon, menuItems });

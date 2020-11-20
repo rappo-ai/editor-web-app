@@ -25,7 +25,7 @@ import {
   TripleSection,
 } from 'components/TripleSection';
 import { Para } from 'components/common';
-import { goToRoute } from 'utils/webapi';
+import history from 'utils/history';
 
 const HomePageSectionContainer = styled(TripleSectionContainer)`
   width: 100%;
@@ -58,17 +58,19 @@ export function HomePage({
     const menuItems = [
       {
         name: 'Home',
-        click: () => goToRoute('/'),
+        click: () => history.push('/'),
       },
       {
         name: 'Logout',
-        click: () => goToRoute('/logout'),
+        click: () => {
+          window.location.href = '/logout';
+        },
       },
     ];
     const actionButtons = [
       {
         faClass: 'fa-plus',
-        click: () => goToRoute('/bot/new'),
+        click: () => history.push('/bot/new'),
       },
     ];
     onSetupHeader({ title, menuIcon, menuItems, actionButtons });

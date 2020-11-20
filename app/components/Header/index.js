@@ -120,8 +120,15 @@ function PopupMenu({ items, onClickOut }) {
     <PopupContainer ref={containerRef}>
       <PopupUl>
         {items.map((item, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <PopupLi unselectable="on" key={index} onClick={item.click}>
+          <PopupLi
+            unselectable="on"
+            // eslint-disable-next-line react/no-array-index-key
+            key={index}
+            onClick={() => {
+              item.click();
+              onClickOut();
+            }}
+          >
             {item.name}
           </PopupLi>
         ))}
