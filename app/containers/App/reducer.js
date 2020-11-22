@@ -109,6 +109,29 @@ const appReducer = (state = initialState, action) =>
         draft.error = action.error;
         break;
 
+      case 'LOAD_BOT':
+        draft.loading = true;
+        draft.error = false;
+        break;
+
+      case 'LOAD_BOT_SUCCESS':
+        draft.loading = false;
+        if (Array.isArray(draft.bots)) {
+          const index = draft.bots.map(e => e.id).indexOf(action.bot.id);
+          if (index > -1) {
+            draft.bots.splice(index, 1);
+          }
+          draft.bots.push(action.bot);
+        } else {
+          draft.bots = [action.bot];
+        }
+        break;
+
+      case 'LOAD_BOT_ERROR':
+        draft.loading = false;
+        draft.error = action.error;
+        break;
+
       case 'SETUP_HEADER':
         draft.header.title = action.payload.title;
         draft.header.menuIcon = action.payload.menuIcon;

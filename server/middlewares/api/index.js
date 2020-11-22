@@ -75,4 +75,19 @@ router.post('/bot', async (req, res) => {
   }
 });
 
+router.get('/bot/:id', async (req, res) => {
+  const { user } = req;
+  if (!user || !user.id) {
+    res.status(500);
+  } else {
+    const bot = await db.get('bot', {
+      property: 'id',
+      value: req.params.id,
+    });
+    res.json({
+      bot,
+    });
+  }
+});
+
 module.exports = router;
