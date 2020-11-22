@@ -10,23 +10,25 @@ import styled from 'styled-components';
 
 import { PRIMARY_COLOR } from 'utils/constants';
 
+const Container = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: ${({ user }) =>
+    user === 'bot' ? 'flex-start' : 'flex-end'};
+  align-items: center;
+`;
+const Bubble = styled.p`
+  max-width: 80%;
+  padding: 10px;
+  border-radius: 10px;
+  color: white;
+  background: ${({ user }) => (user === 'bot' ? PRIMARY_COLOR : 'gray')};
+`;
+
 function MessageBubble({ text, user }) {
-  const Container = styled.div`
-    width: 100%;
-    display: flex;
-    justify-content: ${user === 'bot' ? 'flex-start' : 'flex-end'};
-    align-items: center;
-  `;
-  const Bubble = styled.p`
-    max-width: 80%;
-    padding: 10px;
-    border-radius: 10px;
-    color: white;
-    background: ${user === 'bot' ? PRIMARY_COLOR : 'gray'};
-  `;
   return (
     <Container>
-      <Bubble>{text}</Bubble>
+      <Bubble user={user}>{text}</Bubble>
     </Container>
   );
 }

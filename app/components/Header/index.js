@@ -71,12 +71,47 @@ ActionButtonBar.propTypes = {
   buttons: PropTypes.array,
 };
 
+const PopupContainer = styled.section`
+  position: absolute;
+  top: 60px;
+  margin-left: 10px;
+  border-radius: 4px;
+  background: #333333;
+  color: white;
+  z-index: 1;
+  box-shadow: 0 2px 12px rgba(53, 53, 53, 0.5);
+`;
+const PopupUl = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  margin: 10px 20px;
+`;
+const PopupLi = styled.li`
+  border-top: 1px solid gray;
+  &:first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+  }
+  margin-top: 5px;
+  padding-top: 5px;
+  cursor: pointer;
+  :hover {
+    color: ${PRIMARY_COLOR};
+  }
+  user-select: none;
+`;
+
 function PopupMenu({ items, onClickOut }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
     function onWindowClick(ev) {
-      if (!containerRef.current.contains(ev.target)) {
+      if (
+        containerRef &&
+        containerRef.current &&
+        !containerRef.current.contains(ev.target)
+      ) {
         onClickOut();
       }
     }
@@ -85,36 +120,6 @@ function PopupMenu({ items, onClickOut }) {
       window.removeEventListener('click', onWindowClick);
     };
   });
-  const PopupContainer = styled.section`
-    position: absolute;
-    top: 60px;
-    margin-left: 10px;
-    border-radius: 4px;
-    background: #333333;
-    color: white;
-    z-index: 1;
-    box-shadow: 0 2px 12px rgba(53, 53, 53, 0.5);
-  `;
-  const PopupUl = styled.ul`
-    list-style-type: none;
-    padding: 0;
-    margin: 10px 20px;
-  `;
-  const PopupLi = styled.li`
-    border-top: 1px solid gray;
-    &:first-child {
-      border-top: none;
-      padding-top: 0;
-      margin-top: 0;
-    }
-    margin-top: 5px;
-    padding-top: 5px;
-    cursor: pointer;
-    :hover {
-      color: ${PRIMARY_COLOR};
-    }
-    user-select: none;
-  `;
 
   return (
     <PopupContainer ref={containerRef}>
