@@ -10,11 +10,16 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
+import { useParams } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
-import { setupHeader } from 'containers/App/actions';
-import { makeSelectLoading, makeSelectError } from 'containers/App/selectors';
+import { loadBot, setupHeader } from 'containers/App/actions';
+import {
+  makeSelectLoading,
+  makeSelectError,
+  makeSelectBots,
+} from 'containers/App/selectors';
 import ChatInputBar from 'components/ChatInputBar';
 import MessageList from 'components/MessageList';
 import { useInjectSaga } from 'utils/injectSaga';
@@ -69,17 +74,26 @@ PopupMenuList.propTypes = {
   items: PropTypes.array,
 };
 
-export function BotEditorPage({ loading, error, onSetupHeader }) {
-  const bot = {
-    name: 'Untitled',
-  };
-  bot.profilePic = `https://ui-avatars.com/api/?name=${
-    bot.name
-  }&background=fff`;
+export function BotEditorPage({
+  loading,
+  error,
+  bots,
+  onLoadBot,
+  onSetupHeader,
+}) {
+  const { botId } = useParams();
+
+  const bot = Array.isArray(bots)
+    ? bots.find(element => element.id === botId)
+    : null;
 
   useEffect(() => {
-    const title = bot.name;
-    const menuIcon = bot.profilePic;
+    onLoadBot(botId);
+  }, [botId]);
+
+  useEffect(() => {
+    const title = bot ? bot.name : 'Loading ...';
+    const menuIcon = `https://ui-avatars.com/api/?name=${title}&background=fff`;
     const menuItems = [
       {
         name: 'Home',
@@ -93,7 +107,7 @@ export function BotEditorPage({ loading, error, onSetupHeader }) {
       },
     ];
     onSetupHeader({ title, menuIcon, menuItems });
-  }, []);
+  }, [bots]);
 
   const messages = [
     {
@@ -154,17 +168,21 @@ export function BotEditorPage({ loading, error, onSetupHeader }) {
 BotEditorPage.propTypes = {
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+  bots: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
+  onLoadBot: PropTypes.func,
   onSetupHeader: PropTypes.func,
 };
 
 const mapStateToProps = createStructuredSelector({
   botEditorPage: makeSelectBotEditorPage(),
+  bots: makeSelectBots(),
   loading: makeSelectLoading(),
   error: makeSelectError(),
 });
 
 function mapDispatchToProps(dispatch) {
   return {
+    onLoadBot: id => dispatch(loadBot(id)),
     onSetupHeader: ({ title, menuIcon, menuItems }) =>
       dispatch(setupHeader({ title, menuIcon, menuItems })),
   };

@@ -75,7 +75,7 @@ export function App({
           <Route exact path="/" component={LandingPage} />
         )}
         <Route exact path="/bot/new" component={NewBotPage} />
-        <Route exact path="/bot/:botid" component={BotEditorPage} />
+        <Route exact path="/bot/:botId" component={BotEditorPage} />
         <Route path="" component={NotFoundPage} />
       </Switch>
       {/* <Footer /> */}
