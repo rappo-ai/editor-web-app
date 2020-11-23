@@ -74,7 +74,7 @@ export function HomePage({
         click: () => history.push('/bot/new'),
       },
     ];
-    onSetupHeader({ pageTitle, menuIcon, menuItems, actionButtons });
+    onSetupHeader({ title: pageTitle, menuIcon, menuItems, actionButtons });
   }, []);
 
   const botListProps = {
