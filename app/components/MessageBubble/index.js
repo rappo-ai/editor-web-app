@@ -27,7 +27,7 @@ const Bubble = styled.p`
 
 function MessageBubble({ text, user }) {
   return (
-    <Container>
+    <Container user={user}>
       <Bubble user={user}>{text}</Bubble>
     </Container>
   );
