@@ -61,7 +61,7 @@ export function App({
 
   return (
     <AppWrapper>
-      <Helmet titleTemplate="%s - React.js Boilerplate" defaultTitle="rappo.ai">
+      <Helmet titleTemplate="%s - rappo.ai" defaultTitle="rappo.ai">
         <meta
           name="description"
           content="Create friendly bots for your business."

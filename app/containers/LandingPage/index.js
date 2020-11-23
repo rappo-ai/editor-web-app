@@ -94,7 +94,7 @@ export function LandingPage() {
   return (
     <LandingPageSectionContainer direction="column">
       <Helmet>
-        <title>rappo.ai</title>
+        <title />
         <meta name="description" content="Create powerful bots naturally" />
       </Helmet>
       <LandingPageSection position="top" direction="column" />

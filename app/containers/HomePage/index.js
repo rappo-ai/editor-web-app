@@ -37,6 +37,8 @@ const HomePageSection = styled(TripleSection)`
   height: 100%;
 `;
 
+const pageTitle = 'My Bots';
+
 export function HomePage({
   userProfile,
   bots,
@@ -53,7 +55,6 @@ export function HomePage({
   }, []);
 
   useEffect(() => {
-    const title = 'My Bots';
     const menuIcon = userProfile.profilePic;
     const menuItems = [
       {
@@ -73,7 +74,7 @@ export function HomePage({
         click: () => history.push('/bot/new'),
       },
     ];
-    onSetupHeader({ title, menuIcon, menuItems, actionButtons });
+    onSetupHeader({ pageTitle, menuIcon, menuItems, actionButtons });
   }, []);
 
   const botListProps = {
@@ -87,11 +88,8 @@ export function HomePage({
   return (
     <HomePageSectionContainer direction="column">
       <Helmet>
-        <title>Home Page</title>
-        <meta
-          name="description"
-          content="A React.js Boilerplate application homepage"
-        />
+        <title>{pageTitle}</title>
+        <meta name="description" content="Home page of rappo.ai" />
       </Helmet>
       {hasBots && (
         <HomePageSection position="top" direction="column">

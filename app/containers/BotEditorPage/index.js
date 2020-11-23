@@ -85,15 +85,17 @@ export function BotEditorPage({
 
   const bot = Array.isArray(bots)
     ? bots.find(element => element.id === botId)
-    : null;
+    : { name: '' };
 
   useEffect(() => {
     onLoadBot(botId);
   }, [botId]);
 
   useEffect(() => {
-    const title = bot ? bot.name : 'Loading ...';
-    const menuIcon = `https://ui-avatars.com/api/?name=${title}&background=fff`;
+    const title = bot.name;
+    const menuIcon = `https://ui-avatars.com/api/?name=${
+      bot.name
+    }&background=fff`;
     const menuItems = [
       {
         name: 'Home',
@@ -151,7 +153,7 @@ export function BotEditorPage({
   return (
     <Container>
       <Helmet>
-        <title>BotEditorPage</title>
+        <title>{bot.name}</title>
         <meta name="description" content="Description of BotEditorPage" />
       </Helmet>
       <MessageList {...messageListProps} />
