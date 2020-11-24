@@ -1,24 +1,35 @@
 /* eslint-disable guard-for-in, no-restricted-syntax, no-param-reassign */
 function pojoClone(object) {
-  const cloned = {};
-  for (const key in object) {
-    switch (typeof object[key]) {
+  const cloned = Array.isArray(object) ? [] : {};
+
+  function pojoCloneInternal(value) {
+    let clonedInternal = value;
+    switch (typeof value) {
       case 'object':
-        if (object[key]) {
-          cloned[key] = pojoClone(object[key]);
+        if (value) {
+          clonedInternal = pojoClone(value);
         } else {
-          cloned[key] = null;
+          clonedInternal = null;
         }
         break;
       case 'undefined':
-        cloned[key] = undefined;
+        clonedInternal = undefined;
         break;
       case 'function':
         // skip functions
         break;
       default:
-        cloned[key] = object[key];
         break;
+    }
+    return clonedInternal;
+  }
+  if (Array.isArray(object)) {
+    object.forEach(value => {
+      cloned.push(pojoCloneInternal(value));
+    });
+  } else {
+    for (const key in object) {
+      cloned[key] = pojoCloneInternal(object[key]);
     }
   }
   return cloned;
