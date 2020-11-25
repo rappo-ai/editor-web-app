@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -22,15 +22,23 @@ const InputBar = styled.input`
 
 const SendButton = styled.button``;
 
-function ChatInputBar() {
+function ChatInputBar({ inputText, onTyping, onSendClick }) {
   return (
     <Container>
-      <InputBar type="text" />
-      <SendButton>Send</SendButton>
+      <InputBar
+        type="text"
+        value={inputText}
+        onChange={e => onTyping(e.target.value)}
+      />
+      <SendButton onClick={onSendClick}>Send</SendButton>
     </Container>
   );
 }
 
-ChatInputBar.propTypes = {};
+ChatInputBar.propTypes = {
+  inputText: PropTypes.string,
+  onTyping: PropTypes.func,
+  onSendClick: PropTypes.func,
+};
 
 export default ChatInputBar;

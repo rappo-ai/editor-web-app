@@ -6,26 +6,31 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 import List from 'components/List';
 import ListItem from 'components/ListItem';
 import LoadingIndicator from 'components/LoadingIndicator';
 import MessageListItem from 'components/MessageListItem';
 
+const StyledList = styled(List)`
+  height: 100%;
+`;
+
 function MessageList({ loading, error, messages }) {
   if (loading) {
-    return <List component={LoadingIndicator} />;
+    return <StyledList component={LoadingIndicator} />;
   }
 
   if (error !== false) {
     const ErrorComponent = () => (
       <ListItem item="Something went wrong, please try again!" />
     );
-    return <List component={ErrorComponent} />;
+    return <StyledList component={ErrorComponent} />;
   }
 
   if (messages !== false) {
-    return <List items={messages} component={MessageListItem} />;
+    return <StyledList items={messages} component={MessageListItem} />;
   }
 
   return null;

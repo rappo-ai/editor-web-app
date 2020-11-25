@@ -20,7 +20,13 @@ export function MessageListItem({ item }) {
   );
 
   // Render the content into a list item
-  return <ListItem key={`message-list-item-${item.id}`} item={content} />;
+  return (
+    <ListItem
+      key={`message-list-item-${item.id}`}
+      item={content}
+      scrollOnMount
+    />
+  );
 }
 
 MessageListItem.propTypes = {

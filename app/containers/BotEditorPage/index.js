@@ -5,7 +5,7 @@
  *
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
@@ -25,54 +25,17 @@ import MessageList from 'components/MessageList';
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
 
-import List from 'components/List';
-import ListItem from 'components/ListItem';
 import history from 'utils/history';
 
-import makeSelectBotEditorPage from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-
-const PopupMenuOuterContainer = styled.section`
-  position: relative;
-  width: 100%;
-`;
-
-const PopupMenuInnerContainer = styled.div`
-  position: absolute;
-  bottom: 40px;
-  width: 100%;
-`;
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   overflow: auto;
+  height: 100%;
 `;
-
-const PopupMenuItemContainer = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-`;
-function PopupMenuItem({ item }) {
-  const content = (
-    <PopupMenuItemContainer>
-      <p onClick={item.click}>{item.name}</p>
-    </PopupMenuItemContainer>
-  );
-  return <ListItem item={content} />;
-}
-PopupMenuItem.propTypes = {
-  item: PropTypes.object,
-};
-
-function PopupMenuList({ items }) {
-  return <List component={PopupMenuItem} items={items} />;
-}
-PopupMenuList.propTypes = {
-  items: PropTypes.array,
-};
 
 export function BotEditorPage({
   loading,
@@ -82,6 +45,8 @@ export function BotEditorPage({
   onSetupHeader,
 }) {
   const { botId } = useParams();
+
+  const [messages, setMessages] = useState([]);
 
   const bot = Array.isArray(bots)
     ? bots.find(element => element.id === botId)
@@ -93,9 +58,8 @@ export function BotEditorPage({
 
   useEffect(() => {
     const title = bot.name;
-    const menuIcon = `https://ui-avatars.com/api/?name=${
-      bot.name
-    }&background=fff`;
+    const menuIcon = `https://ui-avatars.com/api/?name=${bot.name}
+    &background=fff`;
     const menuItems = [
       {
         name: 'Home',
@@ -111,44 +75,38 @@ export function BotEditorPage({
     onSetupHeader({ title, menuIcon, menuItems });
   }, [bots]);
 
-  const messages = [
-    {
-      id: 0,
-      user: 'bot',
-      text:
-        'Hello world! Hello world! Hello world! Hello world! Hello world! Hello world! Hello world! Hello world! ',
-    },
-    { id: 1, user: 'notbot', text: 'Nice to meet you!' },
-    { id: 2, user: 'bot', text: 'Nice to meet you!' },
-    { id: 3, user: 'notbot', text: 'Nice to meet you!' },
-    { id: 4, user: 'bot', text: 'Nice to meet you!' },
-    { id: 5, user: 'notbot', text: 'Nice to meet you!' },
-    { id: 6, user: 'bot', text: 'Nice to meet you!' },
-    { id: 7, user: 'notbot', text: 'Nice to meet you!' },
-    { id: 8, user: 'bot', text: 'Nice to meet you!' },
-    { id: 9, user: 'notbot', text: 'Nice to meet you!' },
-    { id: 10, user: 'bot', text: 'Nice to meet you!' },
-  ];
+  const [inputText, setInputText] = useState('');
 
   useInjectReducer({ key: 'botEditorPage', reducer });
   useInjectSaga({ key: 'botEditorPage', saga });
-
-  const menuItems = [
-    { id: 0, name: 'Detach', click: () => console.log('detach click') },
-    { id: 1, name: 'Delete', click: () => console.log('delete click') },
-    {
-      id: 2,
-      name: 'Delete Tree',
-      click: () => console.log('delete tree click'),
-    },
-  ];
 
   const messageListProps = {
     loading,
     error,
     messages,
   };
-  const chatInputBarProps = {};
+  const chatInputBarProps = {
+    inputText,
+    onTyping,
+    onSendClick,
+  };
+
+  function onTyping(input) {
+    setInputText(input);
+  }
+
+  function onSendClick() {
+    setMessages(prevMessages => {
+      const newMessages = [...prevMessages];
+      newMessages.push({
+        id: newMessages.length,
+        user: 'bot',
+        text: inputText,
+      });
+      return newMessages;
+    });
+    setInputText('');
+  }
 
   return (
     <Container>
@@ -158,11 +116,6 @@ export function BotEditorPage({
       </Helmet>
       <MessageList {...messageListProps} />
       <ChatInputBar {...chatInputBarProps} />
-      <PopupMenuOuterContainer>
-        <PopupMenuInnerContainer>
-          <PopupMenuList items={menuItems} />
-        </PopupMenuInnerContainer>
-      </PopupMenuOuterContainer>
     </Container>
   );
 }
@@ -176,10 +129,9 @@ BotEditorPage.propTypes = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  botEditorPage: makeSelectBotEditorPage(),
-  bots: makeSelectBots(),
   loading: makeSelectLoading(),
   error: makeSelectError(),
+  bots: makeSelectBots(),
 });
 
 function mapDispatchToProps(dispatch) {
