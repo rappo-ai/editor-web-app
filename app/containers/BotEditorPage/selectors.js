@@ -11,6 +11,12 @@ const selectBotEditorPageDomain = state => state.botEditorPage || initialState;
  * Other specific selectors
  */
 
+const makeSelectModel = () =>
+  createSelector(
+    selectBotEditorPageDomain,
+    substate => substate.model,
+  );
+
 /**
  * Default selector used by BotEditorPage
  */
@@ -22,4 +28,4 @@ const makeSelectBotEditorPage = () =>
   );
 
 export default makeSelectBotEditorPage;
-export { selectBotEditorPageDomain };
+export { selectBotEditorPageDomain, makeSelectModel };

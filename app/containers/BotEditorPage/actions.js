@@ -4,10 +4,10 @@
  *
  */
 
-import { DEFAULT_ACTION } from './constants';
-
-export function defaultAction() {
+export function loadBotModel(botId, createIfNone) {
   return {
-    type: DEFAULT_ACTION,
+    type: 'LOAD_BOT_MODEL',
+    botId,
+    createIfNone,
   };
 }
