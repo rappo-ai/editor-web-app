@@ -2,7 +2,8 @@
  * Gets the repositories of the user from Github
  */
 
-import { call, put, select, takeLatest, all } from 'redux-saga/effects';
+import { call, put, takeLatest, all } from 'redux-saga/effects';
+import apiBuilder from 'utils/api';
 import history from 'utils/history';
 import request from 'utils/request';
 import Cookies from 'js-cookie';
@@ -12,38 +13,6 @@ import {
   userProfileLoaded,
   userProfileLoadError,
 } from './actions';
-
-import { makeSelectCookies } from './selectors';
-
-function* apiBuilder(
-  apiEndpoint,
-  {
-    headers = { 'Content-Type': 'application/json' },
-    method = 'GET',
-    body = false,
-  } = {},
-) {
-  const cookies = yield select(makeSelectCookies());
-  const domain = 'http://localhost:3000';
-  const apiPrefix = '/api';
-  const url = `${domain}${apiPrefix}${apiEndpoint}`;
-  const options = {
-    headers: {
-      Authorization: `Bearer ${cookies.at}`,
-      ...headers,
-    },
-    method,
-  };
-  if (body) {
-    Object.assign(options, {
-      body: JSON.stringify(body),
-    });
-  }
-  return {
-    url,
-    options,
-  };
-}
 
 /**
  * Read cookies and store the state
@@ -58,7 +27,7 @@ function* loadCookies() {
  */
 function* loadUserProfile() {
   try {
-    const { url, options } = yield call(apiBuilder, '/userinfo');
+    const { url, options } = apiBuilder('/userinfo');
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
     const profile = { displayName: '', profilePic: '' };
@@ -78,7 +47,7 @@ function* loadUserProfile() {
  */
 function* loadBots() {
   try {
-    const { url, options } = yield call(apiBuilder, '/bot');
+    const { url, options } = apiBuilder('/bot');
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
     yield put({
@@ -99,7 +68,7 @@ function* loadBots() {
  */
 function* createBot(action) {
   try {
-    const { url, options } = yield call(apiBuilder, '/bot', {
+    const { url, options } = apiBuilder('/bot', {
       method: 'POST',
       body: {
         name: action.name,
@@ -127,7 +96,7 @@ function* createBot(action) {
  */
 function* loadBot(action) {
   try {
-    const { url, options } = yield call(apiBuilder, `/bot/${action.id}`);
+    const { url, options } = apiBuilder(`/bot/${action.id}`);
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
     yield put({
