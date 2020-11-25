@@ -27,8 +27,10 @@ import { useInjectReducer } from 'utils/injectReducer';
 
 import history from 'utils/history';
 
+import { loadBotModel } from './actions';
 import reducer from './reducer';
 import saga from './saga';
+import { makeSelectModel } from './selectors';
 
 const Container = styled.div`
   display: flex;
@@ -41,9 +43,14 @@ export function BotEditorPage({
   loading,
   error,
   bots,
+  model, // eslint-disable-line no-unused-vars
   onLoadBot,
   onSetupHeader,
+  onLoadBotModel,
 }) {
+  useInjectReducer({ key: 'botEditorPage', reducer });
+  useInjectSaga({ key: 'botEditorPage', saga });
+
   const { botId } = useParams();
 
   const [messages, setMessages] = useState([]);
@@ -54,7 +61,11 @@ export function BotEditorPage({
 
   useEffect(() => {
     onLoadBot(botId);
-  }, [botId]);
+  }, [botId, onLoadBot]);
+
+  useEffect(() => {
+    onLoadBotModel(botId);
+  }, [botId, onLoadBotModel]);
 
   useEffect(() => {
     const title = bot.name;
@@ -76,9 +87,6 @@ export function BotEditorPage({
   }, [bots]);
 
   const [inputText, setInputText] = useState('');
-
-  useInjectReducer({ key: 'botEditorPage', reducer });
-  useInjectSaga({ key: 'botEditorPage', saga });
 
   const messageListProps = {
     loading,
@@ -124,14 +132,17 @@ BotEditorPage.propTypes = {
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   bots: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
+  model: PropTypes.object,
   onLoadBot: PropTypes.func,
   onSetupHeader: PropTypes.func,
+  onLoadBotModel: PropTypes.func,
 };
 
 const mapStateToProps = createStructuredSelector({
   loading: makeSelectLoading(),
   error: makeSelectError(),
   bots: makeSelectBots(),
+  model: makeSelectModel(),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -139,6 +150,7 @@ function mapDispatchToProps(dispatch) {
     onLoadBot: id => dispatch(loadBot(id)),
     onSetupHeader: ({ title, menuIcon, menuItems }) =>
       dispatch(setupHeader({ title, menuIcon, menuItems })),
+    onLoadBotModel: id => dispatch(loadBotModel(id, true)),
   };
 }
 
