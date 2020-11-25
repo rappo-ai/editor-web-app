@@ -91,6 +91,21 @@ router.get('/bot/:id', async (req, res) => {
   });
 });
 
+router.get('/bot/:id/model', async (req, res) => {
+  const { user } = req;
+  if (!user || !user.id) {
+    res.status(500);
+    return res.end();
+  }
+  const models = await db.query('model', {
+    property: 'botid',
+    value: req.params.id,
+  });
+  return res.json({
+    models,
+  });
+});
+
 router.post('/model', async (req, res) => {
   const { user } = req;
   const { botId } = req.body;
