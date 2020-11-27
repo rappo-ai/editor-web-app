@@ -1,4 +1,11 @@
-import { all, call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import {
+  all,
+  call,
+  put,
+  takeEvery,
+  takeLatest,
+  takeLeading,
+} from 'redux-saga/effects';
 import apiBuilder from 'utils/api';
 import request from 'utils/request';
 
@@ -45,10 +52,146 @@ function* loadBotModel(action) {
   }
 }
 
+/**
+ * Add a new state
+ */
+function* addState(action) {
+  let response;
+  try {
+    const { url, options } = apiBuilder(`/model/${action.modelId}/state`, {
+      method: 'POST',
+      body: {
+        message: action.message,
+      },
+    });
+    response = yield call(request, url, options);
+    if (response.model) {
+      yield put({
+        type: 'ADD_STATE_SUCCESS',
+        model: response.model,
+        state: response.state,
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: 'ADD_STATE_ERROR',
+      error: err,
+    });
+    response = err;
+  }
+  return response;
+}
+
+/**
+ * Add a new transition
+ */
+function* addTransition(action) {
+  let response;
+  try {
+    const { url, options } = apiBuilder(`/model/${action.modelId}/transition`, {
+      method: 'POST',
+      body: {
+        fromStateId: action.fromStateId,
+        toStateId: action.toStateId,
+        event: action.event,
+      },
+    });
+    response = yield call(request, url, options);
+    if (response.model) {
+      yield put({
+        type: 'ADD_TRANSITION_SUCCESS',
+        model: response.model,
+        transition: response.transition,
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: 'ADD_TRANSITION_ERROR',
+      error: err,
+    });
+    response = err;
+  }
+  return response;
+}
+
+/**
+ * Transition to the next state
+ */
+function* doTransitionToState(action) {
+  let response;
+  try {
+    const { url, options } = apiBuilder(
+      `/model/${action.modelId}/state?fromStateId=${action.fromStateId}&event=\
+${action.event}`,
+    );
+    response = yield call(request, url, options);
+    console.log('doTransitionToState response');
+    console.log(response);
+    if (response.state) {
+      yield put({
+        type: 'DO_TRANSITION_TO_STATE_SUCCESS',
+        state: response.state,
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: 'DO_TRANSITION_TO_STATE_ERROR',
+      error: err,
+    });
+    response = err;
+  }
+  return response;
+}
+
+/**
+ * Add a new state and a transition to this state.
+ */
+function* addStateWithTransition(action) {
+  try {
+    const { state: existingState } = yield call(doTransitionToState, {
+      type: 'DO_TRANSITION_TO_STATE',
+      modelId: action.modelId,
+      fromStateId: action.fromStateId,
+      event: action.event,
+    });
+    console.log('existingState response');
+    console.log(existingState);
+    if (existingState) {
+      return;
+    }
+    const { state } = yield call(addState, {
+      type: 'ADD_STATE',
+      message: action.message,
+      modelId: action.modelId,
+    });
+    // eslint-disable-next-line no-unused-vars
+    const { transition, model } = yield call(addTransition, {
+      type: 'ADD_TRANSITION',
+      fromStateId: action.fromStateId,
+      toStateId: state.id,
+      event: action.event,
+      modelId: action.modelId,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: 'ADD_STATE_WITH_TRANSITION_ERROR',
+      error: err,
+    });
+  }
+}
+
 // Individual exports for testing
 export default function* botEditorPageSaga() {
   yield all([
     yield takeLatest('LOAD_BOT_MODEL', loadBotModel),
     yield takeEvery('CREATE_BOT_MODEL', createBotModel),
+    yield takeLeading('ADD_STATE', addState),
+    yield takeLeading('ADD_TRANSITION', addTransition),
+    yield takeLeading('DO_TRANSITION_TO_STATE', doTransitionToState),
+    yield takeLeading('ADD_STATE_WITH_TRANSITION', addStateWithTransition),
   ]);
 }
