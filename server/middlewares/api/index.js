@@ -140,8 +140,8 @@ router.get('/model/:id', async (req, res) => {
 
 router.post('/model/:id/state', async (req, res) => {
   const { user } = req;
-  const { message, senderId } = req.body;
-  if (!user || !user.id || !message || !senderId) {
+  const { message } = req.body;
+  if (!user || !user.id || !message) {
     res.status(500);
     return res.end();
   }
@@ -152,12 +152,12 @@ router.post('/model/:id/state', async (req, res) => {
   const state = {
     id: nanoid(),
     message,
-    senderId,
   };
   model.states.push(state);
   await model.set('states', model.states);
   return res.json({
     model,
+    state,
   });
 });
 
@@ -188,12 +188,13 @@ router.post('/model/:id/transition', async (req, res) => {
   await model.set('transitions', model.transitions);
   return res.json({
     model,
+    transition,
   });
 });
 
 router.get('/model/:id/state', async (req, res) => {
   const { user } = req;
-  const { fromStateId, event } = req.body;
+  const { fromStateId, event } = req.query;
   if (!user || !user.id || !fromStateId || (!event && event !== '')) {
     res.status(500);
     return res.end();
