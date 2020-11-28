@@ -32,6 +32,7 @@ import {
   loadBotModel,
   setTransitionEvent,
   doTransitionToState,
+  clearChatHistory,
 } from './actions';
 import reducer from './reducer';
 import saga from './saga';
@@ -56,6 +57,7 @@ export function BotEditorPage({
   onAddStateWithTransition,
   onSetTransitionEvent,
   onDoTransitionToState,
+  onClearChatHistory,
 }) {
   useInjectReducer({ key: 'botEditorPage', reducer });
   useInjectSaga({ key: 'botEditorPage', saga });
@@ -88,13 +90,12 @@ export function BotEditorPage({
     ? bots.find(element => element.id === botId)
     : { name: '' };
 
+  // initialize state for a new botId, and clear state when component is unmounted
   useEffect(() => {
     onLoadBot(botId);
-  }, [botId, onLoadBot]);
-
-  useEffect(() => {
     onLoadBotModel(botId);
-  }, [botId, onLoadBotModel]);
+    return () => onClearChatHistory();
+  }, [botId, onLoadBot, onLoadBotModel]);
 
   useEffect(() => {
     if (model && model.id) {
@@ -162,7 +163,7 @@ export function BotEditorPage({
         fromStateId: currentState.id,
       });
     } else {
-      onSetTransitionEvent(inputText);
+      onSetTransitionEvent(inputText, model.id);
       setInputMode('bot');
     }
     setInputText('');
@@ -192,6 +193,7 @@ BotEditorPage.propTypes = {
   onAddStateWithTransition: PropTypes.func,
   onSetTransitionEvent: PropTypes.func,
   onDoTransitionToState: PropTypes.func,
+  onClearChatHistory: PropTypes.func,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -209,8 +211,10 @@ function mapDispatchToProps(dispatch) {
     onLoadBotModel: id => dispatch(loadBotModel(id, true)),
     onAddStateWithTransition: params =>
       dispatch(addStateWithTransition(params)),
-    onSetTransitionEvent: event => dispatch(setTransitionEvent(event)),
+    onSetTransitionEvent: (event, modelId) =>
+      dispatch(setTransitionEvent(event, modelId)),
     onDoTransitionToState: params => dispatch(doTransitionToState(params)),
+    onClearChatHistory: () => dispatch(clearChatHistory()),
   };
 }
 

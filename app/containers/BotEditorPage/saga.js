@@ -1,11 +1,4 @@
-import {
-  all,
-  call,
-  put,
-  takeEvery,
-  takeLatest,
-  takeLeading,
-} from 'redux-saga/effects';
+import { all, call, put, takeEvery } from 'redux-saga/effects';
 import apiBuilder from 'utils/api';
 import request from 'utils/request';
 
@@ -127,12 +120,16 @@ function* doTransitionToState(action) {
 ${action.event}`,
     );
     response = yield call(request, url, options);
-    console.log('doTransitionToState response');
-    console.log(response);
     if (response.state) {
       yield put({
         type: 'DO_TRANSITION_TO_STATE_SUCCESS',
         state: response.state,
+        modelId: action.modelId,
+      });
+    } else {
+      yield put({
+        type: 'DO_TRANSITION_TO_STATE_ERROR',
+        error: response,
       });
     }
   } catch (err) {
@@ -187,11 +184,11 @@ function* addStateWithTransition(action) {
 // Individual exports for testing
 export default function* botEditorPageSaga() {
   yield all([
-    yield takeLatest('LOAD_BOT_MODEL', loadBotModel),
+    yield takeEvery('LOAD_BOT_MODEL', loadBotModel),
     yield takeEvery('CREATE_BOT_MODEL', createBotModel),
-    yield takeLeading('ADD_STATE', addState),
-    yield takeLeading('ADD_TRANSITION', addTransition),
-    yield takeLeading('DO_TRANSITION_TO_STATE', doTransitionToState),
-    yield takeLeading('ADD_STATE_WITH_TRANSITION', addStateWithTransition),
+    yield takeEvery('ADD_STATE', addState),
+    yield takeEvery('ADD_TRANSITION', addTransition),
+    yield takeEvery('DO_TRANSITION_TO_STATE', doTransitionToState),
+    yield takeEvery('ADD_STATE_WITH_TRANSITION', addStateWithTransition),
   ]);
 }

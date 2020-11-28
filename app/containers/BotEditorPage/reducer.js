@@ -21,18 +21,30 @@ const botEditorPageReducer = (state = initialState, action) =>
         draft.model = action.model;
         break;
       case 'SET_TRANSITION_EVENT':
-        draft.chatHistory[draft.chatHistory.length - 1].transitionEvent =
-          action.event;
+        if (action.modelId === draft.model.id) {
+          draft.chatHistory[draft.chatHistory.length - 1].transitionEvent =
+            action.event;
+        }
         break;
       case 'ADD_STATE_SUCCESS':
-        draft.chatHistory.push({ state: action.state, transitionEvent: '' });
-        draft.model = action.model;
+        if (action.model.id === draft.model.id) {
+          draft.chatHistory.push({ state: action.state, transitionEvent: '' });
+          draft.model = action.model;
+        }
         break;
       case 'ADD_TRANSITION_SUCCESS':
-        draft.model = action.model;
+        if (action.model.id === draft.model.id) {
+          draft.model = action.model;
+        }
         break;
       case 'DO_TRANSITION_TO_STATE_SUCCESS':
-        draft.chatHistory.push({ state: action.state, transitionEvent: '' });
+        if (action.modelId === draft.model.id) {
+          draft.chatHistory.push({ state: action.state, transitionEvent: '' });
+        }
+        break;
+      case 'CLEAR_CHAT_HISTORY':
+        draft.chatHistory = initialState.chatHistory;
+        draft.model = initialState.model;
         break;
     }
   });
