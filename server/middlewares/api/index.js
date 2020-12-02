@@ -140,8 +140,8 @@ router.get('/model/:id', async (req, res) => {
 
 router.post('/model/:id/state', async (req, res) => {
   const { user } = req;
-  const { message } = req.body;
-  if (!user || !user.id || !message) {
+  const { message, responses } = req.body;
+  if (!user || !user.id || !message || !responses) {
     res.status(500);
     return res.end();
   }
@@ -152,12 +152,51 @@ router.post('/model/:id/state', async (req, res) => {
   const state = {
     id: nanoid(),
     message,
+    responses,
   };
   model.states.push(state);
   await model.set('states', model.states);
   return res.json({
     model,
     state,
+  });
+});
+
+router.put('/model/:id/state/:stateId', async (req, res) => {
+  const { user } = req;
+  const { message, responses } = req.body;
+  if (!user || !user.id || !message || !responses) {
+    res.status(500);
+    return res.end();
+  }
+  const model = await db.get('model', {
+    property: 'id',
+    value: req.params.id,
+  });
+  const state = model.states.find(e => e.id === req.params.stateId);
+  state.message = message;
+  state.responses = responses;
+  await model.set('states', model.states);
+  return res.json({
+    model,
+    state,
+  });
+});
+
+router.delete('/model/:id/state/:stateId', async (req, res) => {
+  const { user } = req;
+  if (!user || !user.id) {
+    res.status(500);
+    return res.end();
+  }
+  const model = await db.get('model', {
+    property: 'id',
+    value: req.params.id,
+  });
+  model.states = model.states.filter(e => e.id !== req.params.stateId);
+  await model.set('states', model.states);
+  return res.json({
+    model,
   });
 });
 
@@ -189,6 +228,25 @@ router.post('/model/:id/transition', async (req, res) => {
   return res.json({
     model,
     transition,
+  });
+});
+
+router.delete('/model/:id/transition/:transitionId', async (req, res) => {
+  const { user } = req;
+  if (!user || !user.id) {
+    res.status(500);
+    return res.end();
+  }
+  const model = await db.get('model', {
+    property: 'id',
+    value: req.params.id,
+  });
+  model.transitions = model.transitions.filter(
+    e => e.id !== req.params.transitionId,
+  );
+  await model.set('transitions', model.transitions);
+  return res.json({
+    model,
   });
 });
 
