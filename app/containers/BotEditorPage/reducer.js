@@ -32,10 +32,34 @@ const botEditorPageReducer = (state = initialState, action) =>
           draft.model = action.model;
         }
         break;
+      case 'UPDATE_STATE_SUCCESS':
+        draft.chatHistory = draft.chatHistory.map(e => {
+          if (e.state.id === action.state.id) {
+            return {
+              state: action.state,
+              transitionEvent: e.transitionEvent,
+            };
+          }
+          return e;
+        });
+        draft.model = action.model;
+        break;
+      case 'DELETE_STATE_SUCCESS':
+        draft.chatHistory = draft.chatHistory.filter(
+          e => !action.deletedStates.contains(e.state.id),
+        );
+        draft.model = action.model;
+        break;
       case 'ADD_TRANSITION_SUCCESS':
         if (action.model.id === draft.model.id) {
           draft.model = action.model;
         }
+        break;
+      case 'DELETE_TRANSITION_SUCCESS':
+        draft.chatHistory = draft.chatHistory.filter(
+          e => !action.deletedStates.contains(e.state.id),
+        );
+        draft.model = action.model;
         break;
       case 'DO_TRANSITION_TO_STATE_SUCCESS':
         if (action.modelId === draft.model.id) {
@@ -45,6 +69,8 @@ const botEditorPageReducer = (state = initialState, action) =>
       case 'CLEAR_CHAT_HISTORY':
         draft.chatHistory = initialState.chatHistory;
         draft.model = initialState.model;
+        break;
+      case 'BRANCH_FROM_STATE':
         break;
     }
   });

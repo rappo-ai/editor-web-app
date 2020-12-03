@@ -15,7 +15,11 @@ function ListItem(props) {
   }, [scrollOnMount, itemRef]);
 
   return (
-    <Wrapper className={props.className || 'ListItem'} ref={itemRef}>
+    <Wrapper
+      className={props.className || 'ListItem'}
+      ref={itemRef}
+      showBorder={props.showBorder}
+    >
       <Item>{props.item}</Item>
     </Wrapper>
   );
@@ -25,6 +29,7 @@ ListItem.propTypes = {
   item: PropTypes.any,
   className: PropTypes.string,
   scrollOnMount: PropTypes.bool,
+  showBorder: PropTypes.bool,
 };
 
 export default ListItem;

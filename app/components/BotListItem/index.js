@@ -38,7 +38,9 @@ function BotListItem({ item }) {
   );
 
   // Render the content into a list item
-  return <ListItem key={`bot-list-item-${item.id}`} item={content} />;
+  return (
+    <ListItem key={`bot-list-item-${item.id}`} item={content} showBorder />
+  );
 }
 
 BotListItem.propTypes = {

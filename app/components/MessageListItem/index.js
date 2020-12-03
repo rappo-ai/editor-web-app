@@ -15,7 +15,11 @@ export function MessageListItem({ item }) {
   // Put together the content of the repository
   const content = (
     <Wrapper>
-      <MessageBubble text={item.text} user={item.user} />
+      <MessageBubble
+        text={item.text}
+        responses={item.responses}
+        user={item.user}
+      />
     </Wrapper>
   );
 

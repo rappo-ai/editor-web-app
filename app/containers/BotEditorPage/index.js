@@ -22,9 +22,15 @@ import {
 } from 'containers/App/selectors';
 import ChatInputBar from 'components/ChatInputBar';
 import MessageList from 'components/MessageList';
+
+import {
+  BOT_SEND_BUTTON_BACKGROUND_COLOR,
+  BOT_SEND_BUTTON_ICON_COLOR,
+  USER_SEND_BUTTON_BACKGROUND_COLOR,
+  USER_SEND_BUTTON_ICON_COLOR,
+} from 'utils/constants';
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
-
 import history from 'utils/history';
 
 import {
@@ -33,6 +39,11 @@ import {
   setTransitionEvent,
   doTransitionToState,
   clearChatHistory,
+  updateState,
+  deleteState,
+  addTransition,
+  deleteTransition,
+  branchFromState,
 } from './actions';
 import reducer from './reducer';
 import saga from './saga';
@@ -58,6 +69,11 @@ export function BotEditorPage({
   onSetTransitionEvent,
   onDoTransitionToState,
   onClearChatHistory,
+  onUpdateState,
+  onDeleteState,
+  onAddTransition,
+  onDeleteTransition,
+  onBranchFromState,
 }) {
   useInjectReducer({ key: 'botEditorPage', reducer });
   useInjectSaga({ key: 'botEditorPage', saga });
@@ -75,12 +91,14 @@ export function BotEditorPage({
       id: e.state.id,
       user: 'bot',
       text: e.state.message,
+      responses: e.state.responses || [],
     });
     if (e.transitionEvent) {
       a.push({
         id: `${e.state.id}-transition`,
         user: 'notbot',
         text: e.transitionEvent,
+        responses: [],
       });
     }
     return a;
@@ -123,21 +141,44 @@ export function BotEditorPage({
         },
       },
     ];
-    const actionButtons = [
+    const userActionButtons = [
       {
-        faClass: 'fa-retweet',
+        faClass: 'fa-times',
+        click: () => {
+          setInputMode('bot');
+          onSetupHeader({
+            title,
+            menuIcon,
+            menuItems,
+            actionButtons: botActionButtons,
+          });
+        },
+      },
+    ];
+    const botActionButtons = [
+      {
+        faClass: 'fa-reply',
         click: () => {
           if (transitionEvent !== '') {
             return;
           }
-          setInputMode(oldInputMode =>
-            oldInputMode === 'bot' ? 'user' : 'bot',
-          );
+          setInputMode('user');
+          onSetupHeader({
+            title: 'Please reply ...',
+            menuIcon,
+            menuItems,
+            actionButtons: userActionButtons,
+          });
         },
       },
     ];
-    onSetupHeader({ title, menuIcon, menuItems, actionButtons });
-  }, [bots, transitionEvent, setInputMode]);
+    onSetupHeader({
+      title,
+      menuIcon,
+      menuItems,
+      actionButtons: botActionButtons,
+    });
+  }, [bots, transitionEvent, setInputMode, onSetupHeader]);
 
   const messageListProps = {
     loading,
@@ -146,7 +187,18 @@ export function BotEditorPage({
   };
   const chatInputBarProps = {
     inputText,
+    disabled: false,
+    sendButtonColor:
+      inputMode === 'bot'
+        ? BOT_SEND_BUTTON_BACKGROUND_COLOR
+        : USER_SEND_BUTTON_BACKGROUND_COLOR,
+    sendButtonIconColor:
+      inputMode === 'bot'
+        ? BOT_SEND_BUTTON_ICON_COLOR
+        : USER_SEND_BUTTON_ICON_COLOR,
+    sendButtonIconClass: inputMode === 'bot' ? 'fa-play' : 'fa-reply',
     onTyping,
+    onKeyDown,
     onSendClick,
   };
 
@@ -154,15 +206,105 @@ export function BotEditorPage({
     setInputText(input);
   }
 
+  function onKeyDown(event) {
+    if (event.keyCode === 13) {
+      onSendClick();
+    }
+  }
+
   function onSendClick() {
-    if (inputMode === 'bot') {
+    if (inputText.charAt(0) === '/') {
+      // slash command
+      const inputArgs = inputText.split(' ', 2);
+      switch (inputArgs[0]) {
+        case '/reply':
+          setInputMode('user');
+          break;
+        case '/quick':
+          {
+            if (inputArgs.length !== 2) {
+              break;
+            }
+            const { message } = currentState;
+            const responses = Object.assign([], currentState.responses);
+            responses.push(inputArgs[1]);
+            onUpdateState({
+              modelId: model.id,
+              stateId: currentState.id,
+              message,
+              responses,
+            });
+          }
+          break;
+        case '/detach':
+          if (inputArgs.length !== 2) {
+            break;
+          }
+          onDeleteTransition({ modelId: model.id, transitionId: inputArgs[1] });
+          break;
+        case '/delete':
+          onDeleteState({ modelId: model.id, stateId: inputArgs[1] });
+          break;
+        case '/link':
+          onAddTransition({
+            modelId: model.id,
+            fromStateId: currentState.id,
+            toStateId: inputArgs[1],
+            event: transitionEvent,
+          });
+          break;
+        case '/branch':
+          onBranchFromState({ modelId: model.id, stateId: inputArgs[1] });
+          break;
+        case '/code': // this may practically become '/routine', '/call', etc., but generally there should be some way to handle logic / computation
+          break;
+        /*
+        case '/connect': // bots, spreadsheets, apis, libraries, etc.
+          break;
+        case '/debug':
+          break;
+        case '/text':
+          // can contain embed links
+          break;
+        case '/image':
+          break;
+        case '/audio':
+          break;
+        case '/video':
+          break;
+        case '/publish':
+          break;
+        case '/help':
+          break;
+        case '/tutorial':
+          break; 
+          */
+        default:
+          console.log('unknown slash command');
+          break;
+      }
+    } else if (inputMode === 'bot') {
+      // bot response
+      let message = inputText.trim();
+      const responseRegex = /\[.*\]$/;
+      const responseIndex = message.search(responseRegex);
+      let responses = [];
+      if (responseIndex !== -1) {
+        responses = message
+          .slice(responseIndex + 1, -1)
+          .split('|')
+          .map(r => r.trim());
+        message = message.slice(0, responseIndex).trim();
+      }
       onAddStateWithTransition({
         modelId: model.id,
-        message: inputText,
+        message,
+        responses,
         event: transitionEvent,
         fromStateId: currentState.id,
       });
     } else {
+      // user response
       onSetTransitionEvent(inputText, model.id);
       setInputMode('bot');
     }
@@ -194,6 +336,11 @@ BotEditorPage.propTypes = {
   onSetTransitionEvent: PropTypes.func,
   onDoTransitionToState: PropTypes.func,
   onClearChatHistory: PropTypes.func,
+  onUpdateState: PropTypes.func,
+  onDeleteState: PropTypes.func,
+  onAddTransition: PropTypes.func,
+  onDeleteTransition: PropTypes.func,
+  onBranchFromState: PropTypes.func,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -215,6 +362,11 @@ function mapDispatchToProps(dispatch) {
       dispatch(setTransitionEvent(event, modelId)),
     onDoTransitionToState: params => dispatch(doTransitionToState(params)),
     onClearChatHistory: () => dispatch(clearChatHistory()),
+    onUpdateState: params => dispatch(updateState(params)),
+    onDeleteState: params => dispatch(deleteState(params)),
+    onAddTransition: params => dispatch(addTransition(params)),
+    onDeleteTransition: params => dispatch(deleteTransition(params)),
+    onBranchFromState: params => dispatch(branchFromState(params)),
   };
 }
 

@@ -5,7 +5,7 @@ const Wrapper = styled.li`
   display: flex;
   align-items: center;
   position: relative;
-  border-top: 1px solid #eee;
+  ${props => (props.showBorder ? 'border-top: 1px solid #eee' : '')};
 
   &:first-child {
     border-top: none;

@@ -165,7 +165,7 @@ function EditorHeader({ header }) {
 
   return (
     <>
-      <NavBar background="#d9d9d9">
+      <NavBar background="#f0f0f0">
         <NavSection position="left">
           {header.showBackButton && (
             <BackButton onClick={() => history.goBack()}>&lt; Back</BackButton>
