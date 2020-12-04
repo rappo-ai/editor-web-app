@@ -32,6 +32,7 @@ import {
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
 import history from 'utils/history';
+import { hasTransition } from 'utils/bot';
 
 import {
   addStateWithTransition,
@@ -47,7 +48,11 @@ import {
 } from './actions';
 import reducer from './reducer';
 import saga from './saga';
-import { makeSelectModel, makeSelectChatHistory } from './selectors';
+import {
+  makeSelectModel,
+  makeSelectChatHistory,
+  makeSelectTransitionInProgress,
+} from './selectors';
 
 const Container = styled.div`
   display: flex;
@@ -62,6 +67,7 @@ export function BotEditorPage({
   bots,
   model,
   chatHistory,
+  transitionInProgress,
   onLoadBot,
   onSetupHeader,
   onLoadBotModel,
@@ -104,6 +110,15 @@ export function BotEditorPage({
     return a;
   }, []);
 
+  if (transitionInProgress) {
+    messages.push({
+      id: 'typing',
+      user: 'typing',
+      text: '...',
+      responses: [],
+    });
+  }
+
   const bot = Array.isArray(bots)
     ? bots.find(element => element.id === botId)
     : { name: '' };
@@ -126,6 +141,30 @@ export function BotEditorPage({
   }, [model, currentState, transitionEvent]);
 
   useEffect(() => {
+    if (transitionEvent) {
+      if (inputMode === 'user') {
+        setInputMode('bot');
+      }
+    }
+    if (
+      !transitionInProgress &&
+      ((currentState.responses && currentState.responses.length) ||
+        hasTransition(model, currentState))
+    ) {
+      if (inputMode === 'bot') {
+        setInputMode('user');
+      }
+    }
+  }, [
+    model,
+    transitionInProgress,
+    inputMode,
+    setInputMode,
+    currentState,
+    transitionEvent,
+  ]);
+
+  useEffect(() => {
     const title = bot.name;
     const menuIcon = `https://ui-avatars.com/api/?name=${bot.name}
     &background=fff`;
@@ -141,34 +180,11 @@ export function BotEditorPage({
         },
       },
     ];
-    const userActionButtons = [
+    const actionButtons = [
       {
-        faClass: 'fa-times',
+        faClass: 'fa-user', // inputMode === 'bot' ? 'fa-reply' : 'fa-times',
         click: () => {
-          setInputMode('bot');
-          onSetupHeader({
-            title,
-            menuIcon,
-            menuItems,
-            actionButtons: botActionButtons,
-          });
-        },
-      },
-    ];
-    const botActionButtons = [
-      {
-        faClass: 'fa-reply',
-        click: () => {
-          if (transitionEvent !== '') {
-            return;
-          }
-          setInputMode('user');
-          onSetupHeader({
-            title: 'Please reply ...',
-            menuIcon,
-            menuItems,
-            actionButtons: userActionButtons,
-          });
+          setInputMode(inputMode === 'bot' ? 'user' : 'bot');
         },
       },
     ];
@@ -176,9 +192,9 @@ export function BotEditorPage({
       title,
       menuIcon,
       menuItems,
-      actionButtons: botActionButtons,
+      actionButtons,
     });
-  }, [bots, transitionEvent, setInputMode, onSetupHeader]);
+  }, [bots, transitionEvent, inputMode, setInputMode, onSetupHeader]);
 
   const messageListProps = {
     loading,
@@ -187,7 +203,7 @@ export function BotEditorPage({
   };
   const chatInputBarProps = {
     inputText,
-    disabled: false,
+    disabled: transitionInProgress,
     sendButtonColor:
       inputMode === 'bot'
         ? BOT_SEND_BUTTON_BACKGROUND_COLOR
@@ -217,9 +233,9 @@ export function BotEditorPage({
       // slash command
       const inputArgs = inputText.split(' ', 2);
       switch (inputArgs[0]) {
-        case '/reply':
-          setInputMode('user');
-          break;
+        // case '/reply':
+        // setInputMode('user');
+        // break;
         case '/quick':
           {
             if (inputArgs.length !== 2) {
@@ -306,7 +322,7 @@ export function BotEditorPage({
     } else {
       // user response
       onSetTransitionEvent(inputText, model.id);
-      setInputMode('bot');
+      // setInputMode('bot');
     }
     setInputText('');
   }
@@ -329,6 +345,7 @@ BotEditorPage.propTypes = {
   bots: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   model: PropTypes.object,
   chatHistory: PropTypes.array,
+  transitionInProgress: PropTypes.bool,
   onLoadBot: PropTypes.func,
   onSetupHeader: PropTypes.func,
   onLoadBotModel: PropTypes.func,
@@ -349,6 +366,7 @@ const mapStateToProps = createStructuredSelector({
   bots: makeSelectBots(),
   model: makeSelectModel(),
   chatHistory: makeSelectChatHistory(),
+  transitionInProgress: makeSelectTransitionInProgress(),
 });
 
 function mapDispatchToProps(dispatch) {

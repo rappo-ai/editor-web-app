@@ -6,7 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 import {
   BOT_MESSAGE_BUBBLE_BACKGROUND_COLOR,
@@ -21,7 +21,8 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: ${({ user }) => (user === 'bot' ? 'flex-start' : 'flex-end')};
+  align-items: ${({ user }) =>
+    user === 'bot' || user === 'typing' ? 'flex-start' : 'flex-end'};
 `;
 const Bubble = styled.p`
   white-space: pre-wrap;
@@ -60,10 +61,71 @@ const Response = styled.p`
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 0.85rem;
 `;
+
+const Ellipsis1Animation = keyframes`
+  0% { transform: scale(0); }
+  100% { transform: scale(1); }
+`;
+
+const Ellipsis2Animation = keyframes`
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(12px, 0); }
+`;
+
+const Ellipsis3Animation = keyframes`
+  0% { transform: scale(1); }
+  100% { transform: scale(0); }
+`;
+
+const LoadingContainer = styled.div`
+  //display: inline-block;
+  position: relative;
+  left: 4px;
+  //width: 60px;
+  //height: 60px;
+  div {
+    position: absolute;
+    top: 10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: ${BOT_MESSAGE_BUBBLE_BACKGROUND_COLOR};
+    animation-timing-function: cubic-bezier(0, 1, 1, 0);
+  }
+  div:nth-child(1) {
+    left: 0px;
+    animation: ${Ellipsis1Animation} 0.6s infinite;
+  }
+  div:nth-child(2) {
+    left: 0px;
+    animation: ${Ellipsis2Animation} 0.6s infinite;
+  }
+  div:nth-child(3) {
+    left: 12px;
+    animation: ${Ellipsis2Animation} 0.6s infinite;
+  }
+  div:nth-child(4) {
+    left: 24px;
+    animation: ${Ellipsis3Animation} 0.6s infinite;
+  }
+`;
+
+function LoadingBubble() {
+  return (
+    <LoadingContainer>
+      <div />
+      <div />
+      <div />
+      <div />
+    </LoadingContainer>
+  );
+}
+
 function MessageBubble({ text, responses, user }) {
   return (
     <Container user={user}>
-      <Bubble user={user}>{text}</Bubble>
+      {user === 'typing' && <LoadingBubble />}
+      {user !== 'typing' && <Bubble user={user}>{text}</Bubble>}
       <ResponseContainer>
         {responses.map(response => (
           <Response key={response}>{response}</Response>

@@ -23,6 +23,12 @@ const makeSelectChatHistory = () =>
     substate => substate.chatHistory,
   );
 
+const makeSelectTransitionInProgress = () =>
+  createSelector(
+    selectBotEditorPageDomain,
+    substate => substate.transitionInProgress,
+  );
+
 /**
  * Default selector used by BotEditorPage
  */
@@ -34,4 +40,9 @@ const makeSelectBotEditorPage = () =>
   );
 
 export default makeSelectBotEditorPage;
-export { selectBotEditorPageDomain, makeSelectModel, makeSelectChatHistory };
+export {
+  selectBotEditorPageDomain,
+  makeSelectModel,
+  makeSelectChatHistory,
+  makeSelectTransitionInProgress,
+};

@@ -59,12 +59,13 @@ function ChatInputBar({
       />
       <SendButtonContainer
         disabled={disabled}
-        onClick={onSendClick}
+        onClick={() => !disabled && onSendClick()}
         color={sendButtonColor}
       >
         <SendButton
           className={`fa fa-1x ${sendButtonIconClass}`}
           color={sendButtonIconColor}
+          disabled={disabled}
         />
       </SendButtonContainer>
     </Container>

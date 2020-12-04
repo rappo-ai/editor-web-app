@@ -8,6 +8,7 @@ import produce from 'immer';
 export const initialState = {
   model: {},
   chatHistory: [{ state: { id: 'START' }, transitionEvent: '' }],
+  transitionInProgress: true,
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -61,14 +62,21 @@ const botEditorPageReducer = (state = initialState, action) =>
         );
         draft.model = action.model;
         break;
+      case 'DO_TRANSITION_TO_STATE':
+        draft.transitionInProgress = true;
+        break;
       case 'DO_TRANSITION_TO_STATE_SUCCESS':
         if (action.modelId === draft.model.id) {
           draft.chatHistory.push({ state: action.state, transitionEvent: '' });
         }
         break;
+      case 'DO_TRANSITION_TO_STATE_ERROR':
+        draft.transitionInProgress = false;
+        break;
       case 'CLEAR_CHAT_HISTORY':
         draft.chatHistory = initialState.chatHistory;
         draft.model = initialState.model;
+        draft.transitionInProgress = initialState.transitionInProgress;
         break;
       case 'BRANCH_FROM_STATE':
         break;
