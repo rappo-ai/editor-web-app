@@ -188,8 +188,8 @@ export function BotEditorPage({
         },
         color:
           inputMode === 'bot'
-            ? USER_SEND_BUTTON_BACKGROUND_COLOR
-            : BOT_SEND_BUTTON_BACKGROUND_COLOR,
+            ? BOT_SEND_BUTTON_BACKGROUND_COLOR
+            : USER_SEND_BUTTON_BACKGROUND_COLOR,
       },
     ];
     onSetupHeader({
