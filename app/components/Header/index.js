@@ -46,7 +46,7 @@ function LogoHeader() {
 const ActionButtonIcon = styled.i`
   margin: 0 5px;
   cursor: pointer;
-  color: #777777;
+  color: ${props => props.color || '#777777'};
 `;
 function ActionButtonBar({ buttons }) {
   return (
@@ -58,6 +58,7 @@ function ActionButtonBar({ buttons }) {
             // eslint-disable-next-line react/no-array-index-key
             key={index}
             className={className}
+            color={button.color}
             aria-hidden="true"
             onClick={button.click}
           />

@@ -182,10 +182,14 @@ export function BotEditorPage({
     ];
     const actionButtons = [
       {
-        faClass: 'fa-user', // inputMode === 'bot' ? 'fa-reply' : 'fa-times',
+        faClass: 'fa-user',
         click: () => {
           setInputMode(inputMode === 'bot' ? 'user' : 'bot');
         },
+        color:
+          inputMode === 'bot'
+            ? USER_SEND_BUTTON_BACKGROUND_COLOR
+            : BOT_SEND_BUTTON_BACKGROUND_COLOR,
       },
     ];
     onSetupHeader({
