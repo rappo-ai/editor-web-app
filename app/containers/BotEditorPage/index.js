@@ -148,6 +148,7 @@ export function BotEditorPage({
     }
     if (
       !transitionInProgress &&
+      !transitionEvent &&
       ((currentState.responses && currentState.responses.length) ||
         hasTransition(model, currentState))
     ) {
