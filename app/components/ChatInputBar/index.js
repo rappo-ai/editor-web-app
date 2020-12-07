@@ -8,6 +8,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
+import { FAButton } from 'components/common';
+
 const Container = styled.div`
   padding: 2px;
   border: 1px lightgray solid;
@@ -22,21 +24,7 @@ const InputBar = styled.input`
   border: 1px lightgray solid;
 `;
 
-const SendButtonContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  background-color: ${props => props.color};
-  border-radius: 50%;
-  cursor: pointer;
-`;
-
-const SendButton = styled.i`
-  color: ${props => props.color};
-  vertical-align: middle;
-`;
+const SendButton = styled(FAButton)``;
 
 function ChatInputBar({
   inputText,
@@ -57,17 +45,15 @@ function ChatInputBar({
         onChange={e => onTyping(e.target.value)}
         onKeyDown={e => onKeyDown(e)}
       />
-      <SendButtonContainer
+      <SendButton
         disabled={disabled}
-        onClick={() => !disabled && onSendClick()}
-        color={sendButtonColor}
-      >
-        <SendButton
-          className={`fa fa-1x ${sendButtonIconClass}`}
-          color={sendButtonIconColor}
-          disabled={disabled}
-        />
-      </SendButtonContainer>
+        onClick={onSendClick}
+        backgroundColor={sendButtonColor}
+        iconColor={sendButtonIconColor}
+        iconClass={sendButtonIconClass}
+        width="36px"
+        height="36px"
+      />
     </Container>
   );
 }
