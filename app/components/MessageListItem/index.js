@@ -1,15 +1,19 @@
 /**
- * BotListItem
- *
- * Lists the name and the issue count of a repository
+ * MessageListItem
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 import ListItem from 'components/ListItem';
 import MessageBubble from 'components/MessageBubble';
-import Wrapper from './Wrapper';
+
+const Wrapper = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: space-between;
+`;
 
 export function MessageListItem({ item }) {
   // Put together the content of the repository
