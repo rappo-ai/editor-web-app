@@ -8,6 +8,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { keyframes } from 'styled-components';
 
+import { FAButton } from 'components/common';
+
 import {
   BOT_MESSAGE_BUBBLE_BACKGROUND_COLOR,
   BOT_MESSAGE_BUBBLE_FONT_COLOR,
@@ -27,7 +29,7 @@ const Container = styled.div`
 const Bubble = styled.p`
   white-space: pre-wrap;
   max-width: 80%;
-  margin: 8px 0;
+  margin: 2px 0;
   padding: 8px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(53, 53, 53, 0.5);
@@ -54,6 +56,7 @@ const Response = styled.p`
   margin: 0;
   margin-right: 10px;
   margin-bottom: 10px;
+  margin-top: 6px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(53, 53, 53, 0.5);
   color: ${BOT_QUICK_RESPONSE_FONT_COLOR};
@@ -78,11 +81,8 @@ const Ellipsis3Animation = keyframes`
 `;
 
 const LoadingContainer = styled.div`
-  //display: inline-block;
   position: relative;
   left: 4px;
-  //width: 60px;
-  //height: 60px;
   div {
     position: absolute;
     top: 10px;
@@ -121,9 +121,24 @@ function LoadingBubble() {
   );
 }
 
-function MessageBubble({ text, responses, user }) {
+const DetachButton = styled(FAButton)`
+  margin: 6px 0 0 2px;
+`;
+
+function MessageBubble({ text, responses, user, detachClick }) {
   return (
     <Container user={user}>
+      {user === 'bot' && (
+        <DetachButton
+          backgroundColor="#cccccc"
+          iconColor="white"
+          iconClass="fa-cut fa-rotate-90"
+          iconSize="8px"
+          width="12px"
+          height="12px"
+          onClick={detachClick}
+        />
+      )}
       {user === 'typing' && <LoadingBubble />}
       {user !== 'typing' && <Bubble user={user}>{text}</Bubble>}
       <ResponseContainer>
@@ -139,6 +154,7 @@ MessageBubble.propTypes = {
   text: PropTypes.string,
   responses: PropTypes.array,
   user: PropTypes.string,
+  detachClick: PropTypes.func,
 };
 
 export default MessageBubble;

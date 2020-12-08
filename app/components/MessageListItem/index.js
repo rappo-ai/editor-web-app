@@ -19,6 +19,7 @@ export function MessageListItem({ item }) {
         text={item.text}
         responses={item.responses}
         user={item.user}
+        detachClick={item.detachClick}
       />
     </Wrapper>
   );

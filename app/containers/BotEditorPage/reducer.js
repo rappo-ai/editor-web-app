@@ -46,9 +46,7 @@ const botEditorPageReducer = (state = initialState, action) =>
         draft.model = action.model;
         break;
       case 'DELETE_STATE_SUCCESS':
-        draft.chatHistory = draft.chatHistory.filter(
-          e => !action.deletedStates.contains(e.state.id),
-        );
+        // tbd - chatHistory filtering
         draft.model = action.model;
         break;
       case 'ADD_TRANSITION_SUCCESS':
@@ -57,10 +55,24 @@ const botEditorPageReducer = (state = initialState, action) =>
         }
         break;
       case 'DELETE_TRANSITION_SUCCESS':
-        draft.chatHistory = draft.chatHistory.filter(
-          e => !action.deletedStates.contains(e.state.id),
-        );
-        draft.model = action.model;
+        {
+          const deletedTransition = draft.model.transitions.find(
+            t => t.id === action.transitionId,
+          );
+          draft.chatHistory = draft.chatHistory.reduce((a, e) => {
+            const lastMessage = a.length && a[a.length - 1];
+            if (
+              lastMessage &&
+              lastMessage.state.id === deletedTransition.fromStateId &&
+              lastMessage.transitionEvent === deletedTransition.event
+            ) {
+              return a;
+            }
+            a.push(e);
+            return a;
+          }, []);
+          draft.model = action.model;
+        }
         break;
       case 'DO_TRANSITION_TO_STATE':
         draft.transitionInProgress = true;

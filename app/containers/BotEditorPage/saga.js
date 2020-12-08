@@ -129,6 +129,7 @@ function* deleteState(action) {
       yield put({
         type: 'DELETE_STATE_SUCCESS',
         model: response.model,
+        stateId: response.stateId,
       });
     }
   } catch (err) {
@@ -192,6 +193,7 @@ function* deleteTransition(action) {
       yield put({
         type: 'DELETE_TRANSITION_SUCCESS',
         model: response.model,
+        transitionId: response.transitionId,
       });
     }
   } catch (err) {
