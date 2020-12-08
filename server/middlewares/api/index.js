@@ -197,6 +197,7 @@ router.delete('/model/:id/state/:stateId', async (req, res) => {
   await model.set('states', model.states);
   return res.json({
     model,
+    stateId: req.params.stateId,
   });
 });
 
@@ -247,6 +248,7 @@ router.delete('/model/:id/transition/:transitionId', async (req, res) => {
   await model.set('transitions', model.transitions);
   return res.json({
     model,
+    transitionId: req.params.transitionId,
   });
 });
 
