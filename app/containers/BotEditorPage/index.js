@@ -104,6 +104,7 @@ export function BotEditorPage({
       user: 'bot',
       text: e.state.message,
       responses: e.state.responses || [],
+      transitionEvent: e.transitionEvent,
       detachClick: () =>
         !transitionInProgress &&
         onDeleteTransition({

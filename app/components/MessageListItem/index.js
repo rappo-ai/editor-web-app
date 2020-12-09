@@ -22,9 +22,10 @@ export function MessageListItem({ item, isLastItem }) {
         text={item.text}
         responses={item.responses}
         user={item.user}
+        transitionEvent={item.transitionEvent}
+        isLastItem={isLastItem}
         detachClick={item.detachClick}
         responseClick={item.responseClick}
-        isLastItem={isLastItem}
       />
     </Wrapper>
   );

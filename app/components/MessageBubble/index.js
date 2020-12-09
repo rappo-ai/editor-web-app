@@ -15,6 +15,7 @@ import {
   BOT_MESSAGE_BUBBLE_FONT_COLOR,
   BOT_QUICK_RESPONSE_BACKGROUND_COLOR,
   BOT_QUICK_RESPONSE_FONT_COLOR,
+  BOT_QUICK_RESPONSE_SELECTED_BACKGROUND_COLOR,
   USER_MESSAGE_BUBBLE_BACKGROUND_COLOR,
   USER_MESSAGE_BUBBLE_FONT_COLOR,
 } from 'utils/constants';
@@ -60,7 +61,10 @@ const Response = styled.p`
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(53, 53, 53, 0.5);
   color: ${BOT_QUICK_RESPONSE_FONT_COLOR};
-  background: ${BOT_QUICK_RESPONSE_BACKGROUND_COLOR};
+  background: ${props =>
+    props.selected
+      ? BOT_QUICK_RESPONSE_SELECTED_BACKGROUND_COLOR
+      : BOT_QUICK_RESPONSE_BACKGROUND_COLOR};
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 0.85rem;
   cursor: ${props => (props.isLastItem ? 'pointer' : 'not-allowed')};
@@ -131,9 +135,10 @@ function MessageBubble({
   text,
   responses,
   user,
+  transitionEvent,
+  isLastItem,
   detachClick,
   responseClick,
-  isLastItem,
 }) {
   return (
     <Container user={user}>
@@ -154,6 +159,7 @@ function MessageBubble({
         {responses.map(response => (
           <Response
             key={response}
+            selected={transitionEvent === response}
             isLastItem={isLastItem}
             onClick={() => responseClick(response)}
           >
@@ -169,9 +175,10 @@ MessageBubble.propTypes = {
   text: PropTypes.string,
   responses: PropTypes.array,
   user: PropTypes.string,
+  transitionEvent: PropTypes.string,
+  isLastItem: PropTypes.bool,
   detachClick: PropTypes.func,
   responseClick: PropTypes.func,
-  isLastItem: PropTypes.bool,
 };
 
 export default MessageBubble;
