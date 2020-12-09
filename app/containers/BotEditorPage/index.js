@@ -231,13 +231,15 @@ export function BotEditorPage({
             .map(s => ({
               id: s.id,
               text: s.message,
-              click: () =>
+              click: () => {
                 onAddTransition({
                   modelId: model.id,
                   fromStateId: currentState.id,
                   toStateId: s.id,
                   event: transitionEvent,
-                }),
+                });
+                setInputText('');
+              },
             })),
         );
       } else {
@@ -247,7 +249,7 @@ export function BotEditorPage({
             .map(t => ({
               id: t.id,
               text: t.event,
-              click: () => setInputText(t.event),
+              click: () => onSendClick(t.event),
             })),
         );
       }
@@ -298,10 +300,12 @@ export function BotEditorPage({
     }
   }
 
-  function onSendClick() {
+  function onSendClick(messageText) {
+    // eslint-disable-next-line no-param-reassign
+    messageText = messageText || inputText;
     if (inputMode === 'bot') {
       // bot response
-      let message = inputText.trim();
+      let message = messageText.trim();
       const responseRegex = /\[.*\]$/;
       const responseIndex = message.search(responseRegex);
       let responses = [];
@@ -321,8 +325,7 @@ export function BotEditorPage({
       });
     } else {
       // user response
-      onSetTransitionEvent(inputText, model.id);
-      // setInputMode('bot');
+      onSetTransitionEvent(messageText, model.id);
     }
     setInputText('');
   }
