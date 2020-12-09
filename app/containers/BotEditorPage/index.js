@@ -105,10 +105,12 @@ export function BotEditorPage({
       text: e.state.message,
       responses: e.state.responses || [],
       detachClick: () =>
+        !transitionInProgress &&
         onDeleteTransition({
           modelId: model.id,
           transitionId: lastTransition.id,
         }),
+      responseClick: response => !transitionInProgress && onSendClick(response),
     });
     if (e.transitionEvent) {
       a.push({

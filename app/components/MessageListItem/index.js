@@ -15,8 +15,7 @@ const Wrapper = styled.div`
   align-items: space-between;
 `;
 
-export function MessageListItem({ item }) {
-  // Put together the content of the repository
+export function MessageListItem({ item, isLastItem }) {
   const content = (
     <Wrapper>
       <MessageBubble
@@ -24,6 +23,8 @@ export function MessageListItem({ item }) {
         responses={item.responses}
         user={item.user}
         detachClick={item.detachClick}
+        responseClick={item.responseClick}
+        isLastItem={isLastItem}
       />
     </Wrapper>
   );
@@ -40,6 +41,7 @@ export function MessageListItem({ item }) {
 
 MessageListItem.propTypes = {
   item: PropTypes.object,
+  isLastItem: PropTypes.bool,
 };
 
 export default MessageListItem;

@@ -63,6 +63,8 @@ const Response = styled.p`
   background: ${BOT_QUICK_RESPONSE_BACKGROUND_COLOR};
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 0.85rem;
+  cursor: ${props => (props.isLastItem ? 'pointer' : 'not-allowed')};
+  pointer-events: ${props => (props.isLastItem ? 'auto' : 'none')};
 `;
 
 const Ellipsis1Animation = keyframes`
@@ -125,7 +127,14 @@ const DetachButton = styled(FAButton)`
   margin: 6px 0 0 2px;
 `;
 
-function MessageBubble({ text, responses, user, detachClick }) {
+function MessageBubble({
+  text,
+  responses,
+  user,
+  detachClick,
+  responseClick,
+  isLastItem,
+}) {
   return (
     <Container user={user}>
       {user === 'bot' && (
@@ -143,7 +152,13 @@ function MessageBubble({ text, responses, user, detachClick }) {
       {user !== 'typing' && <Bubble user={user}>{text}</Bubble>}
       <ResponseContainer>
         {responses.map(response => (
-          <Response key={response}>{response}</Response>
+          <Response
+            key={response}
+            isLastItem={isLastItem}
+            onClick={() => responseClick(response)}
+          >
+            {response}
+          </Response>
         ))}
       </ResponseContainer>
     </Container>
@@ -155,6 +170,8 @@ MessageBubble.propTypes = {
   responses: PropTypes.array,
   user: PropTypes.string,
   detachClick: PropTypes.func,
+  responseClick: PropTypes.func,
+  isLastItem: PropTypes.bool,
 };
 
 export default MessageBubble;
