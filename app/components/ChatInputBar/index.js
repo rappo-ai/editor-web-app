@@ -4,7 +4,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -36,9 +36,17 @@ function ChatInputBar({
   onKeyDown,
   onSendClick,
 }) {
+  const inputBar = useRef(null);
+  useEffect(() => {
+    if (!disabled && inputBar && inputBar.current) {
+      inputBar.current.focus();
+    }
+  }, [inputText, disabled]);
+
   return (
     <Container>
       <InputBar
+        ref={inputBar}
         type="text"
         value={inputText}
         disabled={disabled}

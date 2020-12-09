@@ -21,7 +21,7 @@ import {
   makeSelectBots,
 } from 'containers/App/selectors';
 import ChatInputBar from 'components/ChatInputBar';
-import MessageList from 'components/MessageList';
+import ChatView from 'components/ChatView';
 
 import {
   BOT_SEND_BUTTON_BACKGROUND_COLOR,
@@ -88,6 +88,8 @@ export function BotEditorPage({
 
   const [inputMode, setInputMode] = useState('bot');
   const [inputText, setInputText] = useState('');
+  const [popupListEnabled, setPopupListEnabled] = useState(false);
+  const [popupListItems, setPopupListItems] = useState([]);
 
   const botStates = chatHistory.map(e => e.state);
   const currentState = botStates[botStates.length - 1];
@@ -101,7 +103,7 @@ export function BotEditorPage({
       lastMessage.transitionEvent,
     );
     a.push({
-      id: e.state.id,
+      id: `${e.state.id}-state-${i}`,
       user: 'bot',
       text: e.state.message,
       responses: e.state.responses || [],
@@ -113,7 +115,7 @@ export function BotEditorPage({
     });
     if (e.transitionEvent) {
       a.push({
-        id: `${e.state.id}-transition`,
+        id: `${e.state.id}-transition-${i}`,
         user: 'notbot',
         text: e.transitionEvent,
         responses: [],
@@ -213,10 +215,62 @@ export function BotEditorPage({
     });
   }, [bots, transitionEvent, inputMode, setInputMode, onSetupHeader]);
 
-  const messageListProps = {
+  useEffect(() => {
+    if (inputText.charAt(0) === '>' && inputText.length === 1) {
+      if (!popupListEnabled) {
+        setPopupListEnabled(true);
+      }
+    } else if (popupListEnabled) {
+      setPopupListEnabled(false);
+    }
+  }, [inputText, popupListEnabled, setPopupListEnabled]);
+
+  useEffect(() => {
+    if (popupListEnabled) {
+      if (inputMode === 'bot') {
+        setPopupListItems(
+          model.states
+            .filter(s => transitionEvent !== '' || s.id !== currentState.id)
+            .map(s => ({
+              id: s.id,
+              text: s.message,
+              click: () =>
+                onAddTransition({
+                  modelId: model.id,
+                  fromStateId: currentState.id,
+                  toStateId: s.id,
+                  event: transitionEvent,
+                }),
+            })),
+        );
+      } else {
+        setPopupListItems(
+          model.transitions
+            .filter(t => t.fromStateId === currentState.id)
+            .map(t => ({
+              id: t.id,
+              text: t.event,
+              click: () => setInputText(t.event),
+            })),
+        );
+      }
+    } else {
+      setPopupListItems([]);
+    }
+  }, [
+    model,
+    currentState,
+    popupListEnabled,
+    inputMode,
+    setPopupListItems,
+    setInputText,
+  ]);
+
+  const chatViewProps = {
     loading,
     error,
     messages,
+    popupListItems,
   };
   const chatInputBarProps = {
     inputText,
@@ -242,6 +296,8 @@ export function BotEditorPage({
   function onKeyDown(event) {
     if (event.keyCode === 13) {
       onSendClick();
+    } else if (event.key === '>') {
+      setPopupListEnabled(true);
     }
   }
 
@@ -350,7 +406,7 @@ export function BotEditorPage({
         <title>{bot.name}</title>
         <meta name="description" content="Description of BotEditorPage" />
       </Helmet>
-      <MessageList {...messageListProps} />
+      <ChatView {...chatViewProps} />
       <ChatInputBar {...chatInputBarProps} />
     </Container>
   );
