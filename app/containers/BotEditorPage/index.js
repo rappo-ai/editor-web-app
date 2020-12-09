@@ -75,11 +75,8 @@ export function BotEditorPage({
   onSetTransitionEvent,
   onDoTransitionToState,
   onClearChatHistory,
-  onUpdateState,
-  onDeleteState,
   onAddTransition,
   onDeleteTransition,
-  onBranchFromState,
 }) {
   useInjectReducer({ key: 'botEditorPage', reducer });
   useInjectSaga({ key: 'botEditorPage', saga });
@@ -302,77 +299,7 @@ export function BotEditorPage({
   }
 
   function onSendClick() {
-    if (inputText.charAt(0) === '/') {
-      // slash command
-      const inputArgs = inputText.split(' ', 2);
-      switch (inputArgs[0]) {
-        // case '/reply':
-        // setInputMode('user');
-        // break;
-        case '/quick':
-          {
-            if (inputArgs.length !== 2) {
-              break;
-            }
-            const { message } = currentState;
-            const responses = Object.assign([], currentState.responses);
-            responses.push(inputArgs[1]);
-            onUpdateState({
-              modelId: model.id,
-              stateId: currentState.id,
-              message,
-              responses,
-            });
-          }
-          break;
-        case '/detach':
-          if (inputArgs.length !== 2) {
-            break;
-          }
-          onDeleteTransition({ modelId: model.id, transitionId: inputArgs[1] });
-          break;
-        case '/delete':
-          onDeleteState({ modelId: model.id, stateId: inputArgs[1] });
-          break;
-        case '/link':
-          onAddTransition({
-            modelId: model.id,
-            fromStateId: currentState.id,
-            toStateId: inputArgs[1],
-            event: transitionEvent,
-          });
-          break;
-        case '/branch':
-          onBranchFromState({ modelId: model.id, stateId: inputArgs[1] });
-          break;
-        case '/code': // this may practically become '/routine', '/call', etc., but generally there should be some way to handle logic / computation
-          break;
-        /*
-        case '/connect': // bots, spreadsheets, apis, libraries, etc.
-          break;
-        case '/debug':
-          break;
-        case '/text':
-          // can contain embed links
-          break;
-        case '/image':
-          break;
-        case '/audio':
-          break;
-        case '/video':
-          break;
-        case '/publish':
-          break;
-        case '/help':
-          break;
-        case '/tutorial':
-          break; 
-          */
-        default:
-          console.log('unknown slash command');
-          break;
-      }
-    } else if (inputMode === 'bot') {
+    if (inputMode === 'bot') {
       // bot response
       let message = inputText.trim();
       const responseRegex = /\[.*\]$/;
