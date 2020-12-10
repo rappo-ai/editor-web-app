@@ -32,7 +32,7 @@ import {
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
 import history from 'utils/history';
-import { getTransition, hasTransition } from 'utils/bot';
+import { getTransition, hasTransition, isDirectAncestor } from 'utils/bot';
 
 import {
   addStateWithTransition,
@@ -230,7 +230,11 @@ export function BotEditorPage({
       if (inputMode === 'bot') {
         setPopupListItems(
           model.states
-            .filter(s => transitionEvent !== '' || s.id !== currentState.id)
+            .filter(
+              s =>
+                transitionEvent !== '' ||
+                !isDirectAncestor(model, s.id, currentState.id),
+            )
             .map(s => ({
               id: s.id,
               text: s.message,
