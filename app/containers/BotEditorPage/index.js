@@ -91,22 +91,29 @@ export function BotEditorPage({
   const botStates = chatHistory.map(e => e.state);
   const currentState = botStates[botStates.length - 1];
   const { transitionEvent } = chatHistory[chatHistory.length - 1];
-  const messages = chatHistory.slice(1).reduce((a, e, i) => {
-    const lastMessage = chatHistory[i];
-    const lastTransition = getTransition(
-      model,
-      lastMessage.state.id,
-      e.state.id,
-      lastMessage.transitionEvent,
-    );
+  const messages = chatHistory.reduce((a, e, i) => {
+    const lastMessage =
+      i === 0
+        ? { state: { id: null }, transitionEvent: '' }
+        : chatHistory[i - 1];
+    const lastTransition =
+      i === 0
+        ? null
+        : getTransition(
+            model,
+            lastMessage.state.id,
+            e.state.id,
+            lastMessage.transitionEvent,
+          );
     a.push({
       id: `${e.state.id}-state-${i}`,
-      user: 'bot',
+      user: i === 0 ? 'start' : 'bot',
       text: e.state.message,
       responses: e.state.responses || [],
       transitionEvent: e.transitionEvent,
       detachClick: () =>
         !transitionInProgress &&
+        lastTransition &&
         onDeleteTransition({
           modelId: model.id,
           transitionId: lastTransition.id,
@@ -116,7 +123,7 @@ export function BotEditorPage({
     if (e.transitionEvent) {
       a.push({
         id: `${e.state.id}-transition-${i}`,
-        user: 'notbot',
+        user: 'user',
         text: e.transitionEvent,
         responses: [],
       });

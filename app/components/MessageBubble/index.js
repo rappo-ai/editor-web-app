@@ -11,6 +11,7 @@ import styled, { keyframes } from 'styled-components';
 import { FAButton } from 'components/common';
 
 import {
+  START_MESSAGE_BUBBLE_BACKGROUND_COLOR,
   BOT_MESSAGE_BUBBLE_BACKGROUND_COLOR,
   BOT_MESSAGE_BUBBLE_FONT_COLOR,
   BOT_QUICK_RESPONSE_BACKGROUND_COLOR,
@@ -24,8 +25,15 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: ${({ user }) =>
-    user === 'bot' || user === 'typing' ? 'flex-start' : 'flex-end'};
+  align-items: ${({ user }) => {
+    const map = {
+      bot: 'flex-start',
+      typing: 'flex-start',
+      start: 'center',
+      user: 'flex-end',
+    };
+    return map[user];
+  }};
 `;
 const Bubble = styled.p`
   white-space: pre-wrap;
@@ -38,10 +46,15 @@ const Bubble = styled.p`
     user === 'bot'
       ? BOT_MESSAGE_BUBBLE_FONT_COLOR
       : USER_MESSAGE_BUBBLE_FONT_COLOR};
-  background: ${({ user }) =>
-    user === 'bot'
-      ? BOT_MESSAGE_BUBBLE_BACKGROUND_COLOR
-      : USER_MESSAGE_BUBBLE_BACKGROUND_COLOR};
+  background: ${({ user }) => {
+    const map = {
+      bot: BOT_MESSAGE_BUBBLE_BACKGROUND_COLOR,
+      typing: BOT_MESSAGE_BUBBLE_BACKGROUND_COLOR,
+      start: START_MESSAGE_BUBBLE_BACKGROUND_COLOR,
+      user: USER_MESSAGE_BUBBLE_BACKGROUND_COLOR,
+    };
+    return map[user];
+  }};
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 0.85rem;
 `;

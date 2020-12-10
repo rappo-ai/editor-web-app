@@ -7,7 +7,9 @@ import produce from 'immer';
 
 export const initialState = {
   model: {},
-  chatHistory: [{ state: { id: 'START' }, transitionEvent: '' }],
+  chatHistory: [
+    { state: { id: 'START', message: 'START' }, transitionEvent: '' },
+  ],
   transitionInProgress: true,
 };
 
