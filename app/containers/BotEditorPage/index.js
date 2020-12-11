@@ -62,6 +62,8 @@ const Container = styled.div`
   height: 100%;
 `;
 
+const commandKey = '\\';
+
 export function BotEditorPage({
   loading,
   error,
@@ -230,7 +232,7 @@ export function BotEditorPage({
   }, [bots, transitionEvent, inputMode, setInputMode, onSetupHeader]);
 
   useEffect(() => {
-    if (inputText.charAt(0) === '>' && inputText.length === 1) {
+    if (inputText.charAt(0) === commandKey && inputText.length === 1) {
       if (!popupListEnabled) {
         setPopupListEnabled(true);
       }
@@ -373,7 +375,7 @@ export function BotEditorPage({
   function onKeyDown(event) {
     if (event.keyCode === 13) {
       onSendClick();
-    } else if (event.key === '>') {
+    } else if (event.key === commandKey) {
       setPopupListEnabled(true);
     }
   }
