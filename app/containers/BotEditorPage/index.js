@@ -62,7 +62,8 @@ const Container = styled.div`
   height: 100%;
 `;
 
-const commandKey = '\\';
+const popupListShowKeys = ['ArrowUp'];
+const switchInputModeKeys = ['ArrowLeft', 'ArrowRight'];
 
 export function BotEditorPage({
   loading,
@@ -171,6 +172,10 @@ export function BotEditorPage({
   }, [model, currentState, transitionEvent]);
 
   useEffect(() => {
+    setInputText('');
+  }, [inputMode, setInputText]);
+
+  useEffect(() => {
     if (transitionEvent.value) {
       if (inputMode === 'user') {
         setInputMode('bot');
@@ -230,16 +235,6 @@ export function BotEditorPage({
       actionButtons,
     });
   }, [bots, transitionEvent, inputMode, setInputMode, onSetupHeader]);
-
-  useEffect(() => {
-    if (inputText.charAt(0) === commandKey && inputText.length === 1) {
-      if (!popupListEnabled) {
-        setPopupListEnabled(true);
-      }
-    } else if (popupListEnabled) {
-      setPopupListEnabled(false);
-    }
-  }, [inputText, popupListEnabled, setPopupListEnabled]);
 
   useEffect(() => {
     if (popupListEnabled) {
@@ -366,6 +361,7 @@ export function BotEditorPage({
     onTyping,
     onKeyDown,
     onSendClick,
+    onFocusOut,
   };
 
   function onTyping(input) {
@@ -373,10 +369,18 @@ export function BotEditorPage({
   }
 
   function onKeyDown(event) {
+    if (popupListEnabled) {
+      setPopupListEnabled(false);
+    }
     if (event.keyCode === 13) {
       onSendClick();
-    } else if (event.key === commandKey) {
+    }
+    if (popupListShowKeys.some(key => key === event.key)) {
       setPopupListEnabled(true);
+      event.preventDefault();
+    }
+    if (switchInputModeKeys.some(key => key === event.key) && !inputText) {
+      setInputMode(inputMode === 'bot' ? 'user' : 'bot');
     }
   }
 
@@ -408,6 +412,12 @@ export function BotEditorPage({
       onSetTransitionEvent({ type, value }, model.id);
     }
     setInputText('');
+  }
+
+  function onFocusOut() {
+    if (popupListEnabled) {
+      setPopupListEnabled(false);
+    }
   }
 
   return (

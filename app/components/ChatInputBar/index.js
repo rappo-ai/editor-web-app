@@ -35,6 +35,7 @@ function ChatInputBar({
   onTyping,
   onKeyDown,
   onSendClick,
+  onFocusOut,
 }) {
   const inputBar = useRef(null);
   useEffect(() => {
@@ -52,6 +53,7 @@ function ChatInputBar({
         disabled={disabled}
         onChange={e => onTyping(e.target.value)}
         onKeyDown={e => onKeyDown(e)}
+        onBlur={e => onFocusOut(e)}
       />
       <SendButton
         disabled={disabled}
@@ -75,6 +77,7 @@ ChatInputBar.propTypes = {
   onTyping: PropTypes.func,
   onKeyDown: PropTypes.func,
   onSendClick: PropTypes.func,
+  onFocusOut: PropTypes.func,
 };
 
 export default ChatInputBar;
