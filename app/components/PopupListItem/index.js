@@ -14,10 +14,15 @@ const Wrapper = styled.div`
   align-items: space-between;
 `;
 
+const Text = styled.p`
+  font-weight: ${props => (props.type === 'header' ? 'bolder' : 'normal')};
+  margin-left: ${props => (props.type === 'header' ? '0' : '16px')};
+`;
+
 export function PopupListItem({ item }) {
   const content = (
     <Wrapper onClick={item.click}>
-      <p>{item.text}</p>
+      <Text type={item.type}>{item.text}</Text>
     </Wrapper>
   );
 

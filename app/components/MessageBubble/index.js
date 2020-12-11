@@ -11,14 +11,15 @@ import styled, { keyframes } from 'styled-components';
 import { FAButton } from 'components/common';
 
 import {
-  START_MESSAGE_BUBBLE_BACKGROUND_COLOR,
+  getBubbleFontColor,
+  getBubbleBackgroundColor,
+  getBubbleText,
+} from 'utils/bubble';
+import {
   BOT_MESSAGE_BUBBLE_BACKGROUND_COLOR,
-  BOT_MESSAGE_BUBBLE_FONT_COLOR,
   BOT_QUICK_RESPONSE_BACKGROUND_COLOR,
   BOT_QUICK_RESPONSE_FONT_COLOR,
   BOT_QUICK_RESPONSE_SELECTED_BACKGROUND_COLOR,
-  USER_MESSAGE_BUBBLE_BACKGROUND_COLOR,
-  USER_MESSAGE_BUBBLE_FONT_COLOR,
 } from 'utils/constants';
 
 const Container = styled.div`
@@ -42,20 +43,8 @@ const Bubble = styled.p`
   padding: 8px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(53, 53, 53, 0.5);
-  color: ${({ user }) =>
-    user === 'bot'
-      ? BOT_MESSAGE_BUBBLE_FONT_COLOR
-      : USER_MESSAGE_BUBBLE_FONT_COLOR};
-  background: ${({ user }) => {
-    const map = {
-      bot: BOT_MESSAGE_BUBBLE_BACKGROUND_COLOR,
-      typing: BOT_MESSAGE_BUBBLE_BACKGROUND_COLOR,
-      start: START_MESSAGE_BUBBLE_BACKGROUND_COLOR,
-      user: USER_MESSAGE_BUBBLE_BACKGROUND_COLOR,
-    };
-    return map[user];
-  }};
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: ${({ fontColor }) => fontColor};
+  background: ${({ backgroundColor }) => backgroundColor};
   font-size: 0.85rem;
 `;
 const ResponseContainer = styled.div`
@@ -78,7 +67,6 @@ const Response = styled.p`
     props.selected
       ? BOT_QUICK_RESPONSE_SELECTED_BACKGROUND_COLOR
       : BOT_QUICK_RESPONSE_BACKGROUND_COLOR};
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 0.85rem;
   cursor: ${props => (props.isLastItem ? 'pointer' : 'not-allowed')};
   pointer-events: ${props => (props.isLastItem ? 'auto' : 'none')};
@@ -167,12 +155,22 @@ function MessageBubble({
         />
       )}
       {user === 'typing' && <LoadingBubble />}
-      {user !== 'typing' && <Bubble user={user}>{text}</Bubble>}
+      {user !== 'typing' && (
+        <Bubble
+          fontColor={getBubbleFontColor(user)}
+          backgroundColor={getBubbleBackgroundColor(user, transitionEvent.type)}
+        >
+          {getBubbleText(user, text, transitionEvent.type)}
+        </Bubble>
+      )}
       <ResponseContainer>
         {responses.map(response => (
           <Response
             key={response}
-            selected={transitionEvent === response}
+            selected={
+              transitionEvent.type === 'response' &&
+              transitionEvent.value === response
+            }
             isLastItem={isLastItem}
             onClick={() => responseClick(response)}
           >
@@ -188,7 +186,7 @@ MessageBubble.propTypes = {
   text: PropTypes.string,
   responses: PropTypes.array,
   user: PropTypes.string,
-  transitionEvent: PropTypes.string,
+  transitionEvent: PropTypes.object,
   isLastItem: PropTypes.bool,
   detachClick: PropTypes.func,
   responseClick: PropTypes.func,

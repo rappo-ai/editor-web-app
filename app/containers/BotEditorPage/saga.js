@@ -214,8 +214,10 @@ function* doTransitionToState(action) {
   let response;
   try {
     const { url, options } = apiBuilder(
-      `/model/${action.modelId}/state?fromStateId=${action.fromStateId}&event=\
-${action.event}`,
+      `/model/${action.modelId}/state?fromStateId=${
+        action.fromStateId
+      }&transitionEventType=\
+${action.event.type}&transitionEventValue=${action.event.value}`,
     );
     response = yield call(request, url, options);
     if (response.state) {

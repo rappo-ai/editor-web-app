@@ -29,10 +29,11 @@ import {
   USER_SEND_BUTTON_BACKGROUND_COLOR,
   USER_SEND_BUTTON_ICON_COLOR,
 } from 'utils/constants';
+import { filters } from 'utils/filters';
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
 import history from 'utils/history';
-import { getTransition, hasTransition, isDirectAncestor } from 'utils/bot';
+import { getTransition, hasOutTransition, isDirectAncestor } from 'utils/bot';
 
 import {
   addStateWithTransition,
@@ -94,7 +95,10 @@ export function BotEditorPage({
   const messages = chatHistory.reduce((a, e, i) => {
     const lastMessage =
       i === 0
-        ? { state: { id: null }, transitionEvent: '' }
+        ? {
+            state: { id: null },
+            transitionEvent: { type: 'response', value: '' },
+          }
         : chatHistory[i - 1];
     const lastTransition =
       i === 0
@@ -118,13 +122,16 @@ export function BotEditorPage({
           modelId: model.id,
           transitionId: lastTransition.id,
         }),
-      responseClick: response => !transitionInProgress && onSendClick(response),
+      responseClick: response =>
+        !transitionInProgress &&
+        onSendClick({ type: 'response', value: response }),
     });
-    if (e.transitionEvent) {
+    if (e.transitionEvent.value) {
       a.push({
         id: `${e.state.id}-transition-${i}`,
         user: 'user',
-        text: e.transitionEvent,
+        text: e.transitionEvent.value,
+        transitionEvent: e.transitionEvent,
         responses: [],
       });
     }
@@ -162,16 +169,16 @@ export function BotEditorPage({
   }, [model, currentState, transitionEvent]);
 
   useEffect(() => {
-    if (transitionEvent) {
+    if (transitionEvent.value) {
       if (inputMode === 'user') {
         setInputMode('bot');
       }
     }
     if (
       !transitionInProgress &&
-      !transitionEvent &&
+      !transitionEvent.value &&
       ((currentState.responses && currentState.responses.length) ||
-        hasTransition(model, currentState))
+        hasOutTransition(model, currentState))
     ) {
       if (inputMode === 'bot') {
         setInputMode('user');
@@ -235,37 +242,94 @@ export function BotEditorPage({
   useEffect(() => {
     if (popupListEnabled) {
       if (inputMode === 'bot') {
-        setPopupListItems(
-          model.states
-            .filter(
-              s =>
-                transitionEvent !== '' ||
-                !isDirectAncestor(model, s.id, currentState.id),
-            )
-            .map(s => ({
-              id: s.id,
-              text: s.message,
-              click: () => {
-                onAddTransition({
-                  modelId: model.id,
-                  fromStateId: currentState.id,
-                  toStateId: s.id,
-                  event: transitionEvent,
-                });
-                setInputText('');
-              },
-            })),
-        );
+        const linkStatesHeader = {
+          id: 'link-states-header',
+          text: 'Go to ...',
+          type: 'header',
+        };
+        const linkStates = model.states
+          .filter(
+            s =>
+              transitionEvent.value !== '' ||
+              !isDirectAncestor(model, s.id, currentState.id),
+          )
+          .map(s => ({
+            id: s.id,
+            text: s.message,
+            click: () => {
+              onAddTransition({
+                modelId: model.id,
+                fromStateId: currentState.id,
+                toStateId: s.id,
+                event: transitionEvent,
+              });
+              setInputText('');
+            },
+          }));
+        if (!linkStates.length) {
+          linkStates.push({
+            id: 'empty-link',
+            text: 'There are no states to go to',
+            type: 'item',
+          });
+        }
+        setPopupListItems([linkStatesHeader, ...linkStates]);
       } else {
-        setPopupListItems(
-          model.transitions
-            .filter(t => t.fromStateId === currentState.id)
-            .map(t => ({
-              id: t.id,
-              text: t.event,
-              click: () => onSendClick(t.event),
-            })),
-        );
+        const responsesHeader = {
+          id: 'responses-header',
+          text: 'Responses',
+          type: 'header',
+        };
+        const responseItems = model.transitions
+          .filter(t => t.fromStateId === currentState.id)
+          .map(t => ({
+            id: t.id,
+            text:
+              t.event.type === 'filter'
+                ? filters[t.event.value]
+                : t.event.value,
+            type: 'item',
+            click: () => onSendClick(t.event),
+          }));
+        if (!responseItems.length) {
+          responseItems.push({
+            id: 'empty-response',
+            text: 'There are no responses defined',
+            type: 'item',
+          });
+        }
+
+        const filterItems = Object.keys(filters)
+          .filter(
+            f =>
+              !model.transitions.some(
+                t =>
+                  t.fromStateId === currentState.id &&
+                  t.event.type === 'filter' &&
+                  t.event.value === f,
+              ),
+          )
+          .map(f => ({
+            id: f,
+            text: filters[f],
+            type: 'item',
+            click: () => onSendClick({ type: 'filter', value: f }),
+          }));
+        const filtersHeader = filterItems.length
+          ? [
+              {
+                id: 'filters-header',
+                text: 'Filters',
+                type: 'header',
+              },
+            ]
+          : [];
+        setPopupListItems([
+          responsesHeader,
+          ...responseItems,
+          ...filtersHeader,
+          ...filterItems,
+        ]);
       }
     } else {
       setPopupListItems([]);
@@ -314,12 +378,12 @@ export function BotEditorPage({
     }
   }
 
-  function onSendClick(messageText) {
-    // eslint-disable-next-line no-param-reassign
-    messageText = messageText || inputText;
+  function onSendClick(event) {
+    const type = (event && event.type) || 'response';
+    const value = (event && event.value) || inputText;
     if (inputMode === 'bot') {
       // bot response
-      let message = messageText.trim();
+      let message = value.trim();
       const responseRegex = /\[.*\]$/;
       const responseIndex = message.search(responseRegex);
       let responses = [];
@@ -339,7 +403,7 @@ export function BotEditorPage({
       });
     } else {
       // user response
-      onSetTransitionEvent(messageText, model.id);
+      onSetTransitionEvent({ type, value }, model.id);
     }
     setInputText('');
   }

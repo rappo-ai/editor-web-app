@@ -4,6 +4,7 @@ export const ONCE_TILL_UNMOUNT = '@@saga-injector/once-till-unmount';
 
 export const PRIMARY_COLOR = '#fc8182';
 export const START_MESSAGE_BUBBLE_BACKGROUND_COLOR = '#28C79D';
+export const FILTER_MESSAGE_BUBBLE_BACKGROUND_COLOR = '#B628C7';
 export const BOT_MESSAGE_BUBBLE_BACKGROUND_COLOR = '#c83250';
 export const BOT_MESSAGE_BUBBLE_FONT_COLOR = 'white';
 export const BOT_QUICK_RESPONSE_BACKGROUND_COLOR = '#1E97C7';

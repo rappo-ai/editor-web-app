@@ -6,7 +6,7 @@ const db = require('../../db');
 const router = express.Router();
 
 passport.use(
-  new BearerStrategy(async function(token, done) {
+  new BearerStrategy(async (token, done) => {
     const mytoken = await db.get('accesstoken', {
       property: 'value',
       value: token,
@@ -209,7 +209,9 @@ router.post('/model/:id/transition', async (req, res) => {
     !user.id ||
     !fromStateId ||
     !toStateId ||
-    (!event && event !== '')
+    !event ||
+    !event.type ||
+    (!event.value && event.value !== '')
   ) {
     res.status(500);
     return res.end();
@@ -254,8 +256,14 @@ router.delete('/model/:id/transition/:transitionId', async (req, res) => {
 
 router.get('/model/:id/state', async (req, res) => {
   const { user } = req;
-  const { fromStateId, event } = req.query;
-  if (!user || !user.id || !fromStateId || (!event && event !== '')) {
+  const { fromStateId, transitionEventType, transitionEventValue } = req.query;
+  if (
+    !user ||
+    !user.id ||
+    !fromStateId ||
+    !transitionEventType ||
+    (!transitionEventValue && transitionEventValue !== '')
+  ) {
     res.status(500);
     return res.end();
   }
@@ -264,7 +272,10 @@ router.get('/model/:id/state', async (req, res) => {
     value: req.params.id,
   });
   const transition = model.transitions.find(
-    e => e.fromStateId === fromStateId && e.event === event,
+    e =>
+      e.fromStateId === fromStateId &&
+      e.event.type === transitionEventType &&
+      e.event.value === transitionEventValue,
   );
   if (!transition) {
     return res.json({

@@ -8,7 +8,10 @@ import produce from 'immer';
 export const initialState = {
   model: {},
   chatHistory: [
-    { state: { id: 'START', message: 'START' }, transitionEvent: '' },
+    {
+      state: { id: 'START', message: 'START' },
+      transitionEvent: { type: 'response', value: '' },
+    },
   ],
   transitionInProgress: true,
 };
@@ -31,7 +34,10 @@ const botEditorPageReducer = (state = initialState, action) =>
         break;
       case 'ADD_STATE_SUCCESS':
         if (action.model.id === draft.model.id) {
-          draft.chatHistory.push({ state: action.state, transitionEvent: '' });
+          draft.chatHistory.push({
+            state: action.state,
+            transitionEvent: { type: 'response', value: '' },
+          });
           draft.model = action.model;
         }
         break;
@@ -66,7 +72,10 @@ const botEditorPageReducer = (state = initialState, action) =>
             if (
               lastMessage &&
               lastMessage.state.id === deletedTransition.fromStateId &&
-              lastMessage.transitionEvent === deletedTransition.event
+              lastMessage.transitionEvent.type ===
+                deletedTransition.event.type &&
+              lastMessage.transitionEvent.value ===
+                deletedTransition.event.value
             ) {
               return a;
             }
@@ -81,7 +90,10 @@ const botEditorPageReducer = (state = initialState, action) =>
         break;
       case 'DO_TRANSITION_TO_STATE_SUCCESS':
         if (action.modelId === draft.model.id) {
-          draft.chatHistory.push({ state: action.state, transitionEvent: '' });
+          draft.chatHistory.push({
+            state: action.state,
+            transitionEvent: { type: 'response', value: '' },
+          });
         }
         break;
       case 'DO_TRANSITION_TO_STATE_ERROR':
