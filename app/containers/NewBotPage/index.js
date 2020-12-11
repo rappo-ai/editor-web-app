@@ -4,7 +4,7 @@
  *
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
@@ -56,6 +56,7 @@ const Button = styled.button`
 `;
 export function NewBotPage({ onSetupHeader, onCreateBot }) {
   const [name, setName] = useState('');
+  const inputRef = useRef(null);
 
   useEffect(() => {
     const title = 'New Bot';
@@ -63,14 +64,22 @@ export function NewBotPage({ onSetupHeader, onCreateBot }) {
     onSetupHeader({ title, showBackButton });
   }, []);
 
+  useEffect(() => {
+    if (inputRef && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
   return (
     <NewBotPageSectionContainer direction="column">
       <NewBotPageSection direction="column" position="top">
         <InputContainer>
           <Input
+            ref={inputRef}
             type="text"
             placeholder="Name"
             onChange={ev => setName(ev.target.value)}
+            onKeyPress={ev => ev.key === 'Enter' && onCreateBot(name)}
           />
         </InputContainer>
       </NewBotPageSection>
