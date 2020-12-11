@@ -176,7 +176,7 @@ export function BotEditorPage({
   }, [inputMode, setInputText]);
 
   useEffect(() => {
-    if (transitionEvent.value) {
+    if (transitionEvent.value || currentState.id === 'START') {
       if (inputMode === 'user') {
         setInputMode('bot');
       }
