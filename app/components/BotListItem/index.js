@@ -20,7 +20,6 @@ const BotLink = styled.p`
   text-decoration: none;
   display: flex;
   align-items: center;
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 `;
 
 function BotListItem({ item }) {

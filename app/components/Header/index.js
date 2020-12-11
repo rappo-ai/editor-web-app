@@ -149,14 +149,12 @@ PopupMenu.propTypes = {
 };
 
 const Title = styled.h3`
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: bold;
   color: #333333;
   user-select: none;
 `;
 
 const BackButton = styled.p`
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #333333;
   cursor: pointer;
 `;
