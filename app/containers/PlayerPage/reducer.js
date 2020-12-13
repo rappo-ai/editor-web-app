@@ -1,6 +1,6 @@
 /*
  *
- * BotEditorPage reducer
+ * PlayerPage reducer
  *
  */
 import produce from 'immer';
@@ -17,7 +17,7 @@ export const initialState = {
 };
 
 /* eslint-disable default-case, no-param-reassign */
-const botEditorPageReducer = (state = initialState, action) =>
+const playerPageReducer = (state = initialState, action) =>
   produce(state, draft => {
     switch (action.type) {
       case 'CREATE_BOT_MODEL_SUCCESS':
@@ -109,4 +109,4 @@ const botEditorPageReducer = (state = initialState, action) =>
     }
   });
 
-export default botEditorPageReducer;
+export default playerPageReducer;

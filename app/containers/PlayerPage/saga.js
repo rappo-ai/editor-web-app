@@ -281,7 +281,7 @@ function* addStateWithTransition(action) {
 }
 
 // Individual exports for testing
-export default function* botEditorPageSaga() {
+export default function* playerPageSaga() {
   yield all([
     yield takeEvery('LOAD_BOT_MODEL', loadBotModel),
     yield takeEvery('CREATE_BOT_MODEL', createBotModel),

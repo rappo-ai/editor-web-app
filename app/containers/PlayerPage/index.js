@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events */
 /**
  *
- * BotEditorPage
+ * PlayerPage
  *
  */
 
@@ -65,7 +65,7 @@ const Container = styled.div`
 const popupListShowKeys = ['ArrowUp'];
 const switchInputModeKeys = ['ArrowLeft', 'ArrowRight'];
 
-export function BotEditorPage({
+export function PlayerPage({
   loading,
   error,
   bots,
@@ -82,8 +82,8 @@ export function BotEditorPage({
   onAddTransition,
   onDeleteTransition,
 }) {
-  useInjectReducer({ key: 'botEditorPage', reducer });
-  useInjectSaga({ key: 'botEditorPage', saga });
+  useInjectReducer({ key: 'playerPage', reducer });
+  useInjectSaga({ key: 'playerPage', saga });
 
   const { botId } = useParams();
 
@@ -424,7 +424,10 @@ export function BotEditorPage({
     <Container>
       <Helmet>
         <title>{bot.name}</title>
-        <meta name="description" content="Description of BotEditorPage" />
+        <meta
+          name="description"
+          content="Create powerful chatbots rapidly with Rappo.ai"
+        />
       </Helmet>
       <ChatView {...chatViewProps} />
       <ChatInputBar {...chatInputBarProps} />
@@ -432,7 +435,7 @@ export function BotEditorPage({
   );
 }
 
-BotEditorPage.propTypes = {
+PlayerPage.propTypes = {
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   bots: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
@@ -486,4 +489,4 @@ const withConnect = connect(
   mapDispatchToProps,
 );
 
-export default compose(withConnect)(BotEditorPage);
+export default compose(withConnect)(PlayerPage);
