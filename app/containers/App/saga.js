@@ -92,26 +92,6 @@ function* createBot(action) {
 }
 
 /**
- * Load a bot from id
- */
-function* loadBot(action) {
-  try {
-    const { url, options } = apiBuilder(`/bot/${action.id}`);
-    // Call our request helper (see 'utils/request')
-    const response = yield call(request, url, options);
-    yield put({
-      type: 'LOAD_BOT_SUCCESS',
-      bot: response.bot,
-    });
-  } catch (err) {
-    console.error(err);
-    yield put({
-      type: 'LOAD_BOT_ERROR',
-      error: err,
-    });
-  }
-}
-/**
  * Root saga manages watcher lifecycle
  */
 export default function* rootSaga() {
@@ -120,6 +100,5 @@ export default function* rootSaga() {
     yield takeLatest(LOAD_USER_PROFILE, loadUserProfile),
     yield takeLatest('LOAD_BOTS', loadBots),
     yield takeLatest('CREATE_BOT', createBot),
-    yield takeLatest('LOAD_BOT', loadBot),
   ]);
 }

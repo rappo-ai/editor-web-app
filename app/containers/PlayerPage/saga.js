@@ -3,6 +3,27 @@ import apiBuilder from 'utils/api';
 import request from 'utils/request';
 
 /**
+ * Load a bot from id
+ */
+function* loadBot(action) {
+  try {
+    const { url, options } = apiBuilder(`/bot/${action.id}`);
+    // Call our request helper (see 'utils/request')
+    const response = yield call(request, url, options);
+    yield put({
+      type: 'LOAD_BOT_SUCCESS',
+      bot: response.bot,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: 'LOAD_BOT_ERROR',
+      error: err,
+    });
+  }
+}
+
+/**
  * Create a new bot model
  */
 function* createBotModel(action) {
@@ -283,6 +304,7 @@ function* addStateWithTransition(action) {
 // Individual exports for testing
 export default function* playerPageSaga() {
   yield all([
+    yield takeEvery('LOAD_BOT', loadBot),
     yield takeEvery('LOAD_BOT_MODEL', loadBotModel),
     yield takeEvery('CREATE_BOT_MODEL', createBotModel),
     yield takeEvery('ADD_STATE', addState),
