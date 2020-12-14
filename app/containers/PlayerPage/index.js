@@ -64,6 +64,7 @@ const Container = styled.div`
 
 const popupListShowKeys = ['ArrowUp'];
 const switchInputModeKeys = ['ArrowLeft', 'ArrowRight'];
+const emptyBot = { name: '' };
 
 export function PlayerPage({
   loading,
@@ -152,7 +153,7 @@ export function PlayerPage({
 
   const bot = Array.isArray(bots)
     ? bots.find(element => element.id === botId)
-    : { name: '' };
+    : emptyBot;
 
   // initialize state for a new botId, and clear state when component is unmounted
   useEffect(() => {
@@ -234,7 +235,7 @@ export function PlayerPage({
       menuItems,
       actionButtons,
     });
-  }, [bots, transitionEvent, inputMode, setInputMode, onSetupHeader]);
+  }, [bot, inputMode, setInputMode, onSetupHeader]);
 
   useEffect(() => {
     if (popupListEnabled) {
