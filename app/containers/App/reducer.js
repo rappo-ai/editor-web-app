@@ -138,6 +138,7 @@ const appReducer = (state = initialState, action) =>
         draft.header.menuItems = action.payload.menuItems;
         draft.header.actionButtons = action.payload.actionButtons;
         draft.header.showBackButton = action.payload.showBackButton;
+        break;
     }
   });
 
