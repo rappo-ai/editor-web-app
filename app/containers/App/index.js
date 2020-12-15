@@ -79,8 +79,16 @@ export function App({
           <Route exact path="/" component={LandingPage} />
         )}
         <Route exact path="/bot/new" component={NewBotPage} />
-        <Route exact path="/bot/edit/:botId" component={PlayerPage} />
-        <Route exact path="/bot/play/:botId" component={PlayerPage} />
+        <Route
+          exact
+          path="/bot/edit/:botId"
+          render={props => <PlayerPage {...props} playerMode="edit" />}
+        />
+        <Route
+          exact
+          path="/bot/play/:botId"
+          render={props => <PlayerPage {...props} playerMode="play" />}
+        />
         <Route path="" component={NotFoundPage} />
       </Switch>
       {/* <Footer /> */}
