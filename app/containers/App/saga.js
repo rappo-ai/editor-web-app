@@ -25,9 +25,11 @@ function* loadCookies() {
 /**
  * Load the user profile if logged in
  */
-function* loadUserProfile() {
+function* loadUserProfile(action) {
   try {
-    const { url, options } = apiBuilder('/userinfo');
+    const { url, options } = apiBuilder('/userinfo', {
+      token: action.token,
+    });
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
     const profile = { displayName: '', profilePic: '' };
@@ -45,9 +47,11 @@ function* loadUserProfile() {
 /**
  * Load the bots for the logged in user
  */
-function* loadBots() {
+function* loadBots(action) {
   try {
-    const { url, options } = apiBuilder('/bot');
+    const { url, options } = apiBuilder('/bot', {
+      token: action.token,
+    });
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
     yield put({
@@ -73,6 +77,7 @@ function* createBot(action) {
       body: {
         name: action.name,
       },
+      token: action.token,
     });
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);

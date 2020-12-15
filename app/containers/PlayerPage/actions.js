@@ -4,11 +4,12 @@
  *
  */
 
-export function loadBotModel(botId, createIfNone) {
+export function loadBotModel(botId, createIfNone, token) {
   return {
     type: 'LOAD_BOT_MODEL',
     botId,
     createIfNone,
+    token,
   };
 }
 
@@ -19,11 +20,12 @@ export function addStateWithTransition(params) {
   };
 }
 
-export function setTransitionEvent(event, modelId) {
+export function setTransitionEvent(event, modelId, token) {
   return {
     type: 'SET_TRANSITION_EVENT',
     event,
     modelId,
+    token,
   };
 }
 

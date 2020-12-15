@@ -23,6 +23,7 @@ import {
 import ChatInputBar from 'components/ChatInputBar';
 import ChatView from 'components/ChatView';
 
+import { getAccessToken } from 'utils/cookies';
 import {
   BOT_SEND_BUTTON_BACKGROUND_COLOR,
   BOT_SEND_BUTTON_ICON_COLOR,
@@ -155,12 +156,14 @@ export function PlayerPage({
     ? bots.find(element => element.id === botId)
     : emptyBot;
 
+  const token = getAccessToken();
+
   // initialize state for a new botId, and clear state when component is unmounted
   useEffect(() => {
-    onLoadBot(botId);
-    onLoadBotModel(botId);
+    onLoadBot(botId, token);
+    onLoadBotModel(botId, token);
     return () => onClearChatHistory();
-  }, [botId, onLoadBot, onLoadBotModel]);
+  }, [botId, token, onLoadBot, onLoadBotModel]);
 
   useEffect(() => {
     if (model && model.id) {
@@ -168,9 +171,10 @@ export function PlayerPage({
         modelId: model.id,
         fromStateId: currentState.id,
         event: transitionEvent,
+        token,
       });
     }
-  }, [model, currentState, transitionEvent]);
+  }, [model, token, currentState, transitionEvent]);
 
   useEffect(() => {
     setInputText('');
@@ -260,6 +264,7 @@ export function PlayerPage({
                 fromStateId: currentState.id,
                 toStateId: s.id,
                 event: transitionEvent,
+                token,
               });
               setInputText('');
             },
@@ -334,6 +339,7 @@ export function PlayerPage({
     }
   }, [
     model,
+    token,
     currentState,
     popupListEnabled,
     inputMode,
@@ -407,6 +413,7 @@ export function PlayerPage({
         responses,
         event: transitionEvent,
         fromStateId: currentState.id,
+        token,
       });
     } else {
       // user response
@@ -468,13 +475,13 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch) {
   return {
-    onLoadBot: id => dispatch(loadBot(id)),
+    onLoadBot: (id, token) => dispatch(loadBot(id, token)),
     onSetupHeader: params => dispatch(setupHeader(params)),
-    onLoadBotModel: id => dispatch(loadBotModel(id, true)),
+    onLoadBotModel: (id, token) => dispatch(loadBotModel(id, true, token)),
     onAddStateWithTransition: params =>
       dispatch(addStateWithTransition(params)),
-    onSetTransitionEvent: (event, modelId) =>
-      dispatch(setTransitionEvent(event, modelId)),
+    onSetTransitionEvent: (event, modelId, token) =>
+      dispatch(setTransitionEvent(event, modelId, token)),
     onDoTransitionToState: params => dispatch(doTransitionToState(params)),
     onClearChatHistory: () => dispatch(clearChatHistory()),
     onUpdateState: params => dispatch(updateState(params)),

@@ -100,7 +100,7 @@ export function LandingPage() {
       <LandingPageSection position="top" direction="column" />
       <LandingPageSection position="center" direction="column">
         <Para>
-          <strong>Rappo</strong> is a natural language interface for easily
+          <strong>Rappo</strong> is a natural language interface for rapidly
           building powerful chatbots.
         </Para>
       </LandingPageSection>

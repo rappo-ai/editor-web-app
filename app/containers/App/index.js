@@ -15,12 +15,14 @@ import { Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
+
+import { getAccessToken } from 'utils/cookies';
 import { useInjectSaga } from 'utils/injectSaga';
 
 import HomePage from 'containers/HomePage/Loadable';
 import LandingPage from 'containers/LandingPage/Loadable';
 import NewBotPage from 'containers/NewBotPage';
-import BotEditorPage from 'containers/BotEditorPage/Loadable';
+import PlayerPage from 'containers/PlayerPage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import Header from 'components/Header';
 
@@ -54,10 +56,12 @@ export function App({
 }) {
   useInjectSaga({ key: 'app', saga });
 
+  const token = getAccessToken();
+
   useEffect(() => {
-    onLoadCookies();
-    onLoadUserProfile();
-  }, []);
+    onLoadCookies(token);
+    onLoadUserProfile(token);
+  }, [token]);
 
   return (
     <AppWrapper>
@@ -75,7 +79,8 @@ export function App({
           <Route exact path="/" component={LandingPage} />
         )}
         <Route exact path="/bot/new" component={NewBotPage} />
-        <Route exact path="/bot/:botId" component={BotEditorPage} />
+        <Route exact path="/bot/edit/:botId" component={PlayerPage} />
+        <Route exact path="/bot/play/:botId" component={PlayerPage} />
         <Route path="" component={NotFoundPage} />
       </Switch>
       {/* <Footer /> */}
@@ -102,8 +107,8 @@ const mapStateToProps = createStructuredSelector({
 
 export function mapDispatchToProps(dispatch) {
   return {
-    onLoadCookies: () => dispatch(loadCookies()),
-    onLoadUserProfile: () => dispatch(loadUserProfile()),
+    onLoadCookies: token => dispatch(loadCookies(token)),
+    onLoadUserProfile: token => dispatch(loadUserProfile(token)),
   };
 }
 

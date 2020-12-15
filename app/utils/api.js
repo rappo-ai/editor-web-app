@@ -1,11 +1,10 @@
-import { getAccessToken } from './cookies';
-
 export default function apiBuilder(
   apiEndpoint,
   {
     headers = { 'Content-Type': 'application/json' },
     method = 'GET',
     body = false,
+    token = '',
   } = {},
 ) {
   const domain = 'http://localhost:3000';
@@ -13,7 +12,7 @@ export default function apiBuilder(
   const url = `${domain}${apiPrefix}${apiEndpoint}`;
   const options = {
     headers: {
-      Authorization: `Bearer ${getAccessToken()}`,
+      Authorization: `Bearer ${token}`,
       ...headers,
     },
     method,
