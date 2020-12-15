@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
@@ -70,6 +70,7 @@ const emptyBot = { name: '' };
 export function PlayerPage({
   loading,
   error,
+  playerMode,
   bots,
   model,
   chatHistory,
@@ -88,6 +89,10 @@ export function PlayerPage({
   useInjectSaga({ key: 'playerPage', saga });
 
   const { botId } = useParams();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const queryParamsToken = queryParams.get('token');
+  const token = playerMode === 'play' ? queryParamsToken : getAccessToken();
 
   const [inputMode, setInputMode] = useState('bot');
   const [inputText, setInputText] = useState('');
@@ -155,8 +160,6 @@ export function PlayerPage({
   const bot = Array.isArray(bots)
     ? bots.find(element => element.id === botId)
     : emptyBot;
-
-  const token = getAccessToken();
 
   // initialize state for a new botId, and clear state when component is unmounted
   useEffect(() => {
@@ -446,6 +449,7 @@ export function PlayerPage({
 PlayerPage.propTypes = {
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+  playerMode: PropTypes.string,
   bots: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   model: PropTypes.object,
   chatHistory: PropTypes.array,
