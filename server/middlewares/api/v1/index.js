@@ -2,7 +2,7 @@ const express = require('express');
 const { nanoid } = require('nanoid');
 const passport = require('passport');
 const BearerStrategy = require('passport-http-bearer').Strategy;
-const db = require('../../db');
+const db = require('../../../db');
 const router = express.Router();
 
 passport.use(

@@ -7,8 +7,8 @@ export default function apiBuilder(
     token = '',
   } = {},
 ) {
-  const domain = 'http://localhost:3000';
-  const apiPrefix = '/api';
+  const domain = window.location.origin;
+  const apiPrefix = '/api/v1';
   const url = `${domain}${apiPrefix}${apiEndpoint}`;
   const options = {
     headers: {
