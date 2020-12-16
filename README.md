@@ -1,6 +1,6 @@
 Codebase for rappo web editor.
 
-Basic Tech stack - React, Express, NodeJS, Webpack
+Basic tech stack - React, Express, NodeJS, Webpack
 
 Commands to build and run the app for development
 
