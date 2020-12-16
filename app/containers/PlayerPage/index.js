@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events */
 /**
  *
- * BotEditorPage
+ * PlayerPage
  *
  */
 
@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
@@ -23,6 +23,7 @@ import {
 import ChatInputBar from 'components/ChatInputBar';
 import ChatView from 'components/ChatView';
 
+import { getAccessToken } from 'utils/cookies';
 import {
   BOT_SEND_BUTTON_BACKGROUND_COLOR,
   BOT_SEND_BUTTON_ICON_COLOR,
@@ -64,10 +65,12 @@ const Container = styled.div`
 
 const popupListShowKeys = ['ArrowUp'];
 const switchInputModeKeys = ['ArrowLeft', 'ArrowRight'];
+const emptyBot = { name: '' };
 
-export function BotEditorPage({
+export function PlayerPage({
   loading,
   error,
+  playerMode,
   bots,
   model,
   chatHistory,
@@ -82,10 +85,14 @@ export function BotEditorPage({
   onAddTransition,
   onDeleteTransition,
 }) {
-  useInjectReducer({ key: 'botEditorPage', reducer });
-  useInjectSaga({ key: 'botEditorPage', saga });
+  useInjectReducer({ key: 'playerPage', reducer });
+  useInjectSaga({ key: 'playerPage', saga });
 
   const { botId } = useParams();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const queryParamsToken = queryParams.get('token');
+  const token = playerMode === 'play' ? queryParamsToken : getAccessToken();
 
   const [inputMode, setInputMode] = useState('bot');
   const [inputText, setInputText] = useState('');
@@ -152,14 +159,14 @@ export function BotEditorPage({
 
   const bot = Array.isArray(bots)
     ? bots.find(element => element.id === botId)
-    : { name: '' };
+    : emptyBot;
 
   // initialize state for a new botId, and clear state when component is unmounted
   useEffect(() => {
-    onLoadBot(botId);
-    onLoadBotModel(botId);
+    onLoadBot(botId, token);
+    onLoadBotModel(botId, token);
     return () => onClearChatHistory();
-  }, [botId, onLoadBot, onLoadBotModel]);
+  }, [botId, token, onLoadBot, onLoadBotModel]);
 
   useEffect(() => {
     if (model && model.id) {
@@ -167,9 +174,10 @@ export function BotEditorPage({
         modelId: model.id,
         fromStateId: currentState.id,
         event: transitionEvent,
+        token,
       });
     }
-  }, [model, currentState, transitionEvent]);
+  }, [model, token, currentState, transitionEvent]);
 
   useEffect(() => {
     setInputText('');
@@ -234,7 +242,7 @@ export function BotEditorPage({
       menuItems,
       actionButtons,
     });
-  }, [bots, transitionEvent, inputMode, setInputMode, onSetupHeader]);
+  }, [bot, inputMode, setInputMode, onSetupHeader]);
 
   useEffect(() => {
     if (popupListEnabled) {
@@ -259,6 +267,7 @@ export function BotEditorPage({
                 fromStateId: currentState.id,
                 toStateId: s.id,
                 event: transitionEvent,
+                token,
               });
               setInputText('');
             },
@@ -333,6 +342,7 @@ export function BotEditorPage({
     }
   }, [
     model,
+    token,
     currentState,
     popupListEnabled,
     inputMode,
@@ -406,6 +416,7 @@ export function BotEditorPage({
         responses,
         event: transitionEvent,
         fromStateId: currentState.id,
+        token,
       });
     } else {
       // user response
@@ -424,7 +435,10 @@ export function BotEditorPage({
     <Container>
       <Helmet>
         <title>{bot.name}</title>
-        <meta name="description" content="Description of BotEditorPage" />
+        <meta
+          name="description"
+          content="Create powerful chatbots rapidly with Rappo.ai"
+        />
       </Helmet>
       <ChatView {...chatViewProps} />
       <ChatInputBar {...chatInputBarProps} />
@@ -432,9 +446,10 @@ export function BotEditorPage({
   );
 }
 
-BotEditorPage.propTypes = {
+PlayerPage.propTypes = {
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+  playerMode: PropTypes.string,
   bots: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   model: PropTypes.object,
   chatHistory: PropTypes.array,
@@ -464,13 +479,13 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch) {
   return {
-    onLoadBot: id => dispatch(loadBot(id)),
+    onLoadBot: (id, token) => dispatch(loadBot(id, token)),
     onSetupHeader: params => dispatch(setupHeader(params)),
-    onLoadBotModel: id => dispatch(loadBotModel(id, true)),
+    onLoadBotModel: (id, token) => dispatch(loadBotModel(id, true, token)),
     onAddStateWithTransition: params =>
       dispatch(addStateWithTransition(params)),
-    onSetTransitionEvent: (event, modelId) =>
-      dispatch(setTransitionEvent(event, modelId)),
+    onSetTransitionEvent: (event, modelId, token) =>
+      dispatch(setTransitionEvent(event, modelId, token)),
     onDoTransitionToState: params => dispatch(doTransitionToState(params)),
     onClearChatHistory: () => dispatch(clearChatHistory()),
     onUpdateState: params => dispatch(updateState(params)),
@@ -486,4 +501,4 @@ const withConnect = connect(
   mapDispatchToProps,
 );
 
-export default compose(withConnect)(BotEditorPage);
+export default compose(withConnect)(PlayerPage);

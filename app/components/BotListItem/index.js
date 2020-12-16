@@ -24,7 +24,7 @@ const BotLink = styled.p`
 
 function BotListItem({ item }) {
   const content = (
-    <Wrapper onClick={() => history.push(`/bot/${item.id}`)}>
+    <Wrapper onClick={() => history.push(`/bot/edit/${item.id}`)}>
       <Avatar
         image={`https://ui-avatars.com/api/?name=${item.name}\
 &color=555&background=${PRIMARY_COLOR.replace('#', '')}`}

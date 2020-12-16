@@ -25,6 +25,8 @@ import {
   TripleSection,
 } from 'components/TripleSection';
 import { Para } from 'components/common';
+
+import { getAccessToken } from 'utils/cookies';
 import history from 'utils/history';
 
 const HomePageSectionContainer = styled(TripleSectionContainer)`
@@ -50,9 +52,11 @@ export function HomePage({
   // useInjectReducer({ key, reducer });
   // useInjectSaga({ key, saga });
 
+  const token = getAccessToken();
+
   useEffect(() => {
-    onLoadBots();
-  }, []);
+    onLoadBots(token);
+  }, [token]);
 
   useEffect(() => {
     const menuIcon = userProfile.profilePic;
@@ -128,7 +132,7 @@ const mapStateToProps = createStructuredSelector({
 
 export function mapDispatchToProps(dispatch) {
   return {
-    onLoadBots: () => dispatch(loadBots()),
+    onLoadBots: token => dispatch(loadBots(token)),
     onSetupHeader: ({ title, menuIcon, menuItems, actionButtons }) =>
       dispatch(setupHeader({ title, menuIcon, menuItems, actionButtons })),
   };

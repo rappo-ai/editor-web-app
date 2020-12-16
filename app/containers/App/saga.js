@@ -25,9 +25,11 @@ function* loadCookies() {
 /**
  * Load the user profile if logged in
  */
-function* loadUserProfile() {
+function* loadUserProfile(action) {
   try {
-    const { url, options } = apiBuilder('/userinfo');
+    const { url, options } = apiBuilder('/userinfo', {
+      token: action.token,
+    });
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
     const profile = { displayName: '', profilePic: '' };
@@ -45,9 +47,11 @@ function* loadUserProfile() {
 /**
  * Load the bots for the logged in user
  */
-function* loadBots() {
+function* loadBots(action) {
   try {
-    const { url, options } = apiBuilder('/bot');
+    const { url, options } = apiBuilder('/bot', {
+      token: action.token,
+    });
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
     yield put({
@@ -73,6 +77,7 @@ function* createBot(action) {
       body: {
         name: action.name,
       },
+      token: action.token,
     });
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
@@ -81,7 +86,7 @@ function* createBot(action) {
       bot: response.bot,
     });
 
-    yield call(history.push, `/bot/${response.bot.id}`);
+    yield call(history.push, `/bot/edit/${response.bot.id}`);
   } catch (err) {
     console.error(err);
     yield put({
@@ -92,26 +97,6 @@ function* createBot(action) {
 }
 
 /**
- * Load a bot from id
- */
-function* loadBot(action) {
-  try {
-    const { url, options } = apiBuilder(`/bot/${action.id}`);
-    // Call our request helper (see 'utils/request')
-    const response = yield call(request, url, options);
-    yield put({
-      type: 'LOAD_BOT_SUCCESS',
-      bot: response.bot,
-    });
-  } catch (err) {
-    console.error(err);
-    yield put({
-      type: 'LOAD_BOT_ERROR',
-      error: err,
-    });
-  }
-}
-/**
  * Root saga manages watcher lifecycle
  */
 export default function* rootSaga() {
@@ -120,6 +105,5 @@ export default function* rootSaga() {
     yield takeLatest(LOAD_USER_PROFILE, loadUserProfile),
     yield takeLatest('LOAD_BOTS', loadBots),
     yield takeLatest('CREATE_BOT', createBot),
-    yield takeLatest('LOAD_BOT', loadBot),
   ]);
 }
