@@ -15,6 +15,7 @@ const argv = require('./argv');
 const port = require('./port');
 const setup = require('./middlewares/frontendMiddleware');
 const isDev = process.env.NODE_ENV !== 'production';
+const isProd = process.env.NODE_ENV === 'production';
 const ngrok =
   (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel
     ? require('ngrok')
@@ -37,6 +38,11 @@ app.use(
 
 // Initialize Passport and restore authentication state, if any, from the
 // session.
+if (isProd) {
+  // passport redirects to http on Heroku. The below line is a workaround to do a https redirect.
+  // see https://stackoverflow.com/questions/20739744/passportjs-callback-switch-between-http-and-https
+  app.enable('trust proxy');
+}
 app.use(passport.initialize());
 app.use(passport.session());
 
