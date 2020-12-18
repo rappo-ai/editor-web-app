@@ -7,7 +7,7 @@ class FirestoreDBEngine extends DBEngine {
   constructor(entityFactory) {
     super();
     const firestorePrivateKey = process.env.FIRESTORE_PRIVATE_KEY
-      ? String(process.env.FIRESTORE_PRIVATE_KEY).replace('\\n', '\n')
+      ? String(process.env.FIRESTORE_PRIVATE_KEY).replaceAll('\\n', '\n')
       : undefined;
     console.log(firestorePrivateKey);
     this.firestore = new Firestore({
