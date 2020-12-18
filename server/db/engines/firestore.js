@@ -6,6 +6,9 @@ const { pojoClone, cloneFromPojo } = require('../../utils');
 class FirestoreDBEngine extends DBEngine {
   constructor(entityFactory) {
     super();
+    console.log(process.env.FIRESTORE_PROJECT_ID);
+    console.log(process.env.FIRESTORE_CLIENT_EMAIL);
+    console.log(process.env.FIRESTORE_PRIVATE_KEY);
     this.firestore = new Firestore({
       projectId: process.env.FIRESTORE_PROJECT_ID,
       credentials: {
