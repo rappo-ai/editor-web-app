@@ -7,7 +7,7 @@
     "url": "git://github.com/react-boilerplate/react-boilerplate.git"
   },
   "engines": {
-    "npm": ">=5",
+    "npm": ">=5.0.0",
     "node": ">=8.15.1"
   },
   "author": "Max Stoiber",
