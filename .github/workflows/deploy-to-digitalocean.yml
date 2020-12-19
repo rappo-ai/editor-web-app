@@ -39,7 +39,6 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
     - uses: appleboy/ssh-action@master
       env:
-        NODE_ENV: "production"
         ENV_FILE: ${{ secrets.RAPPO_ENV_FILE }}
         GCLOUD_CREDENTIALS_FILE: ${{ secrets.RAPPO_GCLOUD_CREDENTIALS_FILE }}
       with:
@@ -47,7 +46,7 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
-        envs: NODE_ENV,ENV_FILE,GCLOUD_CREDENTIALS_FILE
+        envs: ENV_FILE,GCLOUD_CREDENTIALS_FILE
         script: |
           rm -rf ~/rappo-web-app/*
           tar -xf ~/rappo-web-app.tar.gz -C ~/rappo-web-app
