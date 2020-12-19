@@ -21,6 +21,7 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
         script: pm2 stop rappo-web-app
+        script_stop: false
     - uses: nogsantos/scp-deploy@master
       with:
         src: ./*
