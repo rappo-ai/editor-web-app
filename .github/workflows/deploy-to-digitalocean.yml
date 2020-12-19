@@ -14,6 +14,11 @@ jobs:
         node-version: '12'
     - run: npm ci
     - run: npm run build
+    - uses: master-atul/tar-action@v1.0.2
+      with:
+        command: c
+        files: ./
+        outPath: rappo-web-app.tar.gz
     - uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
@@ -26,8 +31,8 @@ jobs:
           fi
     - uses: nogsantos/scp-deploy@master
       with:
-        src: ./*
-        remote: ~/rappo-web-app
+        src: ./rappo-web-app.tar.gz
+        remote: ~/
         host: ${{ secrets.SSH_HOST }}
         port: ${{ secrets.SSH_PORT }}
         user: ${{ secrets.SSH_USER }}
@@ -39,11 +44,9 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
         script: |
+          rm -rf ~/rappo-web-app/*
+          tar -xf ~/rappo-web-app.tar.gz -C ~/rappo-web-app
+          rm -f ~/rappo-web-app.tar.gz
           pm2 start ~/rappo-web-app/server --name rappo-web-app
           pm2 save
-        
-
-
-      
-      
-
+          
