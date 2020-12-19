@@ -1,0 +1,46 @@
+name: Deploy to Digital Ocean
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '12'
+    - run: npm ci
+    - run: npm run build
+    - uses: appleboy/ssh-action@master@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        port: ${{ secrets.SSH_PORT }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        script: pm2 stop rappo-web-app
+    - uses: nogsantos/scp-deploy@master
+      with:
+        src: ./*
+        remote: ~/rappo-web-app
+        host: ${{ secrets.SSH_HOST }}
+        port: ${{ secrets.SSH_PORT }}
+        user: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+    - uses: appleboy/ssh-action@master@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        port: ${{ secrets.SSH_PORT }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          pm2 start ~/rappo-web-app/server --name rappo-web-app
+          pm2 save
+        
+
+
+      
+      
+
