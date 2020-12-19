@@ -14,7 +14,7 @@ jobs:
         node-version: '12'
     - run: npm ci
     - run: npm run build
-    - uses: appleboy/ssh-action@master@master
+    - uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
         port: ${{ secrets.SSH_PORT }}
@@ -29,7 +29,7 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         user: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
-    - uses: appleboy/ssh-action@master@master
+    - uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
         port: ${{ secrets.SSH_PORT }}
