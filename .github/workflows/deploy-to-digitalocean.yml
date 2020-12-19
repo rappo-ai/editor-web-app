@@ -54,5 +54,5 @@ jobs:
           rm -f ~/rappo-web-app.tar.gz
           echo $ENV_FILE > ~/rappo-web-app/.env
           echo $GCLOUD_CREDENTIALS_FILE > ~/rappo-web-app/gcloud-credentials.json
-          NODE_ENV=production pm2 start ~/rappo-web-app/server --name rappo-web-app --update-env
+          pm2 start npm --cwd ~/rappo-web-app --name rappo-web-app -- run start:prod
           pm2 save
