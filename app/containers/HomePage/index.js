@@ -75,7 +75,7 @@ export function HomePage({
     const actionButtons = [
       {
         faClass: 'fa-plus',
-        click: () => history.push('/bot/new'),
+        click: () => history.push('/add/bot'),
       },
     ];
     onSetupHeader({ title: pageTitle, menuIcon, menuItems, actionButtons });

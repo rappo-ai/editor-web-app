@@ -21,7 +21,7 @@ import { useInjectSaga } from 'utils/injectSaga';
 
 import HomePage from 'containers/HomePage/Loadable';
 import LandingPage from 'containers/LandingPage/Loadable';
-import NewBotPage from 'containers/NewBotPage';
+import AddBotPage from 'containers/AddBotPage';
 import EditorPage from 'containers/EditorPage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import Header from 'components/Header';
@@ -78,7 +78,7 @@ export function App({
         ) : (
           <Route exact path="/" component={LandingPage} />
         )}
-        <Route exact path="/bot/new" component={NewBotPage} />
+        <Route exact path="/add/bot" component={AddBotPage} />
         <Route
           exact
           path="/bot/edit/:botId"
