@@ -2,10 +2,10 @@ import { createSelector } from 'reselect';
 import { initialState } from './reducer';
 
 /**
- * Direct selector to the playerPage state domain
+ * Direct selector to the editorPage state domain
  */
 
-const selectPlayerPageDomain = state => state.playerPage || initialState;
+const selectEditorPageDomain = state => state.editorPage || initialState;
 
 /**
  * Other specific selectors
@@ -13,35 +13,35 @@ const selectPlayerPageDomain = state => state.playerPage || initialState;
 
 const makeSelectModel = () =>
   createSelector(
-    selectPlayerPageDomain,
+    selectEditorPageDomain,
     substate => substate.model,
   );
 
 const makeSelectChatHistory = () =>
   createSelector(
-    selectPlayerPageDomain,
+    selectEditorPageDomain,
     substate => substate.chatHistory,
   );
 
 const makeSelectTransitionInProgress = () =>
   createSelector(
-    selectPlayerPageDomain,
+    selectEditorPageDomain,
     substate => substate.transitionInProgress,
   );
 
 /**
- * Default selector used by PlayerPage
+ * Default selector used by EditorPage
  */
 
-const makeSelectPlayerPage = () =>
+const makeSelectEditorPage = () =>
   createSelector(
-    selectPlayerPageDomain,
+    selectEditorPageDomain,
     substate => substate,
   );
 
-export default makeSelectPlayerPage;
+export default makeSelectEditorPage;
 export {
-  selectPlayerPageDomain,
+  selectEditorPageDomain,
   makeSelectModel,
   makeSelectChatHistory,
   makeSelectTransitionInProgress,

@@ -322,7 +322,7 @@ function* addStateWithTransition(action) {
 }
 
 // Individual exports for testing
-export default function* playerPageSaga() {
+export default function* editorPageSaga() {
   yield all([
     yield takeEvery('LOAD_BOT', loadBot),
     yield takeEvery('LOAD_BOT_MODEL', loadBotModel),

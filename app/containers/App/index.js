@@ -22,7 +22,7 @@ import { useInjectSaga } from 'utils/injectSaga';
 import HomePage from 'containers/HomePage/Loadable';
 import LandingPage from 'containers/LandingPage/Loadable';
 import NewBotPage from 'containers/NewBotPage';
-import PlayerPage from 'containers/PlayerPage/Loadable';
+import EditorPage from 'containers/EditorPage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import Header from 'components/Header';
 
@@ -82,12 +82,12 @@ export function App({
         <Route
           exact
           path="/bot/edit/:botId"
-          render={props => <PlayerPage {...props} playerMode="edit" />}
+          render={props => <EditorPage {...props} playerMode="edit" />}
         />
         <Route
           exact
           path="/bot/play/:botId"
-          render={props => <PlayerPage {...props} playerMode="play" />}
+          render={props => <EditorPage {...props} playerMode="play" />}
         />
         <Route path="" component={NotFoundPage} />
       </Switch>

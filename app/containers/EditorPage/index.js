@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events */
 /**
  *
- * PlayerPage
+ * EditorPage
  *
  */
 
@@ -67,7 +67,7 @@ const popupListShowKeys = ['ArrowUp'];
 const switchInputModeKeys = ['ArrowLeft', 'ArrowRight'];
 const emptyBot = { name: '' };
 
-export function PlayerPage({
+export function EditorPage({
   loading,
   error,
   playerMode,
@@ -85,8 +85,8 @@ export function PlayerPage({
   onAddTransition,
   onDeleteTransition,
 }) {
-  useInjectReducer({ key: 'playerPage', reducer });
-  useInjectSaga({ key: 'playerPage', saga });
+  useInjectReducer({ key: 'editorPage', reducer });
+  useInjectSaga({ key: 'editorPage', saga });
 
   const { botId } = useParams();
   const location = useLocation();
@@ -446,7 +446,7 @@ export function PlayerPage({
   );
 }
 
-PlayerPage.propTypes = {
+EditorPage.propTypes = {
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   playerMode: PropTypes.string,
@@ -501,4 +501,4 @@ const withConnect = connect(
   mapDispatchToProps,
 );
 
-export default compose(withConnect)(PlayerPage);
+export default compose(withConnect)(EditorPage);

@@ -1,6 +1,6 @@
 /**
  *
- * Asynchronously loads the component for PlayerPage
+ * Asynchronously loads the component for EditorPage
  *
  */
 

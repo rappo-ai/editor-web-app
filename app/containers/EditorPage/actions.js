@@ -1,6 +1,6 @@
 /*
  *
- * PlayerPage actions
+ * EditorPage actions
  *
  */
 
