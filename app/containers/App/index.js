@@ -81,7 +81,7 @@ export function App({
         <Route exact path="/add/bot" component={AddBotPage} />
         <Route
           exact
-          path="/bot/edit/:botId"
+          path="/edit/bot/:botId"
           render={props => <EditorPage {...props} />}
         />
         <Route

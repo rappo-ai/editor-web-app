@@ -86,7 +86,7 @@ function* createBot(action) {
       bot: response.bot,
     });
 
-    yield call(history.push, `/bot/edit/${response.bot.id}`);
+    yield call(history.push, `/edit/bot/${response.bot.id}`);
   } catch (err) {
     console.error(err);
     yield put({
