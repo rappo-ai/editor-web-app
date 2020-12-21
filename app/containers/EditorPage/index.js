@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
@@ -70,7 +70,6 @@ const emptyBot = { name: '' };
 export function EditorPage({
   loading,
   error,
-  playerMode,
   bots,
   model,
   chatHistory,
@@ -89,10 +88,7 @@ export function EditorPage({
   useInjectSaga({ key: 'editorPage', saga });
 
   const { botId } = useParams();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const queryParamsToken = queryParams.get('token');
-  const token = playerMode === 'play' ? queryParamsToken : getAccessToken();
+  const accessToken = getAccessToken();
 
   const [inputMode, setInputMode] = useState('bot');
   const [inputText, setInputText] = useState('');
@@ -163,10 +159,10 @@ export function EditorPage({
 
   // initialize state for a new botId, and clear state when component is unmounted
   useEffect(() => {
-    onLoadBot(botId, token);
-    onLoadBotModel(botId, token);
+    onLoadBot(botId, accessToken);
+    onLoadBotModel(botId, accessToken);
     return () => onClearChatHistory();
-  }, [botId, token, onLoadBot, onLoadBotModel]);
+  }, [botId, accessToken, onLoadBot, onLoadBotModel]);
 
   useEffect(() => {
     if (model && model.id) {
@@ -174,10 +170,10 @@ export function EditorPage({
         modelId: model.id,
         fromStateId: currentState.id,
         event: transitionEvent,
-        token,
+        accessToken,
       });
     }
-  }, [model, token, currentState, transitionEvent]);
+  }, [model, accessToken, currentState, transitionEvent]);
 
   useEffect(() => {
     setInputText('');
@@ -267,7 +263,7 @@ export function EditorPage({
                 fromStateId: currentState.id,
                 toStateId: s.id,
                 event: transitionEvent,
-                token,
+                accessToken,
               });
               setInputText('');
             },
@@ -342,7 +338,7 @@ export function EditorPage({
     }
   }, [
     model,
-    token,
+    accessToken,
     currentState,
     popupListEnabled,
     inputMode,
@@ -416,7 +412,7 @@ export function EditorPage({
         responses,
         event: transitionEvent,
         fromStateId: currentState.id,
-        token,
+        accessToken,
       });
     } else {
       // user response
@@ -449,7 +445,6 @@ export function EditorPage({
 EditorPage.propTypes = {
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
-  playerMode: PropTypes.string,
   bots: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   model: PropTypes.object,
   chatHistory: PropTypes.array,
@@ -479,13 +474,14 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch) {
   return {
-    onLoadBot: (id, token) => dispatch(loadBot(id, token)),
+    onLoadBot: (id, accessToken) => dispatch(loadBot(id, accessToken)),
     onSetupHeader: params => dispatch(setupHeader(params)),
-    onLoadBotModel: (id, token) => dispatch(loadBotModel(id, true, token)),
+    onLoadBotModel: (id, accessToken) =>
+      dispatch(loadBotModel(id, true, accessToken)),
     onAddStateWithTransition: params =>
       dispatch(addStateWithTransition(params)),
-    onSetTransitionEvent: (event, modelId, token) =>
-      dispatch(setTransitionEvent(event, modelId, token)),
+    onSetTransitionEvent: (event, modelId, accessToken) =>
+      dispatch(setTransitionEvent(event, modelId, accessToken)),
     onDoTransitionToState: params => dispatch(doTransitionToState(params)),
     onClearChatHistory: () => dispatch(clearChatHistory()),
     onUpdateState: params => dispatch(updateState(params)),

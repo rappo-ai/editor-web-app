@@ -82,12 +82,12 @@ export function App({
         <Route
           exact
           path="/bot/edit/:botId"
-          render={props => <EditorPage {...props} playerMode="edit" />}
+          render={props => <EditorPage {...props} />}
         />
         <Route
           exact
           path="/bot/play/:botId"
-          render={props => <EditorPage {...props} playerMode="play" />}
+          render={props => <EditorPage {...props} />}
         />
         <Route path="" component={NotFoundPage} />
       </Switch>
