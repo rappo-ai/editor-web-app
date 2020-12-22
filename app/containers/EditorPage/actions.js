@@ -20,12 +20,11 @@ export function addStateWithTransition(params) {
   };
 }
 
-export function setTransitionEvent(event, modelId, token) {
+export function setTransitionEvent(event, modelId) {
   return {
     type: 'SET_TRANSITION_EVENT',
     event,
     modelId,
-    token,
   };
 }
 

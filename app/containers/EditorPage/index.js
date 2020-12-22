@@ -23,6 +23,7 @@ import {
 import ChatInputBar from 'components/ChatInputBar';
 import ChatView from 'components/ChatView';
 
+import { getTransition, hasOutTransition, isDirectAncestor } from 'utils/bot';
 import { getAccessToken } from 'utils/cookies';
 import {
   BOT_SEND_BUTTON_BACKGROUND_COLOR,
@@ -34,7 +35,6 @@ import { filters } from 'utils/filters';
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
 import history from 'utils/history';
-import { getTransition, hasOutTransition, isDirectAncestor } from 'utils/bot';
 
 import {
   addStateWithTransition,
@@ -480,8 +480,8 @@ function mapDispatchToProps(dispatch) {
       dispatch(loadBotModel(id, true, accessToken)),
     onAddStateWithTransition: params =>
       dispatch(addStateWithTransition(params)),
-    onSetTransitionEvent: (event, modelId, accessToken) =>
-      dispatch(setTransitionEvent(event, modelId, accessToken)),
+    onSetTransitionEvent: (event, modelId) =>
+      dispatch(setTransitionEvent(event, modelId)),
     onDoTransitionToState: params => dispatch(doTransitionToState(params)),
     onClearChatHistory: () => dispatch(clearChatHistory()),
     onUpdateState: params => dispatch(updateState(params)),
