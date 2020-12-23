@@ -4,12 +4,14 @@
  *
  */
 
-import React from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import List from 'components/List';
 import PopupListItem from 'components/PopupListItem';
+
+import { useOnComponentClickOut } from 'utils/effects';
 
 const Container = styled.div`
   position: absolute;
@@ -19,9 +21,12 @@ const Container = styled.div`
   overflow: auto;
 `;
 
-function PopupList({ items }) {
+function PopupList({ items, onClickOut }) {
+  const popupListRef = useRef(null);
+  useOnComponentClickOut(popupListRef, onClickOut);
+
   return (
-    <Container>
+    <Container ref={popupListRef}>
       <List items={items} component={PopupListItem} />
     </Container>
   );
@@ -29,6 +34,7 @@ function PopupList({ items }) {
 
 PopupList.propTypes = {
   items: PropTypes.array,
+  onClickOut: PropTypes.func,
 };
 
 export default PopupList;

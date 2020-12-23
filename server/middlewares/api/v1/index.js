@@ -30,7 +30,7 @@ router.use(
   },
 );
 
-router.get('/userinfo', async (req, res) => {
+router.get('/user', async (req, res) => {
   const { user } = req;
   if (!user || !user.id) {
     res.status(500);
@@ -271,12 +271,25 @@ router.get('/model/:id/state', async (req, res) => {
     property: 'id',
     value: req.params.id,
   });
-  const transition = model.transitions.find(
+  let isCatchAll = false;
+  let transition = model.transitions.find(
     e =>
       e.fromStateId === fromStateId &&
       e.event.type === transitionEventType &&
       e.event.value === transitionEventValue,
   );
+  if (!transition) {
+    // direct transition not found, looking for catch-all
+    isCatchAll = true;
+    transition =
+      transitionEventValue !== '' &&
+      model.transitions.find(
+        e =>
+          e.fromStateId === fromStateId &&
+          e.event.type === 'filter' &&
+          e.event.value === '*',
+      );
+  }
   if (!transition) {
     return res.json({
       error: 'TRANSITION_NOT_FOUND',
@@ -290,6 +303,7 @@ router.get('/model/:id/state', async (req, res) => {
   }
   return res.json({
     state,
+    isCatchAll,
   });
 });
 

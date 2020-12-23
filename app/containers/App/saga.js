@@ -27,8 +27,8 @@ function* loadCookies() {
  */
 function* loadUserProfile(action) {
   try {
-    const { url, options } = apiBuilder('/userinfo', {
-      token: action.token,
+    const { url, options } = apiBuilder('/user', {
+      accessToken: action.accessToken,
     });
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
@@ -40,7 +40,9 @@ function* loadUserProfile(action) {
     yield put(userProfileLoaded(profile));
   } catch (err) {
     console.error(err);
-    yield put(userProfileLoadError(err));
+    if (!action.isEndUser) {
+      yield put(userProfileLoadError(err));
+    }
   }
 }
 
@@ -50,7 +52,7 @@ function* loadUserProfile(action) {
 function* loadBots(action) {
   try {
     const { url, options } = apiBuilder('/bot', {
-      token: action.token,
+      accessToken: action.accessToken,
     });
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
@@ -77,7 +79,7 @@ function* createBot(action) {
       body: {
         name: action.name,
       },
-      token: action.token,
+      accessToken: action.accessToken,
     });
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
@@ -86,7 +88,7 @@ function* createBot(action) {
       bot: response.bot,
     });
 
-    yield call(history.push, `/bot/edit/${response.bot.id}`);
+    yield call(history.push, `/edit/bot/${response.bot.id}`);
   } catch (err) {
     console.error(err);
     yield put({

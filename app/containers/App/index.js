@@ -11,7 +11,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import styled from 'styled-components';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, useLocation } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
@@ -21,7 +21,8 @@ import { useInjectSaga } from 'utils/injectSaga';
 
 import HomePage from 'containers/HomePage/Loadable';
 import LandingPage from 'containers/LandingPage/Loadable';
-import NewBotPage from 'containers/NewBotPage';
+import AddBotPage from 'containers/AddBotPage';
+import EditorPage from 'containers/EditorPage/Loadable';
 import PlayerPage from 'containers/PlayerPage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import Header from 'components/Header';
@@ -56,12 +57,21 @@ export function App({
 }) {
   useInjectSaga({ key: 'app', saga });
 
-  const token = getAccessToken();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  let accessToken = queryParams.get('accessToken');
+  const endUserId = queryParams.get('endUserId') || '';
+  let isEndUser = false;
+  if (accessToken) {
+    isEndUser = true;
+  } else {
+    accessToken = getAccessToken();
+  }
 
   useEffect(() => {
-    onLoadCookies(token);
-    onLoadUserProfile(token);
-  }, [token]);
+    onLoadCookies();
+    onLoadUserProfile(accessToken, isEndUser, endUserId);
+  }, [accessToken]);
 
   return (
     <AppWrapper>
@@ -78,16 +88,16 @@ export function App({
         ) : (
           <Route exact path="/" component={LandingPage} />
         )}
-        <Route exact path="/bot/new" component={NewBotPage} />
+        <Route exact path="/add/bot" component={AddBotPage} />
         <Route
           exact
-          path="/bot/edit/:botId"
-          render={props => <PlayerPage {...props} playerMode="edit" />}
+          path="/edit/bot/:botId"
+          render={props => <EditorPage {...props} />}
         />
         <Route
           exact
-          path="/bot/play/:botId"
-          render={props => <PlayerPage {...props} playerMode="play" />}
+          path="/play/bot/:botId"
+          render={props => <PlayerPage {...props} />}
         />
         <Route path="" component={NotFoundPage} />
       </Switch>
@@ -115,8 +125,9 @@ const mapStateToProps = createStructuredSelector({
 
 export function mapDispatchToProps(dispatch) {
   return {
-    onLoadCookies: token => dispatch(loadCookies(token)),
-    onLoadUserProfile: token => dispatch(loadUserProfile(token)),
+    onLoadCookies: () => dispatch(loadCookies()),
+    onLoadUserProfile: (accessToken, isEndUser, endUserId) =>
+      dispatch(loadUserProfile(accessToken, isEndUser, endUserId)),
   };
 }
 

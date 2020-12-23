@@ -11,16 +11,22 @@ const selectPlayerPageDomain = state => state.playerPage || initialState;
  * Other specific selectors
  */
 
-const makeSelectModel = () =>
+const makeSelectBot = () =>
   createSelector(
     selectPlayerPageDomain,
-    substate => substate.model,
+    substate => substate.bot,
   );
 
 const makeSelectChatHistory = () =>
   createSelector(
     selectPlayerPageDomain,
     substate => substate.chatHistory,
+  );
+
+const makeSelectModel = () =>
+  createSelector(
+    selectPlayerPageDomain,
+    substate => substate.model,
   );
 
 const makeSelectTransitionInProgress = () =>
@@ -41,8 +47,9 @@ const makeSelectPlayerPage = () =>
 
 export default makeSelectPlayerPage;
 export {
-  selectPlayerPageDomain,
-  makeSelectModel,
+  makeSelectBot,
   makeSelectChatHistory,
+  makeSelectModel,
   makeSelectTransitionInProgress,
+  selectPlayerPageDomain,
 };

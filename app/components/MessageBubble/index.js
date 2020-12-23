@@ -32,6 +32,7 @@ const Container = styled.div`
       typing: 'flex-start',
       start: 'center',
       user: 'flex-end',
+      end: 'center',
     };
     return map[user];
   }};
@@ -143,7 +144,7 @@ function MessageBubble({
 }) {
   return (
     <Container user={user}>
-      {user === 'bot' && (
+      {user === 'bot' && detachClick && (
         <DetachButton
           backgroundColor="#cccccc"
           iconColor="white"
@@ -158,9 +159,12 @@ function MessageBubble({
       {user !== 'typing' && (
         <Bubble
           fontColor={getBubbleFontColor(user)}
-          backgroundColor={getBubbleBackgroundColor(user, transitionEvent.type)}
+          backgroundColor={getBubbleBackgroundColor(
+            user,
+            transitionEvent && transitionEvent.type,
+          )}
         >
-          {getBubbleText(user, text, transitionEvent.type)}
+          {getBubbleText(user, text, transitionEvent && transitionEvent.type)}
         </Bubble>
       )}
       <ResponseContainer>
@@ -168,6 +172,7 @@ function MessageBubble({
           <Response
             key={response}
             selected={
+              transitionEvent &&
               transitionEvent.type === 'response' &&
               transitionEvent.value === response
             }

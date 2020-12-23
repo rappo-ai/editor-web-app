@@ -1,6 +1,6 @@
 /**
  *
- * NewBotPage
+ * AddBotPage
  *
  */
 
@@ -20,13 +20,13 @@ import {
 import { Para } from 'components/common';
 import { createBot, setupHeader } from 'containers/App/actions';
 
-const NewBotPageSectionContainer = styled(TripleSectionContainer)`
+const AddBotPageSectionContainer = styled(TripleSectionContainer)`
   width: 100%;
   height: 100%;
   padding: 150px 0;
 `;
 
-const NewBotPageSection = styled(TripleSection)`
+const AddBotPageSection = styled(TripleSection)`
   width: 100%;
 `;
 
@@ -56,8 +56,8 @@ const Button = styled.button`
   cursor: pointer;
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1.0)};
 `;
-export function NewBotPage({ onSetupHeader, onCreateBot }) {
-  const token = getAccessToken();
+export function AddBotPage({ onSetupHeader, onCreateBot }) {
+  const accessToken = getAccessToken();
 
   const [name, setName] = useState('');
   const inputRef = useRef(null);
@@ -75,34 +75,36 @@ export function NewBotPage({ onSetupHeader, onCreateBot }) {
   }, []);
 
   return (
-    <NewBotPageSectionContainer direction="column">
-      <NewBotPageSection direction="column" position="top">
+    <AddBotPageSectionContainer direction="column">
+      <AddBotPageSection direction="column" position="top">
         <InputContainer>
           <Input
             ref={inputRef}
             type="text"
             placeholder="Name"
             onChange={ev => setName(ev.target.value)}
-            onKeyPress={ev => ev.key === 'Enter' && onCreateBot(name, token)}
+            onKeyPress={ev =>
+              ev.key === 'Enter' && onCreateBot(name, accessToken)
+            }
           />
         </InputContainer>
-      </NewBotPageSection>
-      <NewBotPageSection direction="column" position="center">
+      </AddBotPageSection>
+      <AddBotPageSection direction="column" position="center">
         <Para>Please enter a name for the new bot.</Para>
-      </NewBotPageSection>
-      <NewBotPageSection direction="column" position="bottom">
+      </AddBotPageSection>
+      <AddBotPageSection direction="column" position="bottom">
         <Button
           disabled={!name.length}
-          onClick={() => onCreateBot(name, token)}
+          onClick={() => onCreateBot(name, accessToken)}
         >
           Create
         </Button>
-      </NewBotPageSection>
-    </NewBotPageSectionContainer>
+      </AddBotPageSection>
+    </AddBotPageSectionContainer>
   );
 }
 
-NewBotPage.propTypes = {
+AddBotPage.propTypes = {
   onSetupHeader: PropTypes.func,
   onCreateBot: PropTypes.func,
 };
@@ -111,7 +113,7 @@ function mapDispatchToProps(dispatch) {
   return {
     onSetupHeader: ({ title, showBackButton }) =>
       dispatch(setupHeader({ title, showBackButton })),
-    onCreateBot: (name, token) => dispatch(createBot(name, token)),
+    onCreateBot: (name, accessToken) => dispatch(createBot(name, accessToken)),
   };
 }
 
@@ -120,4 +122,4 @@ const withConnect = connect(
   mapDispatchToProps,
 );
 
-export default compose(withConnect)(NewBotPage);
+export default compose(withConnect)(AddBotPage);

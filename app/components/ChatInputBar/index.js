@@ -51,9 +51,9 @@ function ChatInputBar({
         type="text"
         value={inputText}
         disabled={disabled}
-        onChange={e => onTyping(e.target.value)}
-        onKeyDown={e => onKeyDown(e)}
-        onBlur={e => onFocusOut(e)}
+        onChange={e => onTyping && onTyping(e.target.value)}
+        onKeyDown={e => onKeyDown && onKeyDown(e)}
+        onBlur={e => onFocusOut && onFocusOut(e)}
       />
       <SendButton
         disabled={disabled}

@@ -1,5 +1,6 @@
 import {
   START_MESSAGE_BUBBLE_BACKGROUND_COLOR,
+  END_MESSAGE_BUBBLE_BACKGROUND_COLOR,
   FILTER_MESSAGE_BUBBLE_BACKGROUND_COLOR,
   BOT_MESSAGE_BUBBLE_BACKGROUND_COLOR,
   BOT_MESSAGE_BUBBLE_FONT_COLOR,
@@ -19,6 +20,9 @@ export function getBubbleBackgroundColor(user, type) {
   switch (user) {
     case 'start':
       color = START_MESSAGE_BUBBLE_BACKGROUND_COLOR;
+      break;
+    case 'end':
+      color = END_MESSAGE_BUBBLE_BACKGROUND_COLOR;
       break;
     case 'typing':
       color = USER_MESSAGE_BUBBLE_BACKGROUND_COLOR;
