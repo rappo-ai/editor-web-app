@@ -52,11 +52,11 @@ export function HomePage({
   // useInjectReducer({ key, reducer });
   // useInjectSaga({ key, saga });
 
-  const token = getAccessToken();
+  const accessToken = getAccessToken();
 
   useEffect(() => {
-    onLoadBots(token);
-  }, [token]);
+    onLoadBots(accessToken);
+  }, [accessToken]);
 
   useEffect(() => {
     const menuIcon = userProfile.profilePic;
@@ -132,7 +132,7 @@ const mapStateToProps = createStructuredSelector({
 
 export function mapDispatchToProps(dispatch) {
   return {
-    onLoadBots: token => dispatch(loadBots(token)),
+    onLoadBots: accessToken => dispatch(loadBots(accessToken)),
     onSetupHeader: ({ title, menuIcon, menuItems, actionButtons }) =>
       dispatch(setupHeader({ title, menuIcon, menuItems, actionButtons })),
   };

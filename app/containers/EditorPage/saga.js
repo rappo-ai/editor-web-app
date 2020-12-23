@@ -8,7 +8,7 @@ import request from 'utils/request';
 function* loadBot(action) {
   try {
     const { url, options } = apiBuilder(`/bot/${action.id}`, {
-      token: action.token,
+      accessToken: action.accessToken,
     });
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
@@ -32,7 +32,7 @@ function* createBotModel(action) {
   const { url, options } = apiBuilder(`/model`, {
     body: { botId: action.botId },
     method: 'POST',
-    token: action.token,
+    accessToken: action.accessToken,
   });
   const response = yield call(request, url, options);
   if (response.model) {
@@ -49,7 +49,7 @@ function* createBotModel(action) {
 function* loadBotModel(action) {
   try {
     const { url, options } = apiBuilder(`/bot/${action.botId}/model`, {
-      token: action.token,
+      accessToken: action.accessToken,
     });
     const response = yield call(request, url, options);
     if (response.models) {
@@ -62,7 +62,7 @@ function* loadBotModel(action) {
         yield put({
           type: 'CREATE_BOT_MODEL',
           botId: action.botId,
-          token: action.token,
+          accessToken: action.accessToken,
         });
       }
     }
@@ -87,7 +87,7 @@ function* addState(action) {
         message: action.message,
         responses: action.responses,
       },
-      token: action.token,
+      accessToken: action.accessToken,
     });
     response = yield call(request, url, options);
     if (response.model) {
@@ -122,7 +122,7 @@ function* updateState(action) {
           message: action.message,
           responses: action.responses,
         },
-        token: action.token,
+        accessToken: action.accessToken,
       },
     );
     response = yield call(request, url, options);
@@ -154,7 +154,7 @@ function* deleteState(action) {
       `/model/${action.modelId}/state/${action.stateId}`,
       {
         method: 'DELETE',
-        token: action.token,
+        accessToken: action.accessToken,
       },
     );
     response = yield call(request, url, options);
@@ -189,7 +189,7 @@ function* addTransition(action) {
         toStateId: action.toStateId,
         event: action.event,
       },
-      token: action.token,
+      accessToken: action.accessToken,
     });
     response = yield call(request, url, options);
     if (response.model) {
@@ -220,7 +220,7 @@ function* deleteTransition(action) {
       `/model/${action.modelId}/transition/${action.transitionId}`,
       {
         method: 'DELETE',
-        token: action.token,
+        accessToken: action.accessToken,
       },
     );
     response = yield call(request, url, options);
@@ -254,7 +254,7 @@ function* doTransitionToState(action) {
       }&transitionEventType=\
 ${action.event.type}&transitionEventValue=${action.event.value}`,
       {
-        token: action.token,
+        accessToken: action.accessToken,
       },
     );
     response = yield call(request, url, options);
@@ -291,7 +291,7 @@ function* addStateWithTransition(action) {
       modelId: action.modelId,
       fromStateId: action.fromStateId,
       event: action.event,
-      token: action.token,
+      accessToken: action.accessToken,
     });
     if (existingState) {
       return;
@@ -301,7 +301,7 @@ function* addStateWithTransition(action) {
       message: action.message,
       responses: action.responses,
       modelId: action.modelId,
-      token: action.token,
+      accessToken: action.accessToken,
     });
     // eslint-disable-next-line no-unused-vars
     const { transition, model } = yield call(addTransition, {
@@ -310,7 +310,7 @@ function* addStateWithTransition(action) {
       toStateId: state.id,
       event: action.event,
       modelId: action.modelId,
-      token: action.token,
+      accessToken: action.accessToken,
     });
   } catch (err) {
     console.error(err);

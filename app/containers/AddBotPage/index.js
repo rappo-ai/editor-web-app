@@ -57,7 +57,7 @@ const Button = styled.button`
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1.0)};
 `;
 export function AddBotPage({ onSetupHeader, onCreateBot }) {
-  const token = getAccessToken();
+  const accessToken = getAccessToken();
 
   const [name, setName] = useState('');
   const inputRef = useRef(null);
@@ -83,7 +83,9 @@ export function AddBotPage({ onSetupHeader, onCreateBot }) {
             type="text"
             placeholder="Name"
             onChange={ev => setName(ev.target.value)}
-            onKeyPress={ev => ev.key === 'Enter' && onCreateBot(name, token)}
+            onKeyPress={ev =>
+              ev.key === 'Enter' && onCreateBot(name, accessToken)
+            }
           />
         </InputContainer>
       </AddBotPageSection>
@@ -93,7 +95,7 @@ export function AddBotPage({ onSetupHeader, onCreateBot }) {
       <AddBotPageSection direction="column" position="bottom">
         <Button
           disabled={!name.length}
-          onClick={() => onCreateBot(name, token)}
+          onClick={() => onCreateBot(name, accessToken)}
         >
           Create
         </Button>
@@ -111,7 +113,7 @@ function mapDispatchToProps(dispatch) {
   return {
     onSetupHeader: ({ title, showBackButton }) =>
       dispatch(setupHeader({ title, showBackButton })),
-    onCreateBot: (name, token) => dispatch(createBot(name, token)),
+    onCreateBot: (name, accessToken) => dispatch(createBot(name, accessToken)),
   };
 }
 

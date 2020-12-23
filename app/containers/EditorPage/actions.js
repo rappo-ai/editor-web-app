@@ -4,12 +4,12 @@
  *
  */
 
-export function loadBotModel(botId, createIfNone, token) {
+export function loadBotModel(botId, createIfNone, accessToken) {
   return {
     type: 'LOAD_BOT_MODEL',
     botId,
     createIfNone,
-    token,
+    accessToken,
   };
 }
 

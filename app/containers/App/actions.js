@@ -53,10 +53,10 @@ export function cookiesLoaded(cookies) {
  *
  * @return {object} An action object with a type of LOAD_USER_PROFILE
  */
-export function loadUserProfile(token) {
+export function loadUserProfile(accessToken) {
   return {
     type: LOAD_USER_PROFILE,
-    token,
+    accessToken,
   };
 }
 
@@ -93,10 +93,10 @@ export function userProfileLoadError(error) {
  *
  * @return {object} An action object with a type of LOAD_BOTS
  */
-export function loadBots(token) {
+export function loadBots(accessToken) {
   return {
     type: 'LOAD_BOTS',
-    token,
+    accessToken,
   };
 }
 
@@ -105,24 +105,24 @@ export function loadBots(token) {
  *
  * @return {object} An action object with a type of ADD_BOT
  */
-export function createBot(name = 'Untitled ...', token) {
+export function createBot(name = 'Untitled ...', accessToken) {
   return {
     type: 'CREATE_BOT',
     name,
-    token,
+    accessToken,
   };
 }
 
 /**
- * Loads a bots from DB.
+ * Loads a bot from DB.
  *
  * @return {object} An action object with a type of LOAD_BOT
  */
-export function loadBot(id, token) {
+export function loadBot(id, accessToken) {
   return {
     type: 'LOAD_BOT',
     id,
-    token,
+    accessToken,
   };
 }
 

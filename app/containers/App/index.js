@@ -56,12 +56,12 @@ export function App({
 }) {
   useInjectSaga({ key: 'app', saga });
 
-  const token = getAccessToken();
+  const accessToken = getAccessToken();
 
   useEffect(() => {
-    onLoadCookies(token);
-    onLoadUserProfile(token);
-  }, [token]);
+    onLoadCookies(accessToken);
+    onLoadUserProfile(accessToken);
+  }, [accessToken]);
 
   return (
     <AppWrapper>
@@ -86,7 +86,7 @@ export function App({
         />
         <Route
           exact
-          path="/bot/play/:botId"
+          path="/play/bot/:botId"
           render={props => <EditorPage {...props} />}
         />
         <Route path="" component={NotFoundPage} />
@@ -115,8 +115,8 @@ const mapStateToProps = createStructuredSelector({
 
 export function mapDispatchToProps(dispatch) {
   return {
-    onLoadCookies: token => dispatch(loadCookies(token)),
-    onLoadUserProfile: token => dispatch(loadUserProfile(token)),
+    onLoadCookies: accessToken => dispatch(loadCookies(accessToken)),
+    onLoadUserProfile: accessToken => dispatch(loadUserProfile(accessToken)),
   };
 }
 

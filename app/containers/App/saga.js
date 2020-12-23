@@ -28,7 +28,7 @@ function* loadCookies() {
 function* loadUserProfile(action) {
   try {
     const { url, options } = apiBuilder('/userinfo', {
-      token: action.token,
+      accessToken: action.accessToken,
     });
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
@@ -50,7 +50,7 @@ function* loadUserProfile(action) {
 function* loadBots(action) {
   try {
     const { url, options } = apiBuilder('/bot', {
-      token: action.token,
+      accessToken: action.accessToken,
     });
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
@@ -77,7 +77,7 @@ function* createBot(action) {
       body: {
         name: action.name,
       },
-      token: action.token,
+      accessToken: action.accessToken,
     });
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
