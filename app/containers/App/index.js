@@ -11,7 +11,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import styled from 'styled-components';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, useLocation } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
@@ -23,6 +23,7 @@ import HomePage from 'containers/HomePage/Loadable';
 import LandingPage from 'containers/LandingPage/Loadable';
 import AddBotPage from 'containers/AddBotPage';
 import EditorPage from 'containers/EditorPage/Loadable';
+import PlayerPage from 'containers/PlayerPage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import Header from 'components/Header';
 
@@ -56,11 +57,20 @@ export function App({
 }) {
   useInjectSaga({ key: 'app', saga });
 
-  const accessToken = getAccessToken();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  let accessToken = queryParams.get('accessToken');
+  const endUserId = queryParams.get('endUserId') || '';
+  let isEndUser = false;
+  if (accessToken) {
+    isEndUser = true;
+  } else {
+    accessToken = getAccessToken();
+  }
 
   useEffect(() => {
-    onLoadCookies(accessToken);
-    onLoadUserProfile(accessToken);
+    onLoadCookies();
+    onLoadUserProfile(accessToken, isEndUser, endUserId);
   }, [accessToken]);
 
   return (
@@ -87,7 +97,7 @@ export function App({
         <Route
           exact
           path="/play/bot/:botId"
-          render={props => <EditorPage {...props} />}
+          render={props => <PlayerPage {...props} />}
         />
         <Route path="" component={NotFoundPage} />
       </Switch>
@@ -115,8 +125,9 @@ const mapStateToProps = createStructuredSelector({
 
 export function mapDispatchToProps(dispatch) {
   return {
-    onLoadCookies: accessToken => dispatch(loadCookies(accessToken)),
-    onLoadUserProfile: accessToken => dispatch(loadUserProfile(accessToken)),
+    onLoadCookies: () => dispatch(loadCookies()),
+    onLoadUserProfile: (accessToken, isEndUser, endUserId) =>
+      dispatch(loadUserProfile(accessToken, isEndUser, endUserId)),
   };
 }
 

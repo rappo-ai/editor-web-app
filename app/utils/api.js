@@ -12,11 +12,13 @@ export default function apiBuilder(
   const url = `${domain}${apiPrefix}${apiEndpoint}`;
   const options = {
     headers: {
-      Authorization: `Bearer ${accessToken}`,
       ...headers,
     },
     method,
   };
+  if (accessToken) {
+    options.headers.Authorization = `Bearer ${accessToken}`;
+  }
   if (body) {
     Object.assign(options, {
       body: JSON.stringify(body),

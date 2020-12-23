@@ -258,7 +258,11 @@ ${action.event.type}&transitionEventValue=${action.event.value}`,
       },
     );
     response = yield call(request, url, options);
-    if (response.state) {
+    if (
+      response.state &&
+      (!response.isCatchAll ||
+        (action.event.type === 'filter' && action.event.value === '*'))
+    ) {
       yield put({
         type: 'DO_TRANSITION_TO_STATE_SUCCESS',
         state: response.state,
@@ -286,14 +290,17 @@ ${action.event.type}&transitionEventValue=${action.event.value}`,
  */
 function* addStateWithTransition(action) {
   try {
-    const { state: existingState } = yield call(doTransitionToState, {
-      type: 'DO_TRANSITION_TO_STATE',
-      modelId: action.modelId,
-      fromStateId: action.fromStateId,
-      event: action.event,
-      accessToken: action.accessToken,
-    });
-    if (existingState) {
+    const { state: existingState, isCatchAll } = yield call(
+      doTransitionToState,
+      {
+        type: 'DO_TRANSITION_TO_STATE',
+        modelId: action.modelId,
+        fromStateId: action.fromStateId,
+        event: action.event,
+        accessToken: action.accessToken,
+      },
+    );
+    if (existingState && !isCatchAll) {
       return;
     }
     const { state } = yield call(addState, {

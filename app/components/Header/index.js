@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
@@ -7,6 +7,8 @@ import { createStructuredSelector } from 'reselect';
 
 import { PRIMARY_COLOR } from 'utils/constants';
 import history from 'utils/history';
+import { useOnComponentClickOut } from 'utils/effects';
+
 import {
   TripleSectionContainer,
   TripleSection,
@@ -105,22 +107,7 @@ const PopupLi = styled.li`
 
 function PopupMenu({ items, onClickOut }) {
   const containerRef = useRef(null);
-
-  useEffect(() => {
-    function onWindowClick(ev) {
-      if (
-        containerRef &&
-        containerRef.current &&
-        !containerRef.current.contains(ev.target)
-      ) {
-        onClickOut();
-      }
-    }
-    window.addEventListener('click', onWindowClick);
-    return () => {
-      window.removeEventListener('click', onWindowClick);
-    };
-  });
+  useOnComponentClickOut(containerRef, onClickOut);
 
   return (
     <PopupContainer ref={containerRef}>

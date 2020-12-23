@@ -266,6 +266,7 @@ export function EditorPage({
                 accessToken,
               });
               setInputText('');
+              onPopupListClickOut();
             },
           }));
         if (!linkStates.length) {
@@ -351,6 +352,7 @@ export function EditorPage({
     error,
     messages,
     popupListItems,
+    onPopupListClickOut,
   };
   const chatInputBarProps = {
     inputText,
@@ -367,7 +369,6 @@ export function EditorPage({
     onTyping,
     onKeyDown,
     onSendClick,
-    onFocusOut,
   };
 
   function onTyping(input) {
@@ -419,12 +420,11 @@ export function EditorPage({
       onSetTransitionEvent({ type, value }, model.id);
     }
     setInputText('');
+    onPopupListClickOut();
   }
 
-  function onFocusOut() {
-    if (popupListEnabled) {
-      setPopupListEnabled(false);
-    }
+  function onPopupListClickOut() {
+    setPopupListEnabled(false);
   }
 
   return (

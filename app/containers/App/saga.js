@@ -27,7 +27,7 @@ function* loadCookies() {
  */
 function* loadUserProfile(action) {
   try {
-    const { url, options } = apiBuilder('/userinfo', {
+    const { url, options } = apiBuilder('/user', {
       accessToken: action.accessToken,
     });
     // Call our request helper (see 'utils/request')
@@ -40,7 +40,9 @@ function* loadUserProfile(action) {
     yield put(userProfileLoaded(profile));
   } catch (err) {
     console.error(err);
-    yield put(userProfileLoadError(err));
+    if (!action.isEndUser) {
+      yield put(userProfileLoadError(err));
+    }
   }
 }
 

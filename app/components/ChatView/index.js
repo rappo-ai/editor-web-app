@@ -17,11 +17,19 @@ const Container = styled.div`
   overflow: auto;
 `;
 
-function ChatView({ loading, error, messages, popupListItems }) {
+function ChatView({
+  loading,
+  error,
+  messages,
+  popupListItems,
+  onPopupListClickOut,
+}) {
   return (
     <Container>
       <MessageList loading={loading} error={error} messages={messages} />
-      {popupListItems.length > 0 && <PopupList items={popupListItems} />}
+      {popupListItems.length > 0 && (
+        <PopupList items={popupListItems} onClickOut={onPopupListClickOut} />
+      )}
     </Container>
   );
 }
@@ -31,6 +39,7 @@ ChatView.propTypes = {
   error: PropTypes.any,
   messages: PropTypes.oneOfType([PropTypes.bool, PropTypes.array]),
   popupListItems: PropTypes.array,
+  onPopupListClickOut: PropTypes.func,
 };
 
 export default ChatView;

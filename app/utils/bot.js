@@ -6,11 +6,18 @@ export function hasInTransition(model, state) {
   );
 }
 
-export function hasOutTransition(model, state) {
+export function hasOutTransition(model, state, transitionEvent) {
   return (
     model &&
     model.transitions &&
-    model.transitions.some(t => t.fromStateId === state.id)
+    model.transitions.some(
+      t =>
+        t.fromStateId === state.id &&
+        (!transitionEvent ||
+          transitionEvent.type !== 'response' ||
+          !transitionEvent.value ||
+          transitionEvent.value === t.event.value),
+    )
   );
 }
 
