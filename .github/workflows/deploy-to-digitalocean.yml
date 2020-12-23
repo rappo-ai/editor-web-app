@@ -48,13 +48,13 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
-        envs: ENV_FILE,GCLOUD_CREDENTIALS_FILE
+        envs: GOOGLE_APPLICATION_CREDENTIALS,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,GCLOUD_CREDENTIALS_FILE
         script: |
           rm -rf ~/rappo-web-app/*
           tar -xf ~/rappo-web-app.tar.gz -C ~/rappo-web-app
           rm -f ~/rappo-web-app.tar.gz
           printf "GOOGLE_APPLICATION_CREDENTIALS: "$GOOGLE_APPLICATION_CREDENTIALS"\nGOOGLE_CLIENT_ID: "$GOOGLE_CLIENT_ID"\nGOOGLE_CLIENT_SECRET: "$GOOGLE_CLIENT_SECRET"\n" > ~/rappo-web-app/.env
-          printf $GCLOUD_CREDENTIALS_FILE > ~/rappo-web-app/gcloud-credentials.json
+          echo $GCLOUD_CREDENTIALS_FILE > ~/rappo-web-app/gcloud-credentials.json
           if pm2 list | grep -q "rappo-web-app"; then
             pm2 start rappo-web-app
           else
