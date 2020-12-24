@@ -127,6 +127,7 @@ export function EditorPage({
         onDeleteTransition({
           modelId: model.id,
           transitionId: lastTransition.id,
+          accessToken,
         }),
       responseClick: response =>
         !transitionInProgress &&
