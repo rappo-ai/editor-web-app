@@ -71,7 +71,7 @@ const ResponseContainer = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  margin-left: ${props => (props.hasMargin ? '22px' : '0')};
+  padding-left: ${props => (props.hasMargin ? '22px' : '0')};
 `;
 const Response = styled.p`
   max-width: 100%;
