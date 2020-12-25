@@ -370,6 +370,7 @@ export function EditorPage({
     onTyping,
     onKeyDown,
     onSendClick,
+    onInputClick,
   };
 
   function onTyping(input) {
@@ -389,6 +390,12 @@ export function EditorPage({
     }
     if (switchInputModeKeys.some(key => key === event.key) && !inputText) {
       setInputMode(inputMode === 'bot' ? 'user' : 'bot');
+    }
+  }
+
+  function onInputClick() {
+    if (!inputText) {
+      setPopupListEnabled(!popupListEnabled);
     }
   }
 

@@ -37,6 +37,24 @@ const Container = styled.div`
     return map[user];
   }};
 `;
+
+const BubbleContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  justify-content: ${({ user }) => {
+    const map = {
+      bot: 'flex-start',
+      typing: 'flex-start',
+      start: 'center',
+      user: 'flex-end',
+      end: 'center',
+    };
+    return map[user];
+  }};
+`;
+
 const Bubble = styled.p`
   white-space: pre-wrap;
   max-width: 80%;
@@ -53,6 +71,7 @@ const ResponseContainer = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  padding-left: ${props => (props.hasMargin ? '22px' : '0')};
 `;
 const Response = styled.p`
   max-width: 100%;
@@ -130,7 +149,7 @@ function LoadingBubble() {
 }
 
 const DetachButton = styled(FAButton)`
-  margin: 6px 0 0 2px;
+  margin-right: 6px;
 `;
 
 function MessageBubble({
@@ -144,30 +163,32 @@ function MessageBubble({
 }) {
   return (
     <Container user={user}>
-      {user === 'bot' && detachClick && (
-        <DetachButton
-          backgroundColor="#cccccc"
-          iconColor="white"
-          iconClass="fa-cut fa-rotate-90"
-          iconSize="8px"
-          width="12px"
-          height="12px"
-          onClick={detachClick}
-        />
-      )}
       {user === 'typing' && <LoadingBubble />}
-      {user !== 'typing' && (
-        <Bubble
-          fontColor={getBubbleFontColor(user)}
-          backgroundColor={getBubbleBackgroundColor(
-            user,
-            transitionEvent && transitionEvent.type,
-          )}
-        >
-          {getBubbleText(user, text, transitionEvent && transitionEvent.type)}
-        </Bubble>
-      )}
-      <ResponseContainer>
+      <BubbleContainer user={user}>
+        {user === 'bot' && detachClick && (
+          <DetachButton
+            backgroundColor="#cccccc"
+            iconColor="white"
+            iconClass="fa-cut fa-rotate-90"
+            iconSize="12px"
+            width="16px"
+            height="16px"
+            onClick={detachClick}
+          />
+        )}
+        {user !== 'typing' && (
+          <Bubble
+            fontColor={getBubbleFontColor(user)}
+            backgroundColor={getBubbleBackgroundColor(
+              user,
+              transitionEvent && transitionEvent.type,
+            )}
+          >
+            {getBubbleText(user, text, transitionEvent && transitionEvent.type)}
+          </Bubble>
+        )}
+      </BubbleContainer>
+      <ResponseContainer hasMargin={!!detachClick}>
         {responses.map(response => (
           <Response
             key={response}
