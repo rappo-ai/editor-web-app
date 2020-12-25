@@ -100,7 +100,6 @@ export function PlayerPage({
         user: 'user',
         text: e.transitionEvent.value,
         transitionEvent: e.transitionEvent,
-        responses: [],
       });
     }
     return a;
@@ -110,7 +109,6 @@ export function PlayerPage({
       id: `end-state`,
       user: 'end',
       text: 'The conversation has ended.',
-      responses: [],
     });
   }
 
@@ -119,7 +117,6 @@ export function PlayerPage({
       id: 'typing',
       user: 'typing',
       text: '...',
-      responses: [],
     });
   }
 

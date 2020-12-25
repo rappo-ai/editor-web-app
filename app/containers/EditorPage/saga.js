@@ -328,6 +328,40 @@ function* addStateWithTransition(action) {
   }
 }
 
+/**
+ * Publish the bot with botId.
+ */
+function* publishBot(action) {
+  let response;
+  try {
+    const { url, options } = apiBuilder(`/bot/${action.botId}/publish`, {
+      method: 'POST',
+      accessToken: action.accessToken,
+    });
+    response = yield call(request, url, options);
+    if (response.accessToken && response.botId) {
+      yield put({
+        type: 'PUBLISH_BOT_SUCCESS',
+        accessToken: response.accessToken,
+        botId: response.botId,
+      });
+    } else {
+      yield put({
+        type: 'PUBLISH_BOT_ERROR',
+        error: response,
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: 'PUBLISH_BOT_ERROR',
+      error: err,
+    });
+    response = err;
+  }
+  return response;
+}
+
 // Individual exports for testing
 export default function* editorPageSaga() {
   yield all([
@@ -341,5 +375,6 @@ export default function* editorPageSaga() {
     yield takeEvery('DELETE_TRANSITION', deleteTransition),
     yield takeEvery('DO_TRANSITION_TO_STATE', doTransitionToState),
     yield takeEvery('ADD_STATE_WITH_TRANSITION', addStateWithTransition),
+    yield takeEvery('PUBLISH_BOT', publishBot),
   ]);
 }
