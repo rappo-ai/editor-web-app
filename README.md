@@ -1,3 +1,5 @@
+![Deploy to Digital Ocean](https://github.com/rappo-ai/editor-web-app/workflows/Deploy%20to%20Digital%20Ocean/badge.svg)
+
 Codebase for rappo web editor.
 
 Basic tech stack - React, Express, NodeJS, Webpack
