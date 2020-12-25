@@ -51,7 +51,7 @@ app.use(passport.session());
 
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 app.use('/api/v1', apiV1);
-app.use('/api/*', (req, res) => res.send(404));
+app.use('/api/*', (req, res) => res.sendStatus(404));
 app.use('/login', login);
 app.use('/logout', logout);
 

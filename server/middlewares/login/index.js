@@ -26,7 +26,7 @@ async function addGoogleUser(profile) {
   if (!accessToken) {
     accessToken = await db.create('accesstoken');
     await accessToken.set('userid', user.id);
-    user.set('accesstokenid', accessToken.id);
+    await user.set('accesstokenid', accessToken.id);
   }
 
   return user;

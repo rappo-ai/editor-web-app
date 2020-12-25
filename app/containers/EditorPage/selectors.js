@@ -29,6 +29,12 @@ const makeSelectTransitionInProgress = () =>
     substate => substate.transitionInProgress,
   );
 
+const makeSelectPublishUrl = () =>
+  createSelector(
+    selectEditorPageDomain,
+    substate => substate.publishUrl,
+  );
+
 /**
  * Default selector used by EditorPage
  */
@@ -45,4 +51,5 @@ export {
   makeSelectModel,
   makeSelectChatHistory,
   makeSelectTransitionInProgress,
+  makeSelectPublishUrl,
 };

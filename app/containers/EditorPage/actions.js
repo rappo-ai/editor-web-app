@@ -68,9 +68,10 @@ export function deleteTransition(params) {
     ...params,
   };
 }
-export function branchFromState(params) {
+
+export function publishBot(params) {
   return {
-    type: 'BRANCH_FROM_STATE',
+    type: 'PUBLISH_BOT',
     ...params,
   };
 }

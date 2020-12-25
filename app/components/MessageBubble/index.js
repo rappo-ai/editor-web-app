@@ -189,20 +189,21 @@ function MessageBubble({
         )}
       </BubbleContainer>
       <ResponseContainer hasMargin={!!detachClick}>
-        {responses.map(response => (
-          <Response
-            key={response}
-            selected={
-              transitionEvent &&
-              transitionEvent.type === 'response' &&
-              transitionEvent.value === response
-            }
-            isLastItem={isLastItem}
-            onClick={() => responseClick(response)}
-          >
-            {response}
-          </Response>
-        ))}
+        {responses &&
+          responses.map(response => (
+            <Response
+              key={response}
+              selected={
+                transitionEvent &&
+                transitionEvent.type === 'response' &&
+                transitionEvent.value === response
+              }
+              isLastItem={isLastItem}
+              onClick={() => responseClick(response)}
+            >
+              {response}
+            </Response>
+          ))}
       </ResponseContainer>
     </Container>
   );

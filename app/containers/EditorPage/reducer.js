@@ -14,6 +14,7 @@ export const initialState = {
     },
   ],
   transitionInProgress: true,
+  publishUrl: '',
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -100,11 +101,20 @@ const editorPageReducer = (state = initialState, action) =>
         draft.transitionInProgress = false;
         break;
       case 'CLEAR_CHAT_HISTORY':
-        draft.chatHistory = initialState.chatHistory;
-        draft.model = initialState.model;
-        draft.transitionInProgress = initialState.transitionInProgress;
+        draft = initialState;
         break;
-      case 'BRANCH_FROM_STATE':
+      case 'PUBLISH_BOT':
+        draft.publishUrl = '';
+        break;
+      case 'PUBLISH_BOT_SUCCESS':
+        draft.publishUrl = `${window.location.origin}/play/bot/${
+          action.botId
+        }?accessToken=${action.accessToken.value}`;
+        break;
+      case 'PUBLISH_BOT_ERROR':
+        draft.publishUrl = '';
+        break;
+      default:
         break;
     }
   });

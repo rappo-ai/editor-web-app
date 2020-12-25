@@ -106,6 +106,41 @@ router.get('/bot/:id/model', async (req, res) => {
   });
 });
 
+router.post('/bot/:botId/publish', async (req, res) => {
+  const { user } = req;
+  if (!user || !user.id) {
+    res.status(500);
+    return res.end();
+  }
+
+  let botUser = await db.get('user', {
+    property: 'botid',
+    value: req.params.botId,
+  });
+
+  let accessToken;
+  if (!botUser) {
+    botUser = await db.create('user');
+    await botUser.set('botid', req.params.botId);
+  } else {
+    accessToken = await db.get('accesstoken', {
+      property: 'userid',
+      value: botUser.id,
+    });
+  }
+
+  if (!accessToken) {
+    accessToken = await db.create('accesstoken');
+    await accessToken.set('userid', botUser.id);
+    await botUser.set('accesstokenid', accessToken.id);
+  }
+
+  return res.json({
+    accessToken,
+    botId: req.params.botId,
+  });
+});
+
 router.post('/model', async (req, res) => {
   const { user } = req;
   const { botId } = req.body;

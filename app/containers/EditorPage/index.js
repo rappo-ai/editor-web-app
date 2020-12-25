@@ -30,6 +30,7 @@ import {
   BOT_SEND_BUTTON_ICON_COLOR,
   USER_SEND_BUTTON_BACKGROUND_COLOR,
   USER_SEND_BUTTON_ICON_COLOR,
+  PUBLISH_BOT_ICON_COLOR,
 } from 'utils/constants';
 import { filters } from 'utils/filters';
 import { useInjectSaga } from 'utils/injectSaga';
@@ -46,7 +47,7 @@ import {
   deleteState,
   addTransition,
   deleteTransition,
-  branchFromState,
+  publishBot,
 } from './actions';
 import reducer from './reducer';
 import saga from './saga';
@@ -54,6 +55,7 @@ import {
   makeSelectModel,
   makeSelectChatHistory,
   makeSelectTransitionInProgress,
+  makeSelectPublishUrl,
 } from './selectors';
 
 const Container = styled.div`
@@ -74,6 +76,7 @@ export function EditorPage({
   model,
   chatHistory,
   transitionInProgress,
+  publishUrl,
   onLoadBot,
   onSetupHeader,
   onLoadBotModel,
@@ -83,6 +86,7 @@ export function EditorPage({
   onClearChatHistory,
   onAddTransition,
   onDeleteTransition,
+  onPublishBot,
 }) {
   useInjectReducer({ key: 'editorPage', reducer });
   useInjectSaga({ key: 'editorPage', saga });
@@ -139,7 +143,6 @@ export function EditorPage({
         user: 'user',
         text: e.transitionEvent.value,
         transitionEvent: e.transitionEvent,
-        responses: [],
       });
     }
     return a;
@@ -150,7 +153,6 @@ export function EditorPage({
       id: 'typing',
       user: 'typing',
       text: '...',
-      responses: [],
     });
   }
 
@@ -164,6 +166,13 @@ export function EditorPage({
     onLoadBotModel(botId, accessToken);
     return () => onClearChatHistory();
   }, [botId, accessToken, onLoadBot, onLoadBotModel]);
+
+  // print publish url to console whenever it changes from '' to some value
+  useEffect(() => {
+    if (publishUrl) {
+      alert(publishUrl);
+    }
+  }, [publishUrl]);
 
   useEffect(() => {
     if (model && model.id) {
@@ -231,6 +240,13 @@ export function EditorPage({
           inputMode === 'bot'
             ? BOT_SEND_BUTTON_BACKGROUND_COLOR
             : USER_SEND_BUTTON_BACKGROUND_COLOR,
+      },
+      {
+        faClass: 'fa-share-square',
+        click: () => {
+          onPublishBot({ botId, accessToken });
+        },
+        color: PUBLISH_BOT_ICON_COLOR,
       },
     ];
     onSetupHeader({
@@ -457,6 +473,7 @@ EditorPage.propTypes = {
   model: PropTypes.object,
   chatHistory: PropTypes.array,
   transitionInProgress: PropTypes.bool,
+  publishUrl: PropTypes.string,
   onLoadBot: PropTypes.func,
   onSetupHeader: PropTypes.func,
   onLoadBotModel: PropTypes.func,
@@ -468,7 +485,7 @@ EditorPage.propTypes = {
   onDeleteState: PropTypes.func,
   onAddTransition: PropTypes.func,
   onDeleteTransition: PropTypes.func,
-  onBranchFromState: PropTypes.func,
+  onPublishBot: PropTypes.func,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -478,6 +495,7 @@ const mapStateToProps = createStructuredSelector({
   model: makeSelectModel(),
   chatHistory: makeSelectChatHistory(),
   transitionInProgress: makeSelectTransitionInProgress(),
+  publishUrl: makeSelectPublishUrl(),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -496,7 +514,7 @@ function mapDispatchToProps(dispatch) {
     onDeleteState: params => dispatch(deleteState(params)),
     onAddTransition: params => dispatch(addTransition(params)),
     onDeleteTransition: params => dispatch(deleteTransition(params)),
-    onBranchFromState: params => dispatch(branchFromState(params)),
+    onPublishBot: params => dispatch(publishBot(params)),
   };
 }
 
