@@ -386,7 +386,7 @@ export function EditorPage({
     onTyping,
     onKeyDown,
     onSendClick,
-    onInputClick,
+    onResponseMenuButtonClick,
   };
 
   function onTyping(input) {
@@ -409,7 +409,7 @@ export function EditorPage({
     }
   }
 
-  function onInputClick() {
+  function onResponseMenuButtonClick() {
     if (!inputText) {
       setPopupListEnabled(!popupListEnabled);
     }
