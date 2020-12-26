@@ -9,6 +9,7 @@ import { PRIMARY_COLOR } from 'utils/constants';
 import history from 'utils/history';
 import { useOnComponentClickOut } from 'utils/effects';
 
+import ActionButtonBar from 'components/ActionButtonBar';
 import {
   TripleSectionContainer,
   TripleSection,
@@ -44,35 +45,6 @@ function LogoHeader() {
     </NavBar>
   );
 }
-
-const ActionButtonIcon = styled.i`
-  margin: 0 5px;
-  cursor: pointer;
-  color: ${props => props.color || '#777777'};
-`;
-function ActionButtonBar({ buttons }) {
-  return (
-    <>
-      {buttons.map((button, index) => {
-        const className = `fa fa-2x ${button.faClass}`;
-        return (
-          <ActionButtonIcon
-            // eslint-disable-next-line react/no-array-index-key
-            key={index}
-            className={className}
-            color={button.color}
-            aria-hidden="true"
-            onClick={button.click}
-          />
-        );
-      })}
-    </>
-  );
-}
-
-ActionButtonBar.propTypes = {
-  buttons: PropTypes.array,
-};
 
 const PopupContainer = styled.section`
   position: absolute;

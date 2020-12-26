@@ -8,7 +8,10 @@ import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
+import ActionButtonBar from 'components/ActionButtonBar';
 import { FAButton } from 'components/common';
+
+import { INPUT_ACTION_BUTTON_ICON_COLOR } from 'utils/constants';
 
 const Container = styled.div`
   padding: 2px;
@@ -26,6 +29,20 @@ const InputBar = styled.input`
 
 const SendButton = styled(FAButton)``;
 
+function getActionButton(type) {
+  const button = {
+    color: INPUT_ACTION_BUTTON_ICON_COLOR,
+  };
+  switch (type) {
+    case 'response':
+      button.faClass = 'fa-plus';
+      break;
+    default:
+      break;
+  }
+  return button;
+}
+
 function ChatInputBar({
   inputText,
   disabled,
@@ -37,6 +54,7 @@ function ChatInputBar({
   onSendClick,
   onFocusOut,
   onInputClick,
+  onResponseMenuButtonClick,
 }) {
   const inputBar = useRef(null);
   useEffect(() => {
@@ -45,8 +63,16 @@ function ChatInputBar({
     }
   }, [inputText, disabled]);
 
+  const actionButtons = [];
+  if (onResponseMenuButtonClick) {
+    const responseButton = getActionButton('response');
+    responseButton.click = onResponseMenuButtonClick;
+    actionButtons.push(responseButton);
+  }
+
   return (
     <Container>
+      <ActionButtonBar disabled={disabled} buttons={actionButtons} />
       <InputBar
         ref={inputBar}
         type="text"
@@ -81,6 +107,7 @@ ChatInputBar.propTypes = {
   onSendClick: PropTypes.func,
   onFocusOut: PropTypes.func,
   onInputClick: PropTypes.func,
+  onResponseMenuButtonClick: PropTypes.func,
 };
 
 export default ChatInputBar;
