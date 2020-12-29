@@ -83,6 +83,7 @@ const editorPageReducer = (state = initialState, action) =>
             a.push(e);
             return a;
           }, []);
+          draft.chatHistory[draft.chatHistory.length - 1].transitionEvent = '';
           draft.model = action.model;
         }
         break;
