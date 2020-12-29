@@ -184,7 +184,9 @@ export function PlayerPage({
     <Container>
       <Helmet>
         <title>{bot.name}</title>
-        <meta name="description" content={bot.name} />
+        <meta property="og:title" content={bot.name} />
+        <meta property="description" content={bot.name} />
+        <meta property="og:url" content={window.location.href} />
       </Helmet>
       <ChatView {...chatViewProps} />
       <ChatInputBar {...chatInputBarProps} />
