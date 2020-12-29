@@ -273,7 +273,20 @@ export function EditorPage({
           )
           .map(s => ({
             id: s.id,
-            text: s.message,
+            text: `${s.message}${s.responses.reduce((r, e, i) => {
+              if (i === 0) {
+                // eslint-disable-next-line no-param-reassign
+                r = `${r}[`;
+              }
+              if (i === s.responses.length - 1) {
+                // eslint-disable-next-line no-param-reassign
+                r = `${r}${e}]`;
+              } else {
+                // eslint-disable-next-line no-param-reassign
+                r = `${r}${e} | `;
+              }
+              return r;
+            }, ' ')}`,
             click: () => {
               onAddTransition({
                 modelId: model.id,
