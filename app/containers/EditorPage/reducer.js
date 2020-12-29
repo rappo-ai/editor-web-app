@@ -102,7 +102,7 @@ const editorPageReducer = (state = initialState, action) =>
         draft.transitionInProgress = false;
         break;
       case 'CLEAR_CHAT_HISTORY':
-        draft = initialState;
+        Object.assign(draft, initialState);
         break;
       case 'PUBLISH_BOT':
         draft.publishUrl = '';
