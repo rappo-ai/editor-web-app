@@ -170,7 +170,7 @@ export function EditorPage({
   // print publish url to console whenever it changes from '' to some value
   useEffect(() => {
     if (publishUrl) {
-      alert(publishUrl);
+      window.open(publishUrl, '_blank');
     }
   }, [publishUrl]);
 
