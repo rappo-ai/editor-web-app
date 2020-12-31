@@ -2,8 +2,6 @@
  *
  * Tests for MessageBubble
  *
- * @see https://github.com/react-boilerplate/react-boilerplate/tree/master/docs/testing
- *
  */
 
 import React from 'react';
