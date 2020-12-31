@@ -28,6 +28,7 @@ jobs:
         script: |
           if pm2 list | grep -q "rappo-web-app"; then
             pm2 delete rappo-web-app
+            pm2 save
           fi
     - uses: nogsantos/scp-deploy@master
       with:
@@ -58,9 +59,5 @@ jobs:
           printf "GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_APPLICATION_CREDENTIALS"\nGOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID"\nGOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET"\n" > ~/rappo-web-app/.env.server
           echo $GCLOUD_CREDENTIALS_FILE > ~/rappo-web-app/gcloud-credentials.json
           printf "GTAG_CONTAINER_ID="$GTAG_CONTAINER_ID"\n" > ~/rappo-web-app/.env.webpack
-          if pm2 list | grep -q "rappo-web-app"; then
-            pm2 start rappo-web-app
-          else
-            pm2 start npm --cwd ~/rappo-web-app --name rappo-web-app -- run start:prod
-          fi
+          pm2 start npm --cwd ~/rappo-web-app --name rappo-web-app -- run start:production
           pm2 save
