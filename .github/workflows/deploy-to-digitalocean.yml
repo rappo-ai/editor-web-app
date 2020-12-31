@@ -13,6 +13,7 @@ jobs:
       with:
         node-version: '12'
     - run: npm ci
+    - run: printf "GTAG_CONTAINER_ID="${{ secrets.GTAG_CONTAINER_ID }}"\n" > .env.webpack
     - run: npm run build
     - uses: master-atul/tar-action@v1.0.2
       with:
@@ -44,13 +45,12 @@ jobs:
         GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
         GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         GCLOUD_CREDENTIALS_FILE: ${{ secrets.RAPPO_GCLOUD_CREDENTIALS_FILE }}
-        GTAG_CONTAINER_ID: ${{ secrets.GTAG_CONTAINER_ID }}
       with:
         host: ${{ secrets.SSH_HOST }}
         port: ${{ secrets.SSH_PORT }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
-        envs: GOOGLE_APPLICATION_CREDENTIALS,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,GCLOUD_CREDENTIALS_FILE,GTAG_CONTAINER_ID
+        envs: GOOGLE_APPLICATION_CREDENTIALS,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,GCLOUD_CREDENTIALS_FILE
         script: |
           rm -rf ~/rappo-web-app
           mkdir ~/rappo-web-app
@@ -58,6 +58,5 @@ jobs:
           rm -f ~/rappo-web-app.tar.gz
           printf "GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_APPLICATION_CREDENTIALS"\nGOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID"\nGOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET"\n" > ~/rappo-web-app/.env.server
           echo $GCLOUD_CREDENTIALS_FILE > ~/rappo-web-app/gcloud-credentials.json
-          printf "GTAG_CONTAINER_ID="$GTAG_CONTAINER_ID"\n" > ~/rappo-web-app/.env.webpack
-          pm2 start npm --cwd ~/rappo-web-app --name rappo-web-app -- run start:production
+          pm2 start npm --cwd ~/rappo-web-app --name rappo-web-app -- run start:prod
           pm2 save
