@@ -5,7 +5,7 @@
  */
 import { defineMessages } from 'react-intl';
 
-export const scope = 'boilerplate.containers.HomePage';
+export const scope = 'rappo.containers.HomePage';
 
 export default defineMessages({
   startProjectHeader: {

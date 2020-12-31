@@ -39,7 +39,8 @@ const HomePageSection = styled(TripleSection)`
   height: 100%;
 `;
 
-const pageTitle = 'My Bots';
+const headerTitle = 'All Bots';
+const pageTitle = 'Home';
 
 export function HomePage({
   userProfile,
@@ -78,7 +79,7 @@ export function HomePage({
         click: () => history.push('/add/bot'),
       },
     ];
-    onSetupHeader({ title: pageTitle, menuIcon, menuItems, actionButtons });
+    onSetupHeader({ title: headerTitle, menuIcon, menuItems, actionButtons });
   }, []);
 
   const botListProps = {

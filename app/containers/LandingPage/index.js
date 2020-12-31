@@ -8,7 +8,6 @@ import React from 'react';
 // import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { Helmet } from 'react-helmet';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
@@ -93,10 +92,6 @@ export function LandingPage() {
 
   return (
     <LandingPageSectionContainer direction="column">
-      <Helmet>
-        <title />
-        <meta name="description" content="Create powerful bots naturally" />
-      </Helmet>
       <LandingPageSection position="top" direction="column" />
       <LandingPageSection position="center" direction="column">
         <Para>
