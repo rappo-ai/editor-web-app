@@ -79,7 +79,7 @@ export function App({
         titleTemplate="%s | Rappo"
         defaultTitle="Automate conversations with everyone | Rappo"
       >
-        <title>Automate conversations with everyone | Rappo</title>
+        <title>Automate conversations with everyone</title>
         <meta
           name="description"
           content="Automate conversations with everyone."
