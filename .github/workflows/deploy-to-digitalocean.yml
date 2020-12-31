@@ -27,7 +27,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         script: |
           if pm2 list | grep -q "rappo-web-app"; then
-            pm2 stop rappo-web-app
+            pm2 delete rappo-web-app
           fi
     - uses: nogsantos/scp-deploy@master
       with:
