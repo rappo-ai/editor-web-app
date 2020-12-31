@@ -7,6 +7,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
@@ -75,32 +76,37 @@ export function AddBotPage({ onSetupHeader, onCreateBot }) {
   }, []);
 
   return (
-    <AddBotPageSectionContainer direction="column">
-      <AddBotPageSection direction="column" position="top">
-        <InputContainer>
-          <Input
-            ref={inputRef}
-            type="text"
-            placeholder="Name"
-            onChange={ev => setName(ev.target.value)}
-            onKeyPress={ev =>
-              ev.key === 'Enter' && onCreateBot(name, accessToken)
-            }
-          />
-        </InputContainer>
-      </AddBotPageSection>
-      <AddBotPageSection direction="column" position="center">
-        <Para>Please enter a name for the new bot.</Para>
-      </AddBotPageSection>
-      <AddBotPageSection direction="column" position="bottom">
-        <Button
-          disabled={!name.length}
-          onClick={() => onCreateBot(name, accessToken)}
-        >
-          Create
-        </Button>
-      </AddBotPageSection>
-    </AddBotPageSectionContainer>
+    <>
+      <Helmet>
+        <title>New bot</title>
+      </Helmet>
+      <AddBotPageSectionContainer direction="column">
+        <AddBotPageSection direction="column" position="top">
+          <InputContainer>
+            <Input
+              ref={inputRef}
+              type="text"
+              placeholder="Name"
+              onChange={ev => setName(ev.target.value)}
+              onKeyPress={ev =>
+                ev.key === 'Enter' && onCreateBot(name, accessToken)
+              }
+            />
+          </InputContainer>
+        </AddBotPageSection>
+        <AddBotPageSection direction="column" position="center">
+          <Para>Please enter a name for the new bot.</Para>
+        </AddBotPageSection>
+        <AddBotPageSection direction="column" position="bottom">
+          <Button
+            disabled={!name.length}
+            onClick={() => onCreateBot(name, accessToken)}
+          >
+            Create
+          </Button>
+        </AddBotPageSection>
+      </AddBotPageSectionContainer>
+    </>
   );
 }
 

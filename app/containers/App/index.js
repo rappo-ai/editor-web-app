@@ -75,10 +75,14 @@ export function App({
 
   return (
     <AppWrapper>
-      <Helmet titleTemplate="%s - rappo.ai" defaultTitle="rappo.ai">
+      <Helmet
+        titleTemplate="%s | Rappo"
+        defaultTitle="Automate conversations with everyone | Rappo"
+      >
+        <title>Automate conversations with everyone | Rappo</title>
         <meta
           name="description"
-          content="Create friendly bots for your business."
+          content="Automate conversations with everyone."
         />
       </Helmet>
       <Header />

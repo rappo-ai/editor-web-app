@@ -467,7 +467,7 @@ export function EditorPage({
   return (
     <Container>
       <Helmet>
-        <title>{bot.name}</title>
+        <title>{bot.name} - Edit</title>
         <meta
           name="description"
           content="Create powerful chatbots rapidly with Rappo.ai"
