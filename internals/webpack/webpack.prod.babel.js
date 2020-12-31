@@ -68,7 +68,7 @@ module.exports = require('./webpack.base.babel')({
   plugins: [
     // Minify and optimize the index.html
     new HtmlWebpackPlugin({
-      template: 'app/index.html',
+      template: 'app/index.ejs',
       minify: {
         removeComments: true,
         collapseWhitespace: true,
@@ -82,6 +82,7 @@ module.exports = require('./webpack.base.babel')({
         minifyURLs: true,
       },
       inject: true,
+      gtagContainerId: process.env.GTAG_CONTAINER_ID,
     }),
 
     // Put it in the end to capture all the HtmlWebpackPlugin's

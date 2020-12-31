@@ -9,5 +9,6 @@ stats.json
 npm-debug.log
 .idea
 
-.env
+.env.server
+.env.webpack
 gcloud-credentials.json
