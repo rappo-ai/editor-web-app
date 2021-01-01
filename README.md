@@ -1,6 +1,6 @@
 # Rappo / Editor Web App
 
-[![Stage Deployment Status](https://github.com/rappo-ai/editor-web-app/workflows/Deploy%20to%20Digital%20Ocean/badge.svg?branch=master)](https://stage.rappo.ai)
+[Staging Server](https://stage.rappo.ai)![Deploy to Digital Ocean](https://github.com/rappo-ai/editor-web-app/workflows/Deploy%20to%20Digital%20Ocean/badge.svg?branch=master)
 
 This repository contains the codebase for Rappo editor front-end web application. Additionally it also contains the codebase for the Rappo server, which will eventually be moved into a different repository.
 
