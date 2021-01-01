@@ -57,7 +57,6 @@ Most of the errors/warnings would go away once you roll back the problemetic dep
 - `npm install && npm start`
 
 - Browse example app on development server
-  - Browse Features page, change language to `de`
   - Browse NotFound page
 - Browse example app on dev tunnel
 - Browse example app on Production server

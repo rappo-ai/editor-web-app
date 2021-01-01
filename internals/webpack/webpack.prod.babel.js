@@ -1,7 +1,7 @@
 // Important modules this config uses
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const WebpackPwaManifest = require('webpack-pwa-manifest');
+// const WebpackPwaManifest = require('webpack-pwa-manifest');
 // const OfflinePlugin = require('offline-plugin');
 const { HashedModuleIdsPlugin } = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -116,7 +116,7 @@ module.exports = require('./webpack.base.babel')({
       minRatio: 0.8,
     }),
 
-    new WebpackPwaManifest({
+    /* new WebpackPwaManifest({
       name: 'Rappo',
       short_name: 'Rappo',
       description: 'Automate conversations with everyone',
@@ -135,7 +135,7 @@ module.exports = require('./webpack.base.babel')({
           ios: true,
         },
       ],
-    }),
+    }), */
 
     new HashedModuleIdsPlugin({
       hashFunction: 'sha256',
