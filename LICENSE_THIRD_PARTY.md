@@ -1,3 +1,7 @@
+# 3rd Party Licenses
+
+## React Boilerplate
+
 The MIT License (MIT)
 
 Copyright (c) 2019 Maximilian Stoiber
