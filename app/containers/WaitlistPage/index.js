@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   message: {
-    marginTop: theme.spacing(3),
+    marginTop: theme.spacing(1),
   },
   gridContainer: {
     marginBottom: theme.spacing(1),
@@ -131,13 +131,13 @@ export function WaitlistPage({
       </Helmet>
       <CssBaseline />
       <Paper className={classes.paper}>
-        <Typography component="h1" variant="h4" align="center">
-          Thank you for signing up
-        </Typography>
+        {/* <Typography component="h1" variant="h4" align="center">
+          Waiting for approval
+  </Typography> */}
         <Box className={classes.message}>
           <Typography component="p" variant="body1" align="justify" paragraph>
             Thank you {firstName} for your interest in Rappo. You will receive
-            an email from us once your request has been approved.
+            an email from us once your request has been reviewed.
           </Typography>
           <Typography component="p" variant="body1" align="justify" paragraph>
             Please provide us with some additional info which will help us get
