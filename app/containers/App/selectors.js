@@ -33,10 +33,10 @@ const makeSelectBots = () =>
     globalState => globalState.bots,
   );
 
-const makeSelectUserProfile = () =>
+const makeSelectUser = () =>
   createSelector(
     selectGlobal,
-    globalState => globalState.user.profile,
+    globalState => globalState.user,
   );
 
 const makeSelectLoading = () =>
@@ -63,7 +63,7 @@ export {
   makeSelectSession,
   makeSelectHeader,
   makeSelectBots,
-  makeSelectUserProfile,
+  makeSelectUser,
   makeSelectLoading,
   makeSelectError,
   makeSelectLocation,
