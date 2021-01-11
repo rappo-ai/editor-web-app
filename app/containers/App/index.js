@@ -25,16 +25,17 @@ import AddBotPage from 'containers/AddBotPage';
 import EditorPage from 'containers/EditorPage/Loadable';
 import PlayerPage from 'containers/PlayerPage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
+import WaitlistPage from 'containers/WaitlistPage';
 import Header from 'components/Header';
 
 import {
   makeSelectSession,
-  makeSelectUserProfile,
+  makeSelectUser,
   makeSelectLoading,
   makeSelectError,
 } from './selectors';
 import saga from './saga';
-import { loadCookies, loadUserProfile } from './actions';
+import { loadCookies, loadUser } from './actions';
 import GlobalStyle from '../../global-styles';
 
 const AppWrapper = styled.div`
@@ -51,9 +52,9 @@ export function App({
   loading,
   error,
   session,
-  profile,
+  user,
   onLoadCookies,
-  onLoadUserProfile,
+  onLoadUser,
 }) {
   useInjectSaga({ key: 'app', saga });
 
@@ -70,8 +71,8 @@ export function App({
 
   useEffect(() => {
     onLoadCookies();
-    onLoadUserProfile(accessToken, isEndUser, endUserId);
-  }, [accessToken]);
+    onLoadUser(accessToken, isEndUser, endUserId);
+  }, [accessToken, isEndUser, endUserId]);
 
   return (
     <AppWrapper>
@@ -87,9 +88,13 @@ export function App({
       </Helmet>
       <Header />
       <Switch>
-        {session.isLoggedIn ? (
+        {session.isLoggedIn && user.isActivated && (
           <Route exact path="/" component={HomePage} />
-        ) : (
+        )}
+        {session.isLoggedIn && !user.isActivated && (
+          <Route exact path="/" component={WaitlistPage} />
+        )}
+        {!session.isLoggedIn && (
           <Route exact path="/" component={LandingPage} />
         )}
         <Route exact path="/add/bot" component={AddBotPage} />
@@ -115,14 +120,14 @@ App.propTypes = {
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   session: PropTypes.object,
-  profile: PropTypes.object,
+  user: PropTypes.object,
   onLoadCookies: PropTypes.func,
-  onLoadUserProfile: PropTypes.func,
+  onLoadUser: PropTypes.func,
 };
 
 const mapStateToProps = createStructuredSelector({
   session: makeSelectSession(),
-  profile: makeSelectUserProfile(),
+  user: makeSelectUser(),
   loading: makeSelectLoading(),
   error: makeSelectError(),
 });
@@ -130,8 +135,8 @@ const mapStateToProps = createStructuredSelector({
 export function mapDispatchToProps(dispatch) {
   return {
     onLoadCookies: () => dispatch(loadCookies()),
-    onLoadUserProfile: (accessToken, isEndUser, endUserId) =>
-      dispatch(loadUserProfile(accessToken, isEndUser, endUserId)),
+    onLoadUser: (accessToken, isEndUser, endUserId) =>
+      dispatch(loadUser(accessToken, isEndUser, endUserId)),
   };
 }
 

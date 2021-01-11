@@ -5,9 +5,9 @@
 import {
   LOAD_COOKIES,
   LOAD_COOKIES_SUCCESS,
-  LOAD_USER_PROFILE,
-  LOAD_USER_PROFILE_SUCCESS,
-  LOAD_USER_PROFILE_ERROR,
+  LOAD_USER,
+  LOAD_USER_SUCCESS,
+  LOAD_USER_ERROR,
 } from './constants';
 
 /**
@@ -36,13 +36,13 @@ export function cookiesLoaded(cookies) {
 }
 
 /**
- * Load user profile
+ * Load user
  *
- * @return {object} An action object with a type of LOAD_USER_PROFILE
+ * @return {object} An action object with a type of LOAD_USER
  */
-export function loadUserProfile(accessToken, isEndUser, endUserId) {
+export function loadUser(accessToken, isEndUser, endUserId) {
   return {
-    type: LOAD_USER_PROFILE,
+    type: LOAD_USER,
     accessToken,
     isEndUser,
     endUserId,
@@ -52,27 +52,29 @@ export function loadUserProfile(accessToken, isEndUser, endUserId) {
 /**
  * Dispatched when the user profile is loaded by the request saga
  *
- * @param  {array} profile The user profile data
+ * @param  {object} profile The user profile data
+ * @param  {boolean} isActivated true if user is activated, false otherwise
  *
- * @return {object}      An action object with a type of LOAD_USER_PROFILE_SUCCESS passing the profile
+ * @return {object}      An action object with a type of LOAD_USER_SUCCESS passing the user data
  */
-export function userProfileLoaded(profile) {
+export function userLoaded(profile, isActivated) {
   return {
-    type: LOAD_USER_PROFILE_SUCCESS,
+    type: LOAD_USER_SUCCESS,
     profile,
+    isActivated,
   };
 }
 
 /**
- * Dispatched when loading the user profile fails
+ * Dispatched when loading the user fails
  *
  * @param  {object} error The error
  *
- * @return {object}       An action object with a type of LOAD_USER_PROFILE_ERROR passing the error
+ * @return {object}       An action object with a type of LOAD_USER_ERROR passing the error
  */
-export function userProfileLoadError(error) {
+export function userLoadError(error) {
   return {
-    type: LOAD_USER_PROFILE_ERROR,
+    type: LOAD_USER_ERROR,
     error,
   };
 }

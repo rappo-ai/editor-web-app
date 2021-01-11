@@ -7,12 +7,8 @@ import apiBuilder from 'utils/api';
 import history from 'utils/history';
 import request from 'utils/request';
 import Cookies from 'js-cookie';
-import { LOAD_COOKIES, LOAD_USER_PROFILE } from './constants';
-import {
-  cookiesLoaded,
-  userProfileLoaded,
-  userProfileLoadError,
-} from './actions';
+import { LOAD_COOKIES, LOAD_USER } from './constants';
+import { cookiesLoaded, userLoaded, userLoadError } from './actions';
 
 /**
  * Read cookies and store the state
@@ -23,25 +19,31 @@ function* loadCookies() {
 }
 
 /**
- * Load the user profile if logged in
+ * Load the logged in user
  */
-function* loadUserProfile(action) {
+function* loadUser(action) {
   try {
     const { url, options } = apiBuilder('/user', {
       accessToken: action.accessToken,
     });
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
-    const profile = { displayName: '', profilePic: '' };
+    const profile = { displayName: '', profilePic: '', ...response.profile };
     if (response.googleProfile) {
-      profile.displayName = response.googleProfile.profile.displayName;
-      profile.profilePic = response.googleProfile.profile.photos[0].value;
+      try {
+        profile.displayName = response.googleProfile.profile.displayName;
+        profile.givenName = response.googleProfile.profile.name.givenName;
+        profile.familyName = response.googleProfile.profile.name.familyName;
+        profile.profilePic = response.googleProfile.profile.photos[0].value;
+      } catch (err) {
+        console.error(err);
+      }
     }
-    yield put(userProfileLoaded(profile));
+    yield put(userLoaded(profile, response.isActivated));
   } catch (err) {
     console.error(err);
     if (!action.isEndUser) {
-      yield put(userProfileLoadError(err));
+      yield put(userLoadError(err));
     }
   }
 }
@@ -104,7 +106,7 @@ function* createBot(action) {
 export default function* rootSaga() {
   yield all([
     yield takeLatest(LOAD_COOKIES, loadCookies),
-    yield takeLatest(LOAD_USER_PROFILE, loadUserProfile),
+    yield takeLatest(LOAD_USER, loadUser),
     yield takeLatest('LOAD_BOTS', loadBots),
     yield takeLatest('CREATE_BOT', createBot),
   ]);

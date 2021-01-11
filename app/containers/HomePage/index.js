@@ -17,7 +17,7 @@ import {
   makeSelectLoading,
   makeSelectError,
   makeSelectBots,
-  makeSelectUserProfile,
+  makeSelectUser,
 } from 'containers/App/selectors';
 import BotList from 'components/BotList';
 import {
@@ -43,7 +43,7 @@ const headerTitle = 'All Bots';
 const pageTitle = 'Home';
 
 export function HomePage({
-  userProfile,
+  user,
   bots,
   loading,
   error,
@@ -60,7 +60,7 @@ export function HomePage({
   }, [accessToken]);
 
   useEffect(() => {
-    const menuIcon = userProfile.profilePic;
+    const menuIcon = user.profile.profilePic;
     const menuItems = [
       {
         name: 'Home',
@@ -116,7 +116,7 @@ export function HomePage({
 }
 
 HomePage.propTypes = {
-  userProfile: PropTypes.object,
+  user: PropTypes.object,
   bots: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
@@ -125,7 +125,7 @@ HomePage.propTypes = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  userProfile: makeSelectUserProfile(),
+  user: makeSelectUser(),
   bots: makeSelectBots(),
   loading: makeSelectLoading(),
   error: makeSelectError(),

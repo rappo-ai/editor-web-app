@@ -46,6 +46,19 @@ router.get('/user', async (req, res) => {
   });
 });
 
+router.put('/user/profile', async (req, res) => {
+  const { user } = req;
+  if (!user || !user.id) {
+    res.status(500);
+    return res.end();
+  }
+  const profile = { ...user.profile, ...req.body.profile };
+  await user.set('profile', profile);
+  return res.json({
+    profile: user.profile,
+  });
+});
+
 router.get('/bot', async (req, res) => {
   const { user } = req;
   if (!user || !user.id) {

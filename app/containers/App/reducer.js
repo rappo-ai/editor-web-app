@@ -11,9 +11,9 @@ import produce from 'immer';
 import {
   LOAD_COOKIES,
   LOAD_COOKIES_SUCCESS,
-  LOAD_USER_PROFILE,
-  LOAD_USER_PROFILE_SUCCESS,
-  LOAD_USER_PROFILE_ERROR,
+  LOAD_USER,
+  LOAD_USER_SUCCESS,
+  LOAD_USER_ERROR,
 } from './constants';
 
 // The initial state of the App
@@ -38,6 +38,7 @@ export const initialState = {
       displayName: '',
       profilePic: '',
     },
+    isActivated: false,
   },
   bots: false,
 };
@@ -57,20 +58,21 @@ const appReducer = (state = initialState, action) =>
         draft.loading = false;
         break;
 
-      case LOAD_USER_PROFILE:
+      case LOAD_USER:
         draft.loading = true;
         draft.error = false;
         draft.session.isLoggedIn = initialState.session.isLoggedIn;
-        draft.user.profile = initialState.user.profile;
+        draft.user = initialState.user;
         break;
 
-      case LOAD_USER_PROFILE_SUCCESS:
+      case LOAD_USER_SUCCESS:
         draft.session.isLoggedIn = true;
         draft.user.profile = action.profile;
+        draft.user.isActivated = action.isActivated;
         draft.loading = false;
         break;
 
-      case LOAD_USER_PROFILE_ERROR:
+      case LOAD_USER_ERROR:
         draft.error = action.error;
         draft.loading = false;
         break;
