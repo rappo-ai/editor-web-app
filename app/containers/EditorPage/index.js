@@ -102,6 +102,7 @@ export function EditorPage({
   const botStates = chatHistory.map(e => e.state);
   const currentState = botStates[botStates.length - 1];
   const { transitionEvent } = chatHistory[chatHistory.length - 1];
+  const replyText = inputMode === 'user' ? currentState.message : '';
   const messages = chatHistory.reduce((a, e, i) => {
     const previousMessage =
       i === 0
@@ -121,7 +122,11 @@ export function EditorPage({
           );
     const isLastMessage = i === chatHistory.length - 1;
     const hasReplyButton =
-      !transitionInProgress && inputMode === 'bot' && isLastMessage;
+      i > 0 &&
+      !transitionInProgress &&
+      !transitionEvent.value &&
+      inputMode === 'bot' &&
+      isLastMessage;
     a.push({
       id: `${e.state.id}-state-${i}`,
       user: i === 0 ? 'start' : 'bot',
@@ -390,8 +395,10 @@ export function EditorPage({
     popupListItems,
     onPopupListClickOut,
   };
+
   const chatInputBarProps = {
     inputText,
+    replyText,
     disabled: transitionInProgress,
     sendButtonColor:
       inputMode === 'bot'
@@ -406,6 +413,7 @@ export function EditorPage({
     onKeyDown,
     onSendClick,
     onResponseMenuButtonClick,
+    onReplyCancelClick: () => setInputMode('bot'),
   };
 
   function onTyping(input) {
