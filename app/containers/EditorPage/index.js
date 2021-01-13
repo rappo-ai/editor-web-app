@@ -66,7 +66,8 @@ const Container = styled.div`
 `;
 
 const popupListShowKeys = ['ArrowUp'];
-const switchInputModeKeys = ['ArrowLeft', 'ArrowRight'];
+const replyKeys = { modifiers: ['cmd', 'ctrl'], keys: ['r', 'R'] };
+const replyCancelKeys = ['Escape'];
 const emptyBot = { name: '' };
 
 export function EditorPage({
@@ -242,16 +243,6 @@ export function EditorPage({
       },
     ];
     const actionButtons = [
-      {
-        faClass: 'fa-user',
-        click: () => {
-          setInputMode(inputMode === 'bot' ? 'user' : 'bot');
-        },
-        color:
-          inputMode === 'bot'
-            ? BOT_SEND_BUTTON_BACKGROUND_COLOR
-            : USER_SEND_BUTTON_BACKGROUND_COLOR,
-      },
       {
         faClass: 'fa-share-square',
         click: () => {
@@ -431,15 +422,38 @@ export function EditorPage({
       setPopupListEnabled(true);
       event.preventDefault();
     }
-    if (switchInputModeKeys.some(key => key === event.key) && !inputText) {
-      setInputMode(inputMode === 'bot' ? 'user' : 'bot');
+    function hasModifier(modifier) {
+      switch (modifier) {
+        case 'cmd':
+          return event.metaKey;
+        case 'ctrl':
+          return event.ctrlKey;
+        default:
+          break;
+      }
+      return false;
+    }
+    if (
+      (event.metaKey || event.ctrlKey) &&
+      replyKeys.modifiers.some(modifier => hasModifier(modifier)) &&
+      replyKeys.keys.some(key => key === event.key) &&
+      inputMode === 'bot'
+    ) {
+      setInputMode('user');
+      event.preventDefault();
+    }
+
+    if (
+      replyCancelKeys.some(key => key === event.key) &&
+      inputMode === 'user'
+    ) {
+      setInputMode('bot');
+      event.preventDefault();
     }
   }
 
   function onResponseMenuButtonClick() {
-    if (!inputText) {
-      setPopupListEnabled(!popupListEnabled);
-    }
+    setPopupListEnabled(!popupListEnabled);
   }
 
   function onSendClick(event) {
