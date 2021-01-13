@@ -152,6 +152,10 @@ const DetachButton = styled(FAButton)`
   margin-right: 6px;
 `;
 
+const ReplyButton = styled(FAButton)`
+  margin-left: 6px;
+`;
+
 function MessageBubble({
   text,
   responses,
@@ -160,6 +164,7 @@ function MessageBubble({
   isLastItem,
   detachClick,
   responseClick,
+  replyClick,
 }) {
   return (
     <Container user={user}>
@@ -186,6 +191,17 @@ function MessageBubble({
           >
             {getBubbleText(user, text, transitionEvent && transitionEvent.type)}
           </Bubble>
+        )}
+        {replyClick && (
+          <ReplyButton
+            backgroundColor="#cccccc"
+            iconColor="white"
+            iconClass="fa-reply"
+            iconSize="12px"
+            width="16px"
+            height="16px"
+            onClick={replyClick}
+          />
         )}
       </BubbleContainer>
       <ResponseContainer hasMargin={!!detachClick}>
@@ -217,6 +233,7 @@ MessageBubble.propTypes = {
   isLastItem: PropTypes.bool,
   detachClick: PropTypes.func,
   responseClick: PropTypes.func,
+  replyClick: PropTypes.func,
 };
 
 export default MessageBubble;

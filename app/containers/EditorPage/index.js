@@ -103,22 +103,25 @@ export function EditorPage({
   const currentState = botStates[botStates.length - 1];
   const { transitionEvent } = chatHistory[chatHistory.length - 1];
   const messages = chatHistory.reduce((a, e, i) => {
-    const lastMessage =
+    const previousMessage =
       i === 0
         ? {
             state: { id: null },
             transitionEvent: { type: 'response', value: '' },
           }
         : chatHistory[i - 1];
-    const lastTransition =
+    const previousTransition =
       i === 0
         ? null
         : getTransition(
             model,
-            lastMessage.state.id,
+            previousMessage.state.id,
             e.state.id,
-            lastMessage.transitionEvent,
+            previousMessage.transitionEvent,
           );
+    const isLastMessage = i === chatHistory.length - 1;
+    const hasReplyButton =
+      !transitionInProgress && inputMode === 'bot' && isLastMessage;
     a.push({
       id: `${e.state.id}-state-${i}`,
       user: i === 0 ? 'start' : 'bot',
@@ -126,10 +129,10 @@ export function EditorPage({
       responses: e.state.responses || [],
       transitionEvent: e.transitionEvent,
       detachClick: () => {
-        if (!transitionInProgress && lastTransition) {
+        if (!transitionInProgress && previousTransition) {
           onDeleteTransition({
             modelId: model.id,
-            transitionId: lastTransition.id,
+            transitionId: previousTransition.id,
             accessToken,
           });
           setInputMode('bot');
@@ -138,6 +141,7 @@ export function EditorPage({
       responseClick: response =>
         !transitionInProgress &&
         onSendClick({ type: 'response', value: response }),
+      replyClick: hasReplyButton ? () => setInputMode('user') : null,
     });
     if (e.transitionEvent.value) {
       a.push({
