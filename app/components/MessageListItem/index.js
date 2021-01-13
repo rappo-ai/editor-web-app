@@ -26,6 +26,7 @@ export function MessageListItem({ item, isLastItem }) {
         isLastItem={isLastItem}
         detachClick={item.detachClick}
         responseClick={item.responseClick}
+        replyClick={item.replyClick}
       />
     </Wrapper>
   );

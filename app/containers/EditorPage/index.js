@@ -66,7 +66,8 @@ const Container = styled.div`
 `;
 
 const popupListShowKeys = ['ArrowUp'];
-const switchInputModeKeys = ['ArrowLeft', 'ArrowRight'];
+const replyKeys = { modifiers: ['cmd', 'ctrl'], keys: ['r', 'R'] };
+const replyCancelKeys = ['Escape'];
 const emptyBot = { name: '' };
 
 export function EditorPage({
@@ -102,40 +103,51 @@ export function EditorPage({
   const botStates = chatHistory.map(e => e.state);
   const currentState = botStates[botStates.length - 1];
   const { transitionEvent } = chatHistory[chatHistory.length - 1];
+  const replyText = inputMode === 'user' ? currentState.message : '';
   const messages = chatHistory.reduce((a, e, i) => {
-    const lastMessage =
+    const previousMessage =
       i === 0
         ? {
             state: { id: null },
             transitionEvent: { type: 'response', value: '' },
           }
         : chatHistory[i - 1];
-    const lastTransition =
+    const previousTransition =
       i === 0
         ? null
         : getTransition(
             model,
-            lastMessage.state.id,
+            previousMessage.state.id,
             e.state.id,
-            lastMessage.transitionEvent,
+            previousMessage.transitionEvent,
           );
+    const isLastMessage = i === chatHistory.length - 1;
+    const hasReplyButton =
+      i > 0 &&
+      !transitionInProgress &&
+      !transitionEvent.value &&
+      inputMode === 'bot' &&
+      isLastMessage;
     a.push({
       id: `${e.state.id}-state-${i}`,
       user: i === 0 ? 'start' : 'bot',
       text: e.state.message,
       responses: e.state.responses || [],
       transitionEvent: e.transitionEvent,
-      detachClick: () =>
-        !transitionInProgress &&
-        lastTransition &&
-        onDeleteTransition({
-          modelId: model.id,
-          transitionId: lastTransition.id,
-          accessToken,
-        }),
+      detachClick: () => {
+        if (!transitionInProgress && previousTransition) {
+          onDeleteTransition({
+            modelId: model.id,
+            transitionId: previousTransition.id,
+            accessToken,
+          });
+          setInputMode('bot');
+        }
+      },
       responseClick: response =>
         !transitionInProgress &&
         onSendClick({ type: 'response', value: response }),
+      replyClick: hasReplyButton ? () => setInputMode('user') : null,
     });
     if (e.transitionEvent.value) {
       a.push({
@@ -231,16 +243,6 @@ export function EditorPage({
       },
     ];
     const actionButtons = [
-      {
-        faClass: 'fa-user',
-        click: () => {
-          setInputMode(inputMode === 'bot' ? 'user' : 'bot');
-        },
-        color:
-          inputMode === 'bot'
-            ? BOT_SEND_BUTTON_BACKGROUND_COLOR
-            : USER_SEND_BUTTON_BACKGROUND_COLOR,
-      },
       {
         faClass: 'fa-share-square',
         click: () => {
@@ -384,8 +386,10 @@ export function EditorPage({
     popupListItems,
     onPopupListClickOut,
   };
+
   const chatInputBarProps = {
     inputText,
+    replyText,
     disabled: transitionInProgress,
     sendButtonColor:
       inputMode === 'bot'
@@ -400,6 +404,7 @@ export function EditorPage({
     onKeyDown,
     onSendClick,
     onResponseMenuButtonClick,
+    onReplyCancelClick: () => setInputMode('bot'),
   };
 
   function onTyping(input) {
@@ -417,15 +422,38 @@ export function EditorPage({
       setPopupListEnabled(true);
       event.preventDefault();
     }
-    if (switchInputModeKeys.some(key => key === event.key) && !inputText) {
-      setInputMode(inputMode === 'bot' ? 'user' : 'bot');
+    function hasModifier(modifier) {
+      switch (modifier) {
+        case 'cmd':
+          return event.metaKey;
+        case 'ctrl':
+          return event.ctrlKey;
+        default:
+          break;
+      }
+      return false;
+    }
+    if (
+      (event.metaKey || event.ctrlKey) &&
+      replyKeys.modifiers.some(modifier => hasModifier(modifier)) &&
+      replyKeys.keys.some(key => key === event.key) &&
+      inputMode === 'bot'
+    ) {
+      setInputMode('user');
+      event.preventDefault();
+    }
+
+    if (
+      replyCancelKeys.some(key => key === event.key) &&
+      inputMode === 'user'
+    ) {
+      setInputMode('bot');
+      event.preventDefault();
     }
   }
 
   function onResponseMenuButtonClick() {
-    if (!inputText) {
-      setPopupListEnabled(!popupListEnabled);
-    }
+    setPopupListEnabled(!popupListEnabled);
   }
 
   function onSendClick(event) {
