@@ -125,14 +125,16 @@ export function EditorPage({
       text: e.state.message,
       responses: e.state.responses || [],
       transitionEvent: e.transitionEvent,
-      detachClick: () =>
-        !transitionInProgress &&
-        lastTransition &&
-        onDeleteTransition({
-          modelId: model.id,
-          transitionId: lastTransition.id,
-          accessToken,
-        }),
+      detachClick: () => {
+        if (!transitionInProgress && lastTransition) {
+          onDeleteTransition({
+            modelId: model.id,
+            transitionId: lastTransition.id,
+            accessToken,
+          });
+          setInputMode('bot');
+        }
+      },
       responseClick: response =>
         !transitionInProgress &&
         onSendClick({ type: 'response', value: response }),

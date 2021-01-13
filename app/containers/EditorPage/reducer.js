@@ -63,6 +63,9 @@ const editorPageReducer = (state = initialState, action) =>
           draft.model = action.model;
         }
         break;
+      case 'DELETE_TRANSITION':
+        draft.transitionInProgress = true;
+        break;
       case 'DELETE_TRANSITION_SUCCESS':
         {
           const deletedTransition = draft.model.transitions.find(
@@ -83,9 +86,15 @@ const editorPageReducer = (state = initialState, action) =>
             a.push(e);
             return a;
           }, []);
-          draft.chatHistory[draft.chatHistory.length - 1].transitionEvent = '';
+          draft.chatHistory[draft.chatHistory.length - 1].transitionEvent = {
+            type: 'response',
+            value: '',
+          };
           draft.model = action.model;
         }
+        break;
+      case 'DELETE_TRANSITION_ERROR':
+        draft.transitionInProgress = true;
         break;
       case 'DO_TRANSITION_TO_STATE':
         draft.transitionInProgress = true;
