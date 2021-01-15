@@ -69,6 +69,7 @@ const popupListShowKeys = ['ArrowUp'];
 const replyKeys = { modifiers: ['cmd', 'ctrl'], keys: ['r', 'R'] };
 const replyCancelKeys = ['Escape'];
 const emptyBot = { name: '' };
+const RESPONSE_SEPARATOR = ',';
 
 export function EditorPage({
   loading,
@@ -285,7 +286,7 @@ export function EditorPage({
                 r = `${r}${e}]`;
               } else {
                 // eslint-disable-next-line no-param-reassign
-                r = `${r}${e} | `;
+                r = `${r}${e}${RESPONSE_SEPARATOR} `;
               }
               return r;
             }, ' ')}`,
@@ -468,7 +469,7 @@ export function EditorPage({
       if (responseIndex !== -1) {
         responses = message
           .slice(responseIndex + 1, -1)
-          .split('|')
+          .split(RESPONSE_SEPARATOR)
           .map(r => r.trim());
         message = message.slice(0, responseIndex).trim();
       }
