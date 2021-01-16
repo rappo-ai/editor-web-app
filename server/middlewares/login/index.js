@@ -1,6 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const { sendTransactionalEmail } = require('../../email');
 const db = require('../../db');
 const { pojoClone } = require('../../utils');
 const router = express.Router();
@@ -13,6 +14,17 @@ async function addGoogleUser(profile) {
   let user = googleUser ? await db.get('user', googleUser.userid) : null;
   if (!user) {
     user = await db.create('user');
+    user.set('isActivated', false);
+
+    sendTransactionalEmail(
+      'no-reply@rappo.ai',
+      'server-notifications@rappo.ai',
+      `New user sign up - ${profile.displayName}`,
+      '',
+      `New user signed up through Google with the following details:\n\nName: ${
+        profile.displayName
+      }\nEmail: ${profile.emails[0].value}\nID: ${user.id}`,
+    );
   }
   if (!googleUser) {
     googleUser = await db.create('googleuser');

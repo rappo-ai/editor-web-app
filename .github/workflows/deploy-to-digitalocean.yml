@@ -44,19 +44,20 @@ jobs:
         GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
         GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+        POSTMARK_SERVER_API_TOKEN: ${{ secrets.POSTMARK_SERVER_API_TOKEN }}
         GCLOUD_CREDENTIALS_FILE: ${{ secrets.RAPPO_GCLOUD_CREDENTIALS_FILE }}
       with:
         host: ${{ secrets.SSH_HOST }}
         port: ${{ secrets.SSH_PORT }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
-        envs: GOOGLE_APPLICATION_CREDENTIALS,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,GCLOUD_CREDENTIALS_FILE
+        envs: GOOGLE_APPLICATION_CREDENTIALS,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,POSTMARK_SERVER_API_TOKEN,GCLOUD_CREDENTIALS_FILE
         script: |
           rm -rf ~/rappo-web-app
           mkdir ~/rappo-web-app
           tar -xf ~/rappo-web-app.tar.gz -C ~/rappo-web-app
           rm -f ~/rappo-web-app.tar.gz
-          printf "GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_APPLICATION_CREDENTIALS"\nGOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID"\nGOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET"\n" > ~/rappo-web-app/.env.server
+          printf "GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_APPLICATION_CREDENTIALS"\nGOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID"\nGOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET"\nPOSTMARK_SERVER_API_TOKEN="$POSTMARK_SERVER_API_TOKEN"\n" > ~/rappo-web-app/.env.server
           echo $GCLOUD_CREDENTIALS_FILE > ~/rappo-web-app/gcloud-credentials.json
           pm2 start npm --cwd ~/rappo-web-app --name rappo-web-app -- run start:prod
           pm2 save
