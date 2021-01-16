@@ -11,7 +11,7 @@ const cookieparser = require('cookie-parser');
 const bodyparser = require('body-parser');
 const expresssession = require('express-session');
 const logger = require('./logger');
-const apiV1 = require('./middlewares/api/v1');
+const api = require('./middlewares/api');
 const login = require('./middlewares/login');
 const logout = require('./middlewares/logout');
 const argv = require('./argv');
@@ -50,7 +50,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
-app.use('/api/v1', apiV1);
+app.use('/api', api);
 app.use('/api/*', (req, res) => res.sendStatus(404));
 app.use('/login', login);
 app.use('/logout', logout);

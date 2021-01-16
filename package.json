@@ -109,6 +109,7 @@
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
     "passport-http-bearer": "^1.0.1",
+    "postmark": "2.7.0",
     "prop-types": "15.7.2",
     "react": "16.8.6",
     "react-app-polyfill": "0.2.2",
