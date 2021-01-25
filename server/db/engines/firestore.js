@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 const { Firestore } = require('@google-cloud/firestore');
 const { DBEngine } = require('./_base');
-const { pojoClone, cloneFromPojo } = require('../../utils');
+const { pojoClone, cloneFromPojo } = require('../../utils/pojo');
 
 class FirestoreDBEngine extends DBEngine {
   constructor(entityFactory) {
@@ -67,6 +67,32 @@ class FirestoreDBEngine extends DBEngine {
       .doc(entity.id)
       .set(entity)
       .then(() => entity);
+  }
+
+  async delete(collection, id) {
+    return this.firestore
+      .collection(collection)
+      .withConverter(this.converter)
+      .doc(id)
+      .delete();
+  }
+
+  async deleteAll(collection, query) {
+    if (!query.condition) {
+      query.condition = '==';
+    }
+    return this.firestore
+      .collection(collection)
+      .withConverter(this.converter)
+      .where(query.property, query.condition, query.value)
+      .get()
+      .then(querySnapshot => {
+        const results = [];
+        querySnapshot.forEach(doc => {
+          results.push(doc.ref.delete());
+        });
+        return results;
+      });
   }
 }
 

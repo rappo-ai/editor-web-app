@@ -3,7 +3,7 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { sendTransactionalEmail } = require('../../email');
 const db = require('../../db');
-const { pojoClone } = require('../../utils');
+const { pojoClone } = require('../../utils/pojo');
 const router = express.Router();
 
 async function addGoogleUser(profile) {

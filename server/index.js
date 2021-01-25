@@ -12,11 +12,13 @@ const bodyparser = require('body-parser');
 const expresssession = require('express-session');
 const logger = require('./logger');
 const api = require('./middlewares/api');
+const setup = require('./middlewares/frontendMiddleware');
 const login = require('./middlewares/login');
 const logout = require('./middlewares/logout');
+const webhooks = require('./middlewares/webhooks');
+const { setHttpsHost } = require('./utils/host');
 const argv = require('./argv');
 const port = require('./port');
-const setup = require('./middlewares/frontendMiddleware');
 const isDev = process.env.NODE_ENV !== 'production';
 const isProd = process.env.NODE_ENV === 'production';
 const ngrok =
@@ -54,6 +56,7 @@ app.use('/api', api);
 app.use('/api/*', (req, res) => res.sendStatus(404));
 app.use('/login', login);
 app.use('/logout', logout);
+app.use('/webhooks', webhooks);
 
 // In production we need to pass these values in instead of relying on webpack
 setup(app, {
@@ -84,6 +87,7 @@ app.listen(port, host, async err => {
     let url;
     try {
       url = await ngrok.connect(port);
+      setHttpsHost(url.replace('https://', ''));
     } catch (e) {
       return logger.error(e);
     }

@@ -252,7 +252,9 @@ function* doTransitionToState(action) {
       `/model/${action.modelId}/state?fromStateId=${
         action.fromStateId
       }&transitionEventType=\
-${action.event.type}&transitionEventValue=${action.event.value}`,
+${action.event.type}&transitionEventValue=${encodeURIComponent(
+        action.event.value,
+      )}`,
       {
         accessToken: action.accessToken,
       },
@@ -260,7 +262,7 @@ ${action.event.type}&transitionEventValue=${action.event.value}`,
     response = yield call(request, url, options);
     if (
       response.state &&
-      (!response.isCatchAll ||
+      (!response.isFallback ||
         (action.event.type === 'filter' && action.event.value === '*'))
     ) {
       yield put({
@@ -290,7 +292,7 @@ ${action.event.type}&transitionEventValue=${action.event.value}`,
  */
 function* addStateWithTransition(action) {
   try {
-    const { state: existingState, isCatchAll } = yield call(
+    const { state: existingState, isFallback } = yield call(
       doTransitionToState,
       {
         type: 'DO_TRANSITION_TO_STATE',
@@ -300,7 +302,7 @@ function* addStateWithTransition(action) {
         accessToken: action.accessToken,
       },
     );
-    if (existingState && !isCatchAll) {
+    if (existingState && !isFallback) {
       return;
     }
     const { state } = yield call(addState, {
@@ -334,7 +336,7 @@ function* addStateWithTransition(action) {
 function* publishBot(action) {
   let response;
   try {
-    const { url, options } = apiBuilder(`/bot/${action.botId}/publish`, {
+    const { url, options } = apiBuilder(`/bot/${action.botId}/publish/web`, {
       method: 'POST',
       accessToken: action.accessToken,
     });

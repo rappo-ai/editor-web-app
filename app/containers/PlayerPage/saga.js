@@ -12,8 +12,6 @@ function* loadPlayerBot(action) {
     });
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
-    console.log('loadPlayerBot response');
-    console.log(response);
     yield put({
       type: 'LOAD_PLAYER_BOT_SUCCESS',
       bot: response.bot,
@@ -61,7 +59,9 @@ function* doTransitionToState(action) {
       `/model/${action.modelId}/state?fromStateId=${
         action.fromStateId
       }&transitionEventType=\
-${action.event.type}&transitionEventValue=${action.event.value}`,
+${action.event.type}&transitionEventValue=${encodeURIComponent(
+        action.event.value,
+      )}`,
       {
         accessToken: action.accessToken,
       },

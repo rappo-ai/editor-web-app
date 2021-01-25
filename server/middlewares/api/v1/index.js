@@ -3,6 +3,7 @@ const passport = require('passport');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 
 const db = require('../../../db');
+const { API_THROW_ERROR } = require('../../../utils/api');
 const bot = require('./bot');
 const model = require('./model');
 const user = require('./user');
@@ -11,15 +12,25 @@ const router = express.Router();
 
 passport.use(
   new BearerStrategy(async (token, done) => {
-    const mytoken = await db.get('accesstoken', {
-      property: 'value',
-      value: token,
-    });
-    const dbuser = mytoken ? await db.get('user', mytoken.userid) : null;
-    if (!dbuser) {
-      return done(null, false);
+    try {
+      const mytoken = await db.get('accesstoken', {
+        property: 'value',
+        value: token,
+      });
+      const dbuser =
+        mytoken && mytoken.userid ? await db.get('user', mytoken.userid) : null;
+      if (dbuser) {
+        return done(null, dbuser, { scope: '*' });
+      }
+      const botuser =
+        mytoken && mytoken.botid ? await db.get('bot', mytoken.botid) : null;
+      if (botuser) {
+        return done(null, botuser, { scope: '*' });
+      }
+    } catch (err) {
+      console.err(err);
     }
-    return done(null, dbuser, { scope: '*' });
+    return done(null, false);
   }),
 );
 
@@ -29,8 +40,7 @@ router.use(
     if (req.isAuthenticated()) {
       return next();
     }
-    res.status(401);
-    return res.end();
+    return API_THROW_ERROR(true, 401, 'Authentication failed');
   },
 );
 
