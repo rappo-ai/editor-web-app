@@ -3,6 +3,7 @@ const passport = require('passport');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 
 const db = require('../../../db');
+const { API_THROW_ERROR } = require('../../../utils/api');
 const bot = require('./bot');
 const model = require('./model');
 const user = require('./user');
@@ -29,8 +30,7 @@ router.use(
     if (req.isAuthenticated()) {
       return next();
     }
-    res.status(401);
-    return res.end();
+    return API_THROW_ERROR(true, 401, 'Authentication failed');
   },
 );
 

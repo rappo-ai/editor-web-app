@@ -1,100 +1,84 @@
 const express = require('express');
 const db = require('../../../../db');
+const {
+  API_THROW_ERROR,
+  API_SUCCESS_RESPONSE,
+} = require('../../../../utils/api');
+const { publishRuntime, unpublishRuntime } = require('../../../../runtimes');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
   const { user } = req;
-  if (!user || !user.id) {
-    res.status(500);
-    return res.end();
-  }
+
   const bots = await db.query('bot', {
     property: 'userid',
     value: user.id,
   });
-  return res.json({
-    bots,
-  });
+
+  return res.json(API_SUCCESS_RESPONSE(bots));
 });
 
 router.post('/', async (req, res) => {
   const { user } = req;
-  if (!user || !user.id) {
-    res.status(500);
-    return res.end();
-  }
+
   const name = req.body.name || 'Untitled bot';
   const bot = await db.create('bot');
   await bot.set('userid', user.id);
   await bot.set('name', name);
-  return res.json({
-    bot,
-  });
+
+  return res.json(API_SUCCESS_RESPONSE(bot));
 });
 
 router.get('/:id', async (req, res) => {
-  const { user } = req;
-  if (!user || !user.id) {
-    res.status(500);
-    return res.end();
-  }
   const bot = await db.get('bot', {
     property: 'id',
     value: req.params.id,
   });
-  return res.json({
-    bot,
-  });
+
+  return res.json(API_SUCCESS_RESPONSE(bot));
 });
 
 router.get('/:id/model', async (req, res) => {
-  const { user } = req;
-  if (!user || !user.id) {
-    res.status(500);
-    return res.end();
-  }
   const models = await db.query('model', {
     property: 'botid',
     value: req.params.id,
   });
-  return res.json({
-    models,
-  });
+
+  return res.json(API_SUCCESS_RESPONSE(models));
 });
 
-router.post('/:botId/publish', async (req, res) => {
-  const { user } = req;
-  if (!user || !user.id) {
-    res.status(500);
-    return res.end();
-  }
-
-  let botUser = await db.get('user', {
-    property: 'botid',
+router.post('/:botId/publish/:runtime', async (req, res) => {
+  const bot = await db.get('bot', {
+    property: 'id',
     value: req.params.botId,
   });
 
-  let accessToken;
-  if (!botUser) {
-    botUser = await db.create('user');
-    await botUser.set('botid', req.params.botId);
-  } else {
-    accessToken = await db.get('accesstoken', {
-      property: 'userid',
-      value: botUser.id,
-    });
-  }
+  API_THROW_ERROR(!bot, 400, 'Bot not found');
 
-  if (!accessToken) {
-    accessToken = await db.create('accesstoken');
-    await accessToken.set('userid', botUser.id);
-    await botUser.set('accesstokenid', accessToken.id);
-  }
+  const publishResponse = await publishRuntime(
+    bot,
+    req.params.runtime,
+    req.body,
+  );
 
-  return res.json({
-    accessToken,
-    botId: req.params.botId,
+  return res.json(API_SUCCESS_RESPONSE(publishResponse));
+});
+
+router.post('/:botId/unpublish/:runtime', async (req, res) => {
+  const bot = await db.get('bot', {
+    property: 'id',
+    value: req.params.botId,
   });
+
+  API_THROW_ERROR(!bot, 400, 'Bot not found');
+
+  const unpublishResponse = await unpublishRuntime(
+    bot,
+    req.params.runtime,
+    req.body,
+  );
+
+  return res.json(API_SUCCESS_RESPONSE(unpublishResponse));
 });
 
 module.exports = router;

@@ -40,6 +40,7 @@ function cloneFromPojo(entity, pojo) {
     entity[key] = pojo[key];
   }
 }
+
 module.exports = {
   pojoClone,
   cloneFromPojo,
