@@ -8,7 +8,10 @@ router.use('/v1', v1);
 router.use((err, req, res, next) => {
   if (err instanceof ApiError) {
     res.status(err.httpStatusCode);
-    res.json(err.message);
+    res.json({
+      ok: false,
+      error: err.message,
+    });
     return res.end();
   }
   return next(err);

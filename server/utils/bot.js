@@ -17,7 +17,7 @@ function getNextState(
       e.event.value === transitionEventValue,
   );
   if (!transition) {
-    // direct transition not found, looking for catch-all
+    // direct transition not found, looking for isFallback
     transition =
       transitionEventValue !== '' &&
       model.transitions.find(

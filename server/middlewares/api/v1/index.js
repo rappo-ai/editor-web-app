@@ -12,15 +12,25 @@ const router = express.Router();
 
 passport.use(
   new BearerStrategy(async (token, done) => {
-    const mytoken = await db.get('accesstoken', {
-      property: 'value',
-      value: token,
-    });
-    const dbuser = mytoken ? await db.get('user', mytoken.userid) : null;
-    if (!dbuser) {
-      return done(null, false);
+    try {
+      const mytoken = await db.get('accesstoken', {
+        property: 'value',
+        value: token,
+      });
+      const dbuser =
+        mytoken && mytoken.userid ? await db.get('user', mytoken.userid) : null;
+      if (dbuser) {
+        return done(null, dbuser, { scope: '*' });
+      }
+      const botuser =
+        mytoken && mytoken.botid ? await db.get('bot', mytoken.botid) : null;
+      if (botuser) {
+        return done(null, botuser, { scope: '*' });
+      }
+    } catch (err) {
+      console.err(err);
     }
-    return done(null, dbuser, { scope: '*' });
+    return done(null, false);
   }),
 );
 

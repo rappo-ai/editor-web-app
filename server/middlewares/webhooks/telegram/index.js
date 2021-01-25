@@ -2,7 +2,7 @@ const express = require('express');
 const { getUserQueue } = require('../../../runtimes/telegram');
 const router = express.Router();
 
-router.post('/:botId/:botSecret', async (req, res) => {
+router.post('/:botId/:botSecret', (req, res) => {
   if (req.body.message && req.body.message.from) {
     const userQueue = getUserQueue(req.body.message.from);
     userQueue.push(

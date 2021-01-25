@@ -11,7 +11,7 @@ async function publishWeb(bot, params) {
   await bot.set('webtoken', accessToken.value);
   await bot.set('webparams', params);
 
-  return { accessToken };
+  return { accessToken: accessToken.value, botId: bot.id };
 }
 
 async function unpublishWeb(bot) {

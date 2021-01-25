@@ -1,1 +1,1 @@
-export const filters = { '*': 'CATCH-ALL' };
+export const filters = { '*': 'FALLBACK' };

@@ -33,17 +33,20 @@ function API_VALIDATE_REQUEST_BODY_PARAMETERS(params) {
 
 function API_SUCCESS_RESPONSE(customData) {
   return {
-    response: 'success',
+    ok: true,
     ...customData,
   };
 }
 
 function API_ERROR_RESPONSE(customData) {
   return {
-    response: 'error',
+    ok: false,
     ...customData,
   };
 }
+
+const asyncHandler = fn => (req, res, next) =>
+  Promise.resolve(fn(req, res, next)).catch(next);
 
 module.exports = {
   ApiError,
@@ -52,4 +55,5 @@ module.exports = {
   API_ERROR_RESPONSE,
   API_VALIDATE_QUERY_PARAMETERS,
   API_VALIDATE_REQUEST_BODY_PARAMETERS,
+  asyncHandler,
 };
