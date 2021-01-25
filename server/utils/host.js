@@ -1,4 +1,4 @@
-let httpsHost = process.env.RAPPO_HOST || '';
+let httpsHost = process.env.WEBSERVER_HOST || '';
 function getHttpsHost() {
   return httpsHost;
 }
