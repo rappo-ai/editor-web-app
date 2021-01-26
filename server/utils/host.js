@@ -1,13 +1,30 @@
-let httpsHost = process.env.WEBSERVER_HOST || '';
-function getHttpsHost() {
-  return httpsHost;
+let webserverHost = process.env.WEBSERVER_HOST || 'localhost';
+let webserverProtocol = webserverHost === 'localhost' ? 'http' : 'https';
+
+function getWebserverHost() {
+  return webserverHost;
 }
-function setHttpsHost(newHost) {
-  console.log(`Setting httpsHost to ${newHost}`);
-  httpsHost = newHost;
+
+function setWebserverHost(newHost) {
+  webserverHost = newHost;
+}
+
+function getWebserverProtocol() {
+  return webserverProtocol;
+}
+
+function setWebserverProtocol(protocol) {
+  webserverProtocol = protocol;
+}
+
+function getWebserverUrl(path) {
+  return `${getWebserverProtocol()}://${getWebserverHost()}${path}`;
 }
 
 module.exports = {
-  getHttpsHost,
-  setHttpsHost,
+  getWebserverHost,
+  setWebserverHost,
+  getWebserverProtocol,
+  setWebserverProtocol,
+  getWebserverUrl,
 };

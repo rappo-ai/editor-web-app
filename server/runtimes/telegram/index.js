@@ -10,10 +10,10 @@ const {
   hasNullOutTransition,
   TRANSITION_EVENT_TYPE_RESPONSE,
 } = require('../../utils/bot');
-const { getHttpsHost } = require('../../utils/host');
+const { getWebserverHost, getWebserverUrl } = require('../../utils/host');
 
 function getWebhookUrl(botId, botSecret) {
-  return `https://${getHttpsHost()}/webhooks/telegram/${botId}/${botSecret}`;
+  return getWebserverUrl(`/webhooks/telegram/${botId}/${botSecret}`);
 }
 
 async function callTelegramApi(endpoint, token, body = {}) {
@@ -104,7 +104,8 @@ async function publishTelegram(bot, { botToken }) {
 
   return {
     apiResponse: apiResponse.data,
-    webhookHost: getHttpsHost(),
+    bot,
+    webhookHost: getWebserverHost(),
   };
 }
 
@@ -120,6 +121,7 @@ async function unpublishTelegram(bot) {
 
   return {
     apiResponse: apiResponse && apiResponse.data,
+    bot,
   };
 }
 

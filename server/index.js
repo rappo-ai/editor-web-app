@@ -16,7 +16,7 @@ const setup = require('./middlewares/frontendMiddleware');
 const login = require('./middlewares/login');
 const logout = require('./middlewares/logout');
 const webhooks = require('./middlewares/webhooks');
-const { setHttpsHost } = require('./utils/host');
+const { setWebserverHost, setWebserverProtocol } = require('./utils/host');
 const argv = require('./argv');
 const port = require('./port');
 const isDev = process.env.NODE_ENV !== 'production';
@@ -87,7 +87,8 @@ app.listen(port, host, async err => {
     let url;
     try {
       url = await ngrok.connect(port);
-      setHttpsHost(url.replace('https://', ''));
+      setWebserverHost(url.replace('https://', ''));
+      setWebserverProtocol('https');
     } catch (e) {
       return logger.error(e);
     }
