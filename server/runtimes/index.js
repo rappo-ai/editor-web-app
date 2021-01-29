@@ -15,7 +15,7 @@ function publishRuntime(bot, runtime, params) {
     default:
       break;
   }
-  API_THROW_ERROR(true, 400, 'Invalid runtime');
+  API_THROW_ERROR(true, 404, 'Runtime not found');
 }
 
 // eslint-disable-next-line consistent-return
@@ -28,7 +28,7 @@ function unpublishRuntime(bot, runtime, params) {
     default:
       break;
   }
-  API_THROW_ERROR(true, 400, 'Invalid runtime');
+  API_THROW_ERROR(true, 404, 'Runtime not found');
 }
 
 module.exports = {

@@ -47,8 +47,8 @@ function init(options) {
 
   db.entities = loadEntities(path.resolve(__dirname, './entities'));
 
-  db.create = async function _create(collection) {
-    const entity = entityFactory.create(collection);
+  db.create = async function _create(collection, data = {}) {
+    const entity = entityFactory.create(collection, data);
     return db.engine.create(collection, entity);
   };
 

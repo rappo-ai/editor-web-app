@@ -14,6 +14,7 @@ import {
   LOAD_USER,
   LOAD_USER_SUCCESS,
   LOAD_USER_ERROR,
+  UPDATE_USER_PROFILE_SUCCESS,
 } from './constants';
 
 // The initial state of the App
@@ -34,10 +35,8 @@ export const initialState = {
     showBackButton: false,
   },
   user: {
-    profile: {
-      displayName: '',
-      profilePic: '',
-    },
+    displayName: '',
+    profilePic: '',
     isActivated: false,
   },
   bots: false,
@@ -67,14 +66,17 @@ const appReducer = (state = initialState, action) =>
 
       case LOAD_USER_SUCCESS:
         draft.session.isLoggedIn = true;
-        draft.user.profile = action.profile;
-        draft.user.isActivated = action.isActivated;
+        draft.user = action.user;
         draft.loading = false;
         break;
 
       case LOAD_USER_ERROR:
         draft.error = action.error;
         draft.loading = false;
+        break;
+
+      case UPDATE_USER_PROFILE_SUCCESS:
+        draft.user = action.user;
         break;
 
       case 'LOAD_BOTS':

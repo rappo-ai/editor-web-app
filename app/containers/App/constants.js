@@ -14,3 +14,9 @@ export const LOAD_COOKIES_SUCCESS = 'rappoweb/App/LOAD_COOKIES_SUCCESS';
 export const LOAD_USER = 'rappoweb/App/LOAD_USER';
 export const LOAD_USER_SUCCESS = 'rappoweb/App/LOAD_USER_SUCCESS';
 export const LOAD_USER_ERROR = 'rappoweb/App/LOAD_USER_ERROR';
+
+export const UPDATE_USER_PROFILE = 'rappoweb/App/UPDATE_USER_PROFILE';
+export const UPDATE_USER_PROFILE_SUCCESS =
+  'rappoweb/App/UPDATE_USER_PROFILE_SUCCESS';
+export const UPDATE_USER_PROFILE_ERROR =
+  'rappoweb/App/UPDATE_USER_PROFILE_ERROR';

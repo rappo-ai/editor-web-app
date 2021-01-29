@@ -7,6 +7,8 @@ import produce from 'immer';
 
 export const initialState = {
   bot: { id: '', name: '' },
+  botUser: {},
+  endUser: {},
   model: {},
   chatHistory: [
     {
@@ -26,6 +28,12 @@ const playerPageReducer = (state = initialState, action) =>
         break;
       case 'LOAD_PLAYER_BOT_SUCCESS':
         draft.bot = action.bot;
+        break;
+      case 'LOAD_BOT_USER_SUCCESS':
+        draft.botUser = action.botUser;
+        break;
+      case 'LOAD_END_USER_SUCCESS':
+        draft.endUser = action.endUser;
         break;
       case 'SET_TRANSITION_EVENT':
         if (action.modelId === draft.model.id) {

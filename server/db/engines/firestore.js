@@ -42,7 +42,27 @@ class FirestoreDBEngine extends DBEngine {
     });
   }
 
-  async query(collection, query) {
+  async querySnapshot(collection, query) {
+    if (Array.isArray(query)) {
+      let firestoreQuery = this.firestore
+        .collection(collection)
+        .withConverter(this.converter);
+
+      const queries = query;
+      queries.forEach(_query => {
+        if (!_query.condition) {
+          _query.condition = '==';
+        }
+        firestoreQuery = firestoreQuery.where(
+          _query.property,
+          _query.condition,
+          _query.value,
+        );
+      });
+
+      return firestoreQuery.get();
+    }
+
     if (!query.condition) {
       query.condition = '==';
     }
@@ -50,14 +70,17 @@ class FirestoreDBEngine extends DBEngine {
       .collection(collection)
       .withConverter(this.converter)
       .where(query.property, query.condition, query.value)
-      .get()
-      .then(snapshot => {
-        const results = [];
-        snapshot.forEach(doc => {
-          results.push(doc.data());
-        });
-        return results;
+      .get();
+  }
+
+  async query(collection, query) {
+    return this.querySnapshot(collection, query).then(querySnapshot => {
+      const results = [];
+      querySnapshot.forEach(doc => {
+        results.push(doc.data());
       });
+      return results;
+    });
   }
 
   async set(collection, entity) {
@@ -81,18 +104,13 @@ class FirestoreDBEngine extends DBEngine {
     if (!query.condition) {
       query.condition = '==';
     }
-    return this.firestore
-      .collection(collection)
-      .withConverter(this.converter)
-      .where(query.property, query.condition, query.value)
-      .get()
-      .then(querySnapshot => {
-        const results = [];
-        querySnapshot.forEach(doc => {
-          results.push(doc.ref.delete());
-        });
-        return results;
+    return this.querySnapshot(collection, query).then(querySnapshot => {
+      const results = [];
+      querySnapshot.forEach(doc => {
+        results.push(doc.ref.delete());
       });
+      return results;
+    });
   }
 }
 

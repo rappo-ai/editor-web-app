@@ -2,24 +2,23 @@ import { call, put, takeEvery } from 'redux-saga/effects';
 import apiBuilder from 'utils/api';
 import request from 'utils/request';
 import { updateUserProfileSuccess, updateUserProfileError } from './actions';
-import { UPDATE_USER_PROFILE } from './constants';
+import { UPDATE_USER_PROFILE } from '../App/constants';
 
 function* updateUserProfile(action) {
   try {
-    const { url, options } = apiBuilder('/user/profile', {
-      method: 'PUT',
-      body: {
-        profile: {
-          linkedinUrl: action.linkedinUrl,
-          phoneNumber: action.phoneNumber,
-          useCase: action.useCase,
+    const { url, options } = apiBuilder(
+      `/users/me/profiles/${action.profileName}`,
+      {
+        method: 'PUT',
+        body: {
+          data: action.data,
         },
+        accessToken: action.accessToken,
       },
-      accessToken: action.accessToken,
-    });
+    );
     // Call our request helper (see 'utils/request')
-    const profile = yield call(request, url, options);
-    yield put(updateUserProfileSuccess(profile));
+    const user = yield call(request, url, options);
+    yield put(updateUserProfileSuccess(user));
   } catch (err) {
     console.error(err);
     yield put(updateUserProfileError(err));

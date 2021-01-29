@@ -25,6 +25,23 @@ export function loadBotModel(botId, accessToken) {
   };
 }
 
+export function loadBotUser(botUserAccessToken) {
+  return {
+    type: 'LOAD_BOT_USER',
+    botUserAccessToken,
+  };
+}
+
+export function loadEndUser(botUser, botId, botUserAccessToken, userKey) {
+  return {
+    type: 'LOAD_END_USER',
+    botUser,
+    botId,
+    botUserAccessToken,
+    userKey,
+  };
+}
+
 export function loadPlayerBot(botId, accessToken) {
   return {
     type: 'LOAD_PLAYER_BOT',

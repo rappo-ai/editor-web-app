@@ -11,6 +11,7 @@ import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import { get as getObjectProperty } from 'lodash/object';
 
 import { loadBots, setupHeader } from 'containers/App/actions';
 import {
@@ -60,7 +61,7 @@ export function HomePage({
   }, [accessToken]);
 
   useEffect(() => {
-    const menuIcon = user.profile.profilePic;
+    const menuIcon = getObjectProperty(user, 'profiles.rappo.profilePic', '');
     const menuItems = [
       {
         name: 'Home',
@@ -80,7 +81,7 @@ export function HomePage({
       },
     ];
     onSetupHeader({ title: headerTitle, menuIcon, menuItems, actionButtons });
-  }, []);
+  }, [user, headerTitle]);
 
   const botListProps = {
     loading,

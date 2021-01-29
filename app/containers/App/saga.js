@@ -23,28 +23,15 @@ function* loadCookies() {
  */
 function* loadUser(action) {
   try {
-    const { url, options } = apiBuilder('/user', {
+    const { url, options } = apiBuilder(`/users/me`, {
       accessToken: action.accessToken,
     });
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
-    const profile = { displayName: '', profilePic: '', ...response.profile };
-    if (response.googleProfile) {
-      try {
-        profile.displayName = response.googleProfile.profile.displayName;
-        profile.givenName = response.googleProfile.profile.name.givenName;
-        profile.familyName = response.googleProfile.profile.name.familyName;
-        profile.profilePic = response.googleProfile.profile.photos[0].value;
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    yield put(userLoaded(profile, response.isActivated));
+    yield put(userLoaded(response.user));
   } catch (err) {
     console.error(err);
-    if (!action.isEndUser) {
-      yield put(userLoadError(err));
-    }
+    yield put(userLoadError(err));
   }
 }
 
@@ -53,7 +40,7 @@ function* loadUser(action) {
  */
 function* loadBots(action) {
   try {
-    const { url, options } = apiBuilder('/bot', {
+    const { url, options } = apiBuilder(`/bots`, {
       accessToken: action.accessToken,
     });
     // Call our request helper (see 'utils/request')
@@ -76,7 +63,7 @@ function* loadBots(action) {
  */
 function* createBot(action) {
   try {
-    const { url, options } = apiBuilder('/bot', {
+    const { url, options } = apiBuilder('/bots', {
       method: 'POST',
       body: {
         name: action.name,

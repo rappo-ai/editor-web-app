@@ -7,8 +7,9 @@ class Factory {
     this.builders[collection] = builder;
   }
 
-  create(collection) {
-    return this.builders[collection]();
+  create(collection, data = {}) {
+    const entity = this.builders[collection]();
+    return Object.assign(entity, data);
   }
 }
 const factory = new Factory();

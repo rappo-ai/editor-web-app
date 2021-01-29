@@ -7,7 +7,7 @@ import request from 'utils/request';
  */
 function* loadBot(action) {
   try {
-    const { url, options } = apiBuilder(`/bot/${action.id}`, {
+    const { url, options } = apiBuilder(`/bots/${action.botId}`, {
       accessToken: action.accessToken,
     });
     // Call our request helper (see 'utils/request')
@@ -29,7 +29,7 @@ function* loadBot(action) {
  * Create a new bot model
  */
 function* createBotModel(action) {
-  const { url, options } = apiBuilder(`/model`, {
+  const { url, options } = apiBuilder(`/models`, {
     body: { botId: action.botId },
     method: 'POST',
     accessToken: action.accessToken,
@@ -48,7 +48,7 @@ function* createBotModel(action) {
  */
 function* loadBotModel(action) {
   try {
-    const { url, options } = apiBuilder(`/bot/${action.botId}/model`, {
+    const { url, options } = apiBuilder(`/bots/${action.botId}/models`, {
       accessToken: action.accessToken,
     });
     const response = yield call(request, url, options);
@@ -81,7 +81,7 @@ function* loadBotModel(action) {
 function* addState(action) {
   let response;
   try {
-    const { url, options } = apiBuilder(`/model/${action.modelId}/state`, {
+    const { url, options } = apiBuilder(`/models/${action.modelId}/states`, {
       method: 'POST',
       body: {
         message: action.message,
@@ -115,7 +115,7 @@ function* updateState(action) {
   let response;
   try {
     const { url, options } = apiBuilder(
-      `/model/${action.modelId}/state/${action.stateId}`,
+      `/models/${action.modelId}/states/${action.stateId}`,
       {
         method: 'PUT',
         body: {
@@ -151,7 +151,7 @@ function* deleteState(action) {
   let response;
   try {
     const { url, options } = apiBuilder(
-      `/model/${action.modelId}/state/${action.stateId}`,
+      `/models/${action.modelId}/states/${action.stateId}`,
       {
         method: 'DELETE',
         accessToken: action.accessToken,
@@ -182,15 +182,18 @@ function* deleteState(action) {
 function* addTransition(action) {
   let response;
   try {
-    const { url, options } = apiBuilder(`/model/${action.modelId}/transition`, {
-      method: 'POST',
-      body: {
-        fromStateId: action.fromStateId,
-        toStateId: action.toStateId,
-        event: action.event,
+    const { url, options } = apiBuilder(
+      `/models/${action.modelId}/transitions`,
+      {
+        method: 'POST',
+        body: {
+          fromStateId: action.fromStateId,
+          toStateId: action.toStateId,
+          event: action.event,
+        },
+        accessToken: action.accessToken,
       },
-      accessToken: action.accessToken,
-    });
+    );
     response = yield call(request, url, options);
     if (response.model) {
       yield put({
@@ -217,7 +220,7 @@ function* deleteTransition(action) {
   let response;
   try {
     const { url, options } = apiBuilder(
-      `/model/${action.modelId}/transition/${action.transitionId}`,
+      `/models/${action.modelId}/transitions/${action.transitionId}`,
       {
         method: 'DELETE',
         accessToken: action.accessToken,
@@ -249,7 +252,7 @@ function* doTransitionToState(action) {
   let response;
   try {
     const { url, options } = apiBuilder(
-      `/model/${action.modelId}/state?fromStateId=${
+      `/models/${action.modelId}/states?fromStateId=${
         action.fromStateId
       }&transitionEventType=\
 ${action.event.type}&transitionEventValue=${encodeURIComponent(
@@ -336,10 +339,13 @@ function* addStateWithTransition(action) {
 function* publishBot(action) {
   let response;
   try {
-    const { url, options } = apiBuilder(`/bot/${action.botId}/publish/web`, {
-      method: 'POST',
-      accessToken: action.accessToken,
-    });
+    const { url, options } = apiBuilder(
+      `/bots/${action.botId}/deployments/web`,
+      {
+        method: 'POST',
+        accessToken: action.accessToken,
+      },
+    );
     response = yield call(request, url, options);
     if (response.accessToken && response.botId) {
       yield put({

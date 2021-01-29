@@ -10,6 +10,10 @@ import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
+import {
+  get as getObjectProperty,
+  has as hasObjectProperty,
+} from 'lodash/object';
 
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -78,7 +82,7 @@ export function WaitlistPage({
 
   const accessToken = getAccessToken();
   const classes = useStyles();
-  const firstName = user.profile.givenName;
+  const firstName = getObjectProperty(user, 'profiles.rappo.givenName', '');
 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [linkedinUrl, setLinkedinUrl] = useState('');
@@ -89,15 +93,15 @@ export function WaitlistPage({
   );
 
   useEffect(() => {
-    if (user && user.profile) {
-      setPhoneNumber(user.profile.phoneNumber || '');
-      setLinkedinUrl(user.profile.linkedinUrl || '');
-      setUseCase(user.profile.useCase || '');
+    if (hasObjectProperty(user, 'profiles.waitlist')) {
+      setPhoneNumber(user.profiles.waitlist.phoneNumber || '');
+      setLinkedinUrl(user.profiles.waitlist.linkedinUrl || '');
+      setUseCase(user.profiles.waitlist.useCase || '');
     }
   }, [user]);
 
   useEffect(() => {
-    const menuIcon = user.profile.profilePic;
+    const menuIcon = getObjectProperty(user, 'profiles.rappo.profilePic', '');
     const menuItems = [
       {
         name: 'Logout',
@@ -237,9 +241,12 @@ function mapDispatchToProps(dispatch) {
       dispatch(
         updateUserProfile({
           accessToken,
-          phoneNumber,
-          linkedinUrl,
-          useCase,
+          profileName: 'waitlist',
+          data: {
+            phoneNumber,
+            linkedinUrl,
+            useCase,
+          },
         }),
       ),
   };

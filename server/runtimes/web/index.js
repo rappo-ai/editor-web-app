@@ -1,29 +1,39 @@
 const db = require('../../db');
+const {
+  USER_ROLE_BOT_END_USER_CREATOR,
+  TOKEN_EXPIRY_NEVER,
+} = require('../../utils/auth');
+const {
+  generateAccessToken,
+  expireAccessTokens,
+} = require('../../utils/token');
 
-async function publishWeb(bot, params) {
-  await db.deleteAll('accesstoken', {
-    property: 'botid',
+async function publishWeb(bot) {
+  const botEndUserCreator = await db.get('users', {
+    property: 'botId',
     value: bot.id,
   });
 
-  const accessToken = await db.create('accesstoken');
-  accessToken.set('botid', bot.id);
-  await bot.set('webtoken', accessToken.value);
-  await bot.set('webparams', params);
+  await expireAccessTokens(botEndUserCreator);
 
-  return { accessToken: accessToken.value, botId: bot.id };
+  const accessToken = await generateAccessToken(
+    botEndUserCreator,
+    USER_ROLE_BOT_END_USER_CREATOR,
+    TOKEN_EXPIRY_NEVER(),
+  );
+
+  return { accessToken: accessToken.token, botId: bot.id };
 }
 
 async function unpublishWeb(bot) {
-  // destroy access token used to generate end-users
-  await db.delete('accesstoken', {
-    property: 'botid',
+  const botEndUserCreator = await db.get('users', {
+    property: 'botId',
     value: bot.id,
   });
 
-  await bot.set('webtoken', '');
+  await expireAccessTokens(botEndUserCreator);
 
-  return { accessToken: '' };
+  return { accessToken: '', botId: bot.id };
 }
 
 module.exports = {

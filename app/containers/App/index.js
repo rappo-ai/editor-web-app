@@ -60,19 +60,15 @@ export function App({
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  let accessToken = queryParams.get('accessToken');
-  const endUserId = queryParams.get('endUserId') || '';
-  let isEndUser = false;
-  if (accessToken) {
-    isEndUser = true;
-  } else {
+  let accessToken = queryParams.get('token');
+  if (!accessToken) {
     accessToken = getAccessToken();
   }
 
   useEffect(() => {
     onLoadCookies();
-    onLoadUser(accessToken, isEndUser, endUserId);
-  }, [accessToken, isEndUser, endUserId]);
+    onLoadUser(accessToken);
+  }, [accessToken]);
 
   return (
     <AppWrapper>
@@ -135,8 +131,7 @@ const mapStateToProps = createStructuredSelector({
 export function mapDispatchToProps(dispatch) {
   return {
     onLoadCookies: () => dispatch(loadCookies()),
-    onLoadUser: (accessToken, isEndUser, endUserId) =>
-      dispatch(loadUser(accessToken, isEndUser, endUserId)),
+    onLoadUser: accessToken => dispatch(loadUser(accessToken)),
   };
 }
 
