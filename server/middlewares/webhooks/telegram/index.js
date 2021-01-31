@@ -11,7 +11,6 @@ router.post('/:botId/:botSecret', (req, res) => {
         botSecret: req.params.botSecret,
         update: req.body,
       },
-      req.body.update_id,
       err => err && console.log(err.message),
     );
   }

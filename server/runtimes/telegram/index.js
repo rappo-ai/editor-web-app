@@ -1,5 +1,5 @@
 const axios = require('axios').default;
-const priorityQueue = require('async/priorityQueue');
+const queue = require('async/queue');
 const deepEqual = require('deep-equal');
 const { nanoid } = require('nanoid');
 const db = require('../../db');
@@ -103,7 +103,7 @@ async function publishTelegram(bot, { botToken }) {
     token: botToken,
     secret: botSecret,
   };
-  await bot.set('deployments', deployments);
+  await db.update('bots', bot.id, { deployments });
 
   await setDefaultCommands(botToken);
 
@@ -125,7 +125,7 @@ async function unpublishTelegram(bot) {
 
   deployments.telegram = {};
 
-  await bot.set('deployments', deployments);
+  await db.update('bots', bot.id, { deployments });
 
   return {
     apiResponse: apiResponse && apiResponse.data,
@@ -135,7 +135,7 @@ async function unpublishTelegram(bot) {
 
 const userQueueMap = {};
 function createUserQueue(telegramUserId) {
-  userQueueMap[telegramUserId] = priorityQueue(processUpdate, 1);
+  userQueueMap[telegramUserId] = queue(processUpdate, 1);
   return userQueueMap[telegramUserId];
 }
 function getUserQueue(telegramUser) {
@@ -202,7 +202,7 @@ async function processUpdate(task, callback) {
       transitionEventValue === '/start' ||
       transitionEventValue === '/restart'
     ) {
-      await chatsession.set('botStateId', 'START');
+      await db.update(chatsession, { botStateId: 'START' });
       transitionEventValue = '';
     }
     const getNextStateResponse = getNextState(
@@ -260,7 +260,7 @@ async function processUpdate(task, callback) {
       );
     }
 
-    await chatsession.set('botStateId', getNextStateResponse.state.id);
+    await db.update(chatsession, { botStateId: getNextStateResponse.state.id });
   } catch (err) {
     callback(err);
   }

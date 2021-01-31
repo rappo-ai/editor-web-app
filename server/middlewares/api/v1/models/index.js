@@ -105,8 +105,9 @@ router.post(
       message,
       responses,
     };
+
     model.states.push(state);
-    await model.set('states', model.states);
+    await db.update('models', model.id, { states: model.states });
 
     res.status(201);
     res.json(
@@ -147,7 +148,7 @@ router.put(
 
     state.message = message;
     state.responses = responses;
-    await model.set('states', model.states);
+    await db.update('models', model.id, { states: model.states });
 
     res.json(
       API_SUCCESS_RESPONSE({
@@ -179,7 +180,7 @@ router.delete(
     }
 
     model.states = model.states.filter(e => e.id !== req.params.stateId);
-    await model.set('states', model.states);
+    await db.update('models', model.id, { states: model.states });
 
     res.json(
       API_SUCCESS_RESPONSE({
@@ -228,7 +229,7 @@ router.post(
       event,
     };
     model.transitions.push(transition);
-    await model.set('transitions', model.transitions);
+    await db.update('models', model.id, { transitions: model.transitions });
 
     res.status(201);
     res.json(
@@ -263,7 +264,7 @@ router.delete(
     model.transitions = model.transitions.filter(
       e => e.id !== req.params.transitionId,
     );
-    await model.set('transitions', model.transitions);
+    await db.update('models', model.id, { transitions: model.transitions });
     res.json(
       API_SUCCESS_RESPONSE({
         model,

@@ -21,7 +21,12 @@ class FirestoreDBEngine extends DBEngine {
   }
 
   async create(collection, entity) {
-    return this.set(collection, entity).then(() => entity);
+    return this.firestore
+      .collection(collection)
+      .withConverter(this.converter)
+      .doc(entity.id)
+      .create(entity)
+      .then(() => entity);
   }
 
   async get(collection, query) {
@@ -39,6 +44,67 @@ class FirestoreDBEngine extends DBEngine {
         return null;
       }
       return results[0];
+    });
+  }
+
+  async update(collection, query, data) {
+    let entity;
+    // update(entity, data) overload
+    if (typeof collection === 'object') {
+      entity = collection;
+      ({ collection } = entity);
+
+      data = query;
+      query = entity.id;
+    }
+
+    // update(collection, id, data) overload
+    if (typeof query === 'string') {
+      const id = query;
+      return this.firestore
+        .collection(collection)
+        .withConverter(this.converter)
+        .doc(id)
+        .update(data)
+        .then(() => entity && Object.assign(entity, data));
+    }
+
+    // update(collection, query, data) overload
+    // update(collection, query[], data) overload
+    return this.querySnapshot(collection, query).then(querySnapshot => {
+      const results = [];
+      querySnapshot.forEach(doc => {
+        results.push(doc.ref.update(data));
+      });
+      return results;
+    });
+  }
+
+  async delete(collection, query) {
+    if (typeof query === 'string') {
+      const id = query;
+      return this.firestore
+        .collection(collection)
+        .withConverter(this.converter)
+        .doc(id)
+        .delete();
+    }
+    return this.querySnapshot(collection, query).then(querySnapshot => {
+      const results = [];
+      querySnapshot.forEach(doc => {
+        results.push(doc.ref.delete());
+      });
+      return results;
+    });
+  }
+
+  async query(collection, query) {
+    return this.querySnapshot(collection, query).then(querySnapshot => {
+      const results = [];
+      querySnapshot.forEach(doc => {
+        results.push(doc.data());
+      });
+      return results;
     });
   }
 
@@ -71,46 +137,6 @@ class FirestoreDBEngine extends DBEngine {
       .withConverter(this.converter)
       .where(query.property, query.condition, query.value)
       .get();
-  }
-
-  async query(collection, query) {
-    return this.querySnapshot(collection, query).then(querySnapshot => {
-      const results = [];
-      querySnapshot.forEach(doc => {
-        results.push(doc.data());
-      });
-      return results;
-    });
-  }
-
-  async set(collection, entity) {
-    return this.firestore
-      .collection(collection)
-      .withConverter(this.converter)
-      .doc(entity.id)
-      .set(entity)
-      .then(() => entity);
-  }
-
-  async delete(collection, id) {
-    return this.firestore
-      .collection(collection)
-      .withConverter(this.converter)
-      .doc(id)
-      .delete();
-  }
-
-  async deleteAll(collection, query) {
-    if (!query.condition) {
-      query.condition = '==';
-    }
-    return this.querySnapshot(collection, query).then(querySnapshot => {
-      const results = [];
-      querySnapshot.forEach(doc => {
-        results.push(doc.ref.delete());
-      });
-      return results;
-    });
   }
 }
 

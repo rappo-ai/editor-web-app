@@ -497,10 +497,6 @@ export function EditorPage({
     <Container>
       <Helmet>
         <title>{bot.name} - Edit</title>
-        <meta
-          name="description"
-          content="Create powerful chatbots rapidly with Rappo.ai"
-        />
       </Helmet>
       <ChatView {...chatViewProps} />
       <ChatInputBar {...chatInputBarProps} />

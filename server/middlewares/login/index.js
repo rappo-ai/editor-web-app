@@ -100,7 +100,7 @@ async function authenticateGoogleUser(profile) {
       },
       google: profile,
     });
-    await user.set('profiles', profiles);
+    await db.update(user, { profiles });
     accessToken = await generateAccessToken(
       user,
       USER_ROLE_BOT_DESIGNER,

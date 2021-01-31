@@ -26,7 +26,7 @@ async function decodeToken(token) {
   if (accessToken) {
     const isTokenDateExpired = now() >= accessToken.expiryTs;
     if (isTokenDateExpired) {
-      await accessToken.set('isExpired', true);
+      await db.update(accessToken, { isExpired: true });
     }
   }
 
@@ -48,7 +48,7 @@ async function expireAccessTokens(user) {
 
   const tokenExpiredPromises = [];
   oldTokens.forEach(oldToken => {
-    tokenExpiredPromises.push(oldToken.set('isExpired', true));
+    tokenExpiredPromises.push(db.update(oldToken, { isExpired: true }));
   });
 
   return Promise.all(tokenExpiredPromises);

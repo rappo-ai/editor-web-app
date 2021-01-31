@@ -8,7 +8,15 @@ class DBEngine {
     throw new Error('Override not implemented');
   }
 
-  async set(collection, entity) {
+  async update(collection, query, data) {
+    throw new Error('Override not implemented');
+  }
+
+  async delete(collection, query) {
+    throw new Error('Override not implemented');
+  }
+
+  async query(collection, query) {
     throw new Error('Override not implemented');
   }
 }

@@ -43,6 +43,7 @@ const SCOPES_BOT_DESIGNER = [
 const SCOPES_BOT_END_USER_CREATOR = [
   'GET /api/v1/users',
   'POST /api/v1/users',
+  'POST /api/v1/users/:userId/endusertokens',
   'GET /api/v1/users/:userId',
 ];
 const SCOPES_END_USER = [

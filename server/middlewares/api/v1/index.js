@@ -2,6 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 
+const db = require('../../../db');
 const { API_THROW_ERROR } = require('../../../utils/api');
 const { decodeToken } = require('../../../utils/token');
 const bots = require('./bots');
@@ -54,7 +55,9 @@ router.use(async req => {
   // as the response is already sent at this point
   try {
     if (req.authInfo.accessToken && req.authInfo.accessToken.isOneTimeUse) {
-      await req.authInfo.accessToken.set('isExpired', true);
+      await db.update(req.authInfo.accessToken, {
+        isExpired: true,
+      });
     }
   } catch (err) {
     console.log(err);

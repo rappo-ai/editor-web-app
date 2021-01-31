@@ -81,6 +81,13 @@ function* loadEndUser(action) {
       endUser = Object.assign({}, response.data.users[0]);
     }
 
+    ({ url, options } = apiBuilder(`/users/${endUser.id}/endusertokens`, {
+      accessToken: action.botUserAccessToken,
+      method: 'POST',
+    }));
+    response = yield call(request, url, options);
+
+    endUser.accessToken = response.data.accessToken;
     yield put({
       type: 'LOAD_END_USER_SUCCESS',
       endUser,

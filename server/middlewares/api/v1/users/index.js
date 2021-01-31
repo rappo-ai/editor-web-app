@@ -84,13 +84,51 @@ router.post(
         USER_ROLE_END_USER,
         TOKEN_EXPIRY_1_HOUR(),
       );
-      await user.set('accessToken', accessToken);
+      await db.update(user, { accessToken });
     }
 
     res.json(
       API_SUCCESS_RESPONSE({
         data: {
           user,
+        },
+      }),
+    );
+
+    return next();
+  }),
+);
+
+router.post(
+  '/:userId/endusertokens',
+  asyncHandler(async (req, res, next) => {
+    API_VALIDATE_AUTH_SCOPE(
+      req.authInfo,
+      'POST /api/v1/users/:userId/endusertokens',
+    );
+
+    const user = await db.get('users', req.params.userId);
+    if (req.user.id !== req.params.userId) {
+      if (req.user.role === USER_ROLE_BOT_END_USER_CREATOR) {
+        API_THROW_ERROR(
+          user.ownerId !== req.user.id,
+          403,
+          'Access denied - User does not have permission to modify this resource',
+        );
+      } else {
+        API_VALIDATE_ADMIN(req.user);
+      }
+    }
+    const accessToken = await generateAccessToken(
+      user,
+      USER_ROLE_END_USER,
+      TOKEN_EXPIRY_1_HOUR(),
+    );
+
+    res.json(
+      API_SUCCESS_RESPONSE({
+        data: {
+          accessToken,
         },
       }),
     );
@@ -141,9 +179,10 @@ router.put(
     const { data } = req.body;
     API_VALIDATE_REQUEST_BODY_PARAMETERS({ data });
 
+    const { profiles } = user;
     const { profileName } = req.params;
-    user.profiles[profileName] = data;
-    await user.set('profiles', user.profiles);
+    profiles[profileName] = data;
+    await db.update('users', user.id, { profiles });
 
     res.json(API_SUCCESS_RESPONSE({ user }));
 
@@ -160,7 +199,7 @@ router.get(
     const user = await getUser(req.params.userId);
     API_THROW_ERROR(!user, 404, 'User not found');
 
-    await user.set('isActivated', true);
+    await db.update(user, { isActivated: true });
 
     res.json(API_SUCCESS_RESPONSE({ user }));
 
