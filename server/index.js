@@ -9,8 +9,9 @@ const passport = require('passport');
 const morgan = require('morgan')('combined');
 const cookieparser = require('cookie-parser');
 const bodyparser = require('body-parser');
-const expresssession = require('express-session');
+const session = require('express-session');
 const logger = require('./logger');
+const { getSessionStore } = require('./db/stores');
 const api = require('./middlewares/api');
 const setup = require('./middlewares/frontendMiddleware');
 const login = require('./middlewares/login');
@@ -33,23 +34,31 @@ const app = express();
 app.use(morgan);
 app.use(cookieparser());
 app.use(bodyparser.json());
+
+if (isProd) {
+  app.set('trust proxy', 1);
+}
+
 app.use(
-  expresssession({
-    secret: 'keyboard cat',
-    resave: true,
+  session({
+    cookie: {
+      httpOnly: true,
+      maxAge: 60 * 60 * 1000, // 1 hour in milliseconds
+      sameSite: isProd,
+      secure: isProd,
+    },
+    name: 'rsid',
+    proxy: isProd,
+    resave: false,
+    rolling: true,
     saveUninitialized: true,
+    secret: process.env.SESSION_COOKIE_SECRET,
+    store: getSessionStore(),
   }),
 );
 
-// Initialize Passport and restore authentication state, if any, from the
-// session.
-if (isProd) {
-  // passport redirects to http on Heroku. The below line is a workaround to do a https redirect.
-  // see https://stackoverflow.com/questions/20739744/passportjs-callback-switch-between-http-and-https
-  app.enable('trust proxy');
-}
+// Initialize Passport
 app.use(passport.initialize());
-app.use(passport.session());
 
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 app.use('/api', api);

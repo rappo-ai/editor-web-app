@@ -26,7 +26,6 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import MuiAlert from '@material-ui/lab/Alert';
 
-import { getAccessToken } from 'utils/cookies';
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
 import { setupHeader } from 'containers/App/actions';
@@ -80,7 +79,6 @@ export function WaitlistPage({
   useInjectReducer({ key: 'waitlistPage', reducer });
   useInjectSaga({ key: 'waitlistPage', saga });
 
-  const accessToken = getAccessToken();
   const classes = useStyles();
   const firstName = getObjectProperty(user, 'profiles.rappo.givenName', '');
 
@@ -188,7 +186,6 @@ export function WaitlistPage({
               disabled={waitlistPage.updateStatus === 'updateInProgress'}
               onClick={() =>
                 onUpdateClick({
-                  accessToken,
                   phoneNumber,
                   linkedinUrl,
                   useCase,
@@ -237,10 +234,9 @@ function mapDispatchToProps(dispatch) {
   return {
     onSetupHeader: ({ title, menuIcon, menuItems, actionButtons }) =>
       dispatch(setupHeader({ title, menuIcon, menuItems, actionButtons })),
-    onUpdateClick: ({ accessToken, phoneNumber, linkedinUrl, useCase }) =>
+    onUpdateClick: ({ phoneNumber, linkedinUrl, useCase }) =>
       dispatch(
         updateUserProfile({
-          accessToken,
           profileName: 'waitlist',
           data: {
             phoneNumber,

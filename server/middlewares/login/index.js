@@ -1,23 +1,21 @@
 /* eslint-disable func-names */
 const express = require('express');
+const { has: hasObjectProperty } = require('lodash/object');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { sendTransactionalEmail } = require('../../utils/email');
 const db = require('../../db');
 const {
-  TOKEN_EXPIRY_1_DAY,
-  TOKEN_EXPIRY_1_WEEK,
   USER_SERVICE_ADMIN,
   USER_ROLE_SIGNUP_APPROVER,
   USER_ROLE_BOT_DESIGNER,
 } = require('../../utils/auth');
 const { getWebserverUrl } = require('../../utils/host');
-const { pojoClone } = require('../../utils/pojo');
 const {
   generateAccessToken,
-  expireAccessTokens,
+  generateBotDesignerAccessToken,
+  TOKEN_EXPIRY_1_WEEK,
 } = require('../../utils/token');
-const { getUser } = require('../../utils/user');
 const router = express.Router();
 
 async function authenticateGoogleUser(profile) {
@@ -50,16 +48,13 @@ async function authenticateGoogleUser(profile) {
       },
     });
 
-    accessToken = await generateAccessToken(
-      user,
-      USER_ROLE_BOT_DESIGNER,
-      TOKEN_EXPIRY_1_DAY(),
-    );
+    accessToken = await generateBotDesignerAccessToken(db, user);
 
     const userApprovalAccessToken = await generateAccessToken(
+      db,
       USER_SERVICE_ADMIN,
       USER_ROLE_SIGNUP_APPROVER,
-      TOKEN_EXPIRY_1_WEEK(),
+      TOKEN_EXPIRY_1_WEEK,
       true,
     );
 
@@ -81,8 +76,6 @@ async function authenticateGoogleUser(profile) {
       }\n\nClick to approve -> ${approvalLink}`,
     );
   } else {
-    await expireAccessTokens(user);
-
     // update rappo and google profiles (currently in sync)
     const profiles = Object.assign({}, user.profiles, {
       rappo: {
@@ -101,11 +94,7 @@ async function authenticateGoogleUser(profile) {
       google: profile,
     });
     await db.update(user, { profiles });
-    accessToken = await generateAccessToken(
-      user,
-      USER_ROLE_BOT_DESIGNER,
-      TOKEN_EXPIRY_1_DAY(),
-    );
+    accessToken = await generateBotDesignerAccessToken(db, user);
   }
   return {
     user,
@@ -122,18 +111,10 @@ passport.use(
     },
     async function(googleAccessToken, googleRefreshToken, profile, cb) {
       const { user, accessToken } = await authenticateGoogleUser(profile);
-      return cb(null, user, { accessToken });
+      return cb(null, user, { accessToken, type: 'google' });
     },
   ),
 );
-
-passport.serializeUser(function(user, cb) {
-  cb(null, user.id);
-});
-
-passport.deserializeUser(async function(id, cb) {
-  cb(null, pojoClone(await getUser(id)));
-});
 
 router.get(
   '/google',
@@ -142,20 +123,18 @@ router.get(
   }),
 );
 
-router.get('/google/redirect', passport.authenticate('google'), async function(
-  req,
-  res,
-) {
-  if (req.user) {
-    const accessToken = await db.get('tokens', {
-      property: 'token',
-      value: req.authInfo.accessToken.token,
-    });
-    if (accessToken) {
-      res.cookie('at', accessToken.token);
+router.get(
+  '/google/redirect',
+  passport.authenticate('google', { session: false }),
+  async function(req, res) {
+    if (req.user) {
+      req.session.userId = req.user.id;
     }
-  }
-  res.redirect('/');
-});
+    if (hasObjectProperty(req, 'authInfo.accessToken.token')) {
+      req.session.token = req.authInfo.accessToken.token;
+    }
+    res.redirect('/');
+  },
+);
 
 module.exports = router;

@@ -1,12 +1,3 @@
-const { now } = require('lodash/date');
-
-const TOKEN_EXPIRY_1_HOUR = () => now() + 60 * 60 * 1000; // hour in milliseconds
-const TOKEN_EXPIRY_1_DAY = () => now() + 24 * 60 * 60 * 1000; // 24 hours
-const TOKEN_EXPIRY_1_WEEK = () => now() + 7 * 24 * 60 * 60 * 1000; // 7 days
-const TOKEN_EXPIRY_1_MONTH = () => now() + 30 * 24 * 60 * 60 * 1000; // 30 days
-const TOKEN_EXPIRY_1_YEAR = () => now() + 365 * 24 * 60 * 60 * 1000; // 365 days
-const TOKEN_EXPIRY_NEVER = () => now() + 100 * 365 * 24 * 60 * 60 * 1000; // 100 years
-
 const USER_NULL = {
   id: 'null',
 };
@@ -20,9 +11,9 @@ const USER_ROLE_BOT_DESIGNER = 'bot_designer';
 const USER_ROLE_BOT_END_USER_CREATOR = 'bot_end_user_creator';
 const USER_ROLE_END_USER = 'end_user';
 
-const SCOPES_SUPER_ADMIN = ['*'];
-const SCOPES_SIGNUP_APPROVER = ['GET /api/v1/users/:userId/approve'];
-const SCOPES_BOT_DESIGNER = [
+const USER_SCOPES_SUPER_ADMIN = ['*'];
+const USER_SCOPES_SIGNUP_APPROVER = ['GET /api/v1/users/:userId/approve'];
+const USER_SCOPES_BOT_DESIGNER = [
   'GET /api/v1/bots',
   'POST /api/v1/bots',
   'GET /api/v1/bots/:botId',
@@ -40,13 +31,13 @@ const SCOPES_BOT_DESIGNER = [
   'GET /api/v1/users/:userId',
   'PUT /api/v1/users/:userId/profiles/:profileName',
 ];
-const SCOPES_BOT_END_USER_CREATOR = [
+const USER_SCOPES_BOT_END_USER_CREATOR = [
+  'POST /api/v1/tokens',
   'GET /api/v1/users',
   'POST /api/v1/users',
-  'POST /api/v1/users/:userId/endusertokens',
   'GET /api/v1/users/:userId',
 ];
-const SCOPES_END_USER = [
+const USER_SCOPES_END_USER = [
   'GET /api/v1/bots/:botId',
   'GET /api/v1/bots/:botId/models',
   'GET /api/v1/models/:modelId',
@@ -57,15 +48,15 @@ const SCOPES_END_USER = [
 function getScopesForRole(role) {
   switch (role) {
     case USER_ROLE_SUPER_ADMIN:
-      return SCOPES_SUPER_ADMIN;
+      return USER_SCOPES_SUPER_ADMIN;
     case USER_ROLE_SIGNUP_APPROVER:
-      return SCOPES_SIGNUP_APPROVER;
+      return USER_SCOPES_SIGNUP_APPROVER;
     case USER_ROLE_BOT_DESIGNER:
-      return SCOPES_BOT_DESIGNER;
+      return USER_SCOPES_BOT_DESIGNER;
     case USER_ROLE_BOT_END_USER_CREATOR:
-      return SCOPES_BOT_END_USER_CREATOR;
+      return USER_SCOPES_BOT_END_USER_CREATOR;
     case USER_ROLE_END_USER:
-      return SCOPES_END_USER;
+      return USER_SCOPES_END_USER;
     default:
       break;
   }
@@ -76,13 +67,11 @@ function hasAdminRole(user) {
   return user.role === USER_ROLE_SUPER_ADMIN;
 }
 
+function hasSuperAdminRole(user) {
+  return user.role === USER_ROLE_SUPER_ADMIN;
+}
+
 module.exports = {
-  TOKEN_EXPIRY_1_HOUR,
-  TOKEN_EXPIRY_1_DAY,
-  TOKEN_EXPIRY_1_WEEK,
-  TOKEN_EXPIRY_1_MONTH,
-  TOKEN_EXPIRY_1_YEAR,
-  TOKEN_EXPIRY_NEVER,
   USER_NULL,
   USER_SERVICE_ADMIN,
   USER_ROLE_SUPER_ADMIN,
@@ -92,4 +81,5 @@ module.exports = {
   USER_ROLE_END_USER,
   getScopesForRole,
   hasAdminRole,
+  hasSuperAdminRole,
 };

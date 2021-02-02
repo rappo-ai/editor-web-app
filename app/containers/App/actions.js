@@ -80,10 +80,9 @@ export function userLoadError(error) {
  *
  * @return {object} An action object with a type of LOAD_BOTS
  */
-export function loadBots(accessToken) {
+export function loadBots() {
   return {
     type: 'LOAD_BOTS',
-    accessToken,
   };
 }
 
@@ -92,11 +91,10 @@ export function loadBots(accessToken) {
  *
  * @return {object} An action object with a type of ADD_BOT
  */
-export function createBot(name = 'Untitled ...', accessToken) {
+export function createBot(name = 'Untitled ...') {
   return {
     type: 'CREATE_BOT',
     name,
-    accessToken,
   };
 }
 
@@ -105,11 +103,10 @@ export function createBot(name = 'Untitled ...', accessToken) {
  *
  * @return {object} An action object with a type of LOAD_BOT
  */
-export function loadBot(botId, accessToken) {
+export function loadBot(botId) {
   return {
     type: 'LOAD_BOT',
     botId,
-    accessToken,
   };
 }
 

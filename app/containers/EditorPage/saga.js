@@ -7,9 +7,7 @@ import request from 'utils/request';
  */
 function* loadBot(action) {
   try {
-    const { url, options } = apiBuilder(`/bots/${action.botId}`, {
-      accessToken: action.accessToken,
-    });
+    const { url, options } = apiBuilder(`/bots/${action.botId}`);
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
     yield put({
@@ -32,7 +30,6 @@ function* createBotModel(action) {
   const { url, options } = apiBuilder(`/models`, {
     body: { botId: action.botId },
     method: 'POST',
-    accessToken: action.accessToken,
   });
   const response = yield call(request, url, options);
   if (response.model) {
@@ -48,9 +45,7 @@ function* createBotModel(action) {
  */
 function* loadBotModel(action) {
   try {
-    const { url, options } = apiBuilder(`/bots/${action.botId}/models`, {
-      accessToken: action.accessToken,
-    });
+    const { url, options } = apiBuilder(`/bots/${action.botId}/models`);
     const response = yield call(request, url, options);
     if (response.models) {
       if (response.models.length) {
@@ -62,7 +57,6 @@ function* loadBotModel(action) {
         yield put({
           type: 'CREATE_BOT_MODEL',
           botId: action.botId,
-          accessToken: action.accessToken,
         });
       }
     }
@@ -87,7 +81,6 @@ function* addState(action) {
         message: action.message,
         responses: action.responses,
       },
-      accessToken: action.accessToken,
     });
     response = yield call(request, url, options);
     if (response.model) {
@@ -122,7 +115,6 @@ function* updateState(action) {
           message: action.message,
           responses: action.responses,
         },
-        accessToken: action.accessToken,
       },
     );
     response = yield call(request, url, options);
@@ -154,7 +146,6 @@ function* deleteState(action) {
       `/models/${action.modelId}/states/${action.stateId}`,
       {
         method: 'DELETE',
-        accessToken: action.accessToken,
       },
     );
     response = yield call(request, url, options);
@@ -191,7 +182,6 @@ function* addTransition(action) {
           toStateId: action.toStateId,
           event: action.event,
         },
-        accessToken: action.accessToken,
       },
     );
     response = yield call(request, url, options);
@@ -223,7 +213,6 @@ function* deleteTransition(action) {
       `/models/${action.modelId}/transitions/${action.transitionId}`,
       {
         method: 'DELETE',
-        accessToken: action.accessToken,
       },
     );
     response = yield call(request, url, options);
@@ -258,9 +247,6 @@ function* doTransitionToState(action) {
 ${action.event.type}&transitionEventValue=${encodeURIComponent(
         action.event.value,
       )}`,
-      {
-        accessToken: action.accessToken,
-      },
     );
     response = yield call(request, url, options);
     if (
@@ -302,7 +288,6 @@ function* addStateWithTransition(action) {
         modelId: action.modelId,
         fromStateId: action.fromStateId,
         event: action.event,
-        accessToken: action.accessToken,
       },
     );
     if (existingState && !isFallback) {
@@ -313,7 +298,6 @@ function* addStateWithTransition(action) {
       message: action.message,
       responses: action.responses,
       modelId: action.modelId,
-      accessToken: action.accessToken,
     });
     // eslint-disable-next-line no-unused-vars
     const { transition, model } = yield call(addTransition, {
@@ -322,7 +306,6 @@ function* addStateWithTransition(action) {
       toStateId: state.id,
       event: action.event,
       modelId: action.modelId,
-      accessToken: action.accessToken,
     });
   } catch (err) {
     console.error(err);
@@ -343,7 +326,6 @@ function* publishBot(action) {
       `/bots/${action.botId}/deployments/web`,
       {
         method: 'POST',
-        accessToken: action.accessToken,
       },
     );
     response = yield call(request, url, options);

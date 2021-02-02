@@ -80,7 +80,7 @@ export function PlayerPage({
   const { botId } = useParams();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const botUserAccessToken = queryParams.get('accessToken');
+  const botUserAccessToken = queryParams.get('token');
   const userKey = queryParams.get('userKey');
 
   const [inputText, setInputText] = useState('');

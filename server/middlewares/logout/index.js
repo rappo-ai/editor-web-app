@@ -1,13 +1,15 @@
 const express = require('express');
+const db = require('../../db');
+const { expireAccessToken } = require('../../utils/token');
+
 const router = express.Router();
 
-router.get('/', (req, res, next) => {
-  // tbd clear db access token
+router.get('/', async (req, res) => {
+  if (req.session.token) {
+    await expireAccessToken(db, req.session.token);
+  }
   req.session.destroy(() => {
-    res.clearCookie('at');
     res.redirect('/');
-
-    return next();
   });
 });
 

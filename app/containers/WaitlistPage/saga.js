@@ -13,7 +13,6 @@ function* updateUserProfile(action) {
         body: {
           data: action.data,
         },
-        accessToken: action.accessToken,
       },
     );
     // Call our request helper (see 'utils/request')

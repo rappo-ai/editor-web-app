@@ -1,12 +1,13 @@
 /* eslint-disable no-param-reassign */
-const { Firestore } = require('@google-cloud/firestore');
+
 const { DBEngine } = require('./_base');
+const firestore = require('../stores/firestore');
 const { pojoClone, cloneFromPojo } = require('../../utils/pojo');
 
 class FirestoreDBEngine extends DBEngine {
   constructor(entityFactory) {
     super();
-    this.firestore = new Firestore();
+    this.firestore = firestore;
     this.converter = {
       toFirestore(entity) {
         return pojoClone(entity);
@@ -30,7 +31,16 @@ class FirestoreDBEngine extends DBEngine {
   }
 
   async get(collection, query) {
+    if (!query) {
+      // get(collection) => return the whole collection
+      return this.firestore
+        .collection(collection)
+        .withConverter(this.converter)
+        .get()
+        .then(snapshot => snapshot.docs.map(doc => doc.data()));
+    }
     if (typeof query === 'string') {
+      // get(collection, id) => get entity in collection by id
       const id = query;
       return this.firestore
         .collection(collection)
@@ -39,6 +49,7 @@ class FirestoreDBEngine extends DBEngine {
         .get()
         .then(snapshot => snapshot.data());
     }
+    // get(collection, query) => get first entity in collection by query or query[]
     return this.query(collection, query).then(results => {
       if (results.length === 0) {
         return null;

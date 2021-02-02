@@ -1,4 +1,4 @@
-const { hasAdminRole } = require('./auth');
+const { hasAdminRole, hasSuperAdminRole } = require('./auth');
 
 class ApiError extends Error {
   constructor(httpStatusCode, message) {
@@ -19,6 +19,14 @@ function API_VALIDATE_ADMIN(user) {
     !hasAdminRole(user),
     403,
     'Access denied - User needs to be an admin to perform this operation',
+  );
+}
+
+function API_VALIDATE_SUPER_ADMIN(user) {
+  API_THROW_ERROR(
+    !hasSuperAdminRole(user),
+    403,
+    'Access denied - User needs to be a super admin to perform this operation',
   );
 }
 
@@ -68,5 +76,6 @@ module.exports = {
   API_VALIDATE_AUTH_SCOPE,
   API_VALIDATE_QUERY_PARAMETERS,
   API_VALIDATE_REQUEST_BODY_PARAMETERS,
+  API_VALIDATE_SUPER_ADMIN,
   asyncHandler,
 };

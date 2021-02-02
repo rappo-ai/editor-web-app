@@ -16,7 +16,6 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
-import { getAccessToken } from 'utils/cookies';
 import { useInjectSaga } from 'utils/injectSaga';
 
 import AddBotPage from 'containers/AddBotPage';
@@ -61,10 +60,7 @@ export function App({
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  let accessToken = queryParams.get('token');
-  if (!accessToken) {
-    accessToken = getAccessToken();
-  }
+  const accessToken = queryParams.get('token');
 
   useEffect(() => {
     onLoadCookies();

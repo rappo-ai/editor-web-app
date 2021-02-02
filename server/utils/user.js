@@ -1,7 +1,6 @@
-const db = require('../db');
 const { USER_NULL, USER_SERVICE_ADMIN } = require('./auth');
 
-async function getUser(id) {
+async function getUser(db, id) {
   switch (id) {
     case USER_NULL.id:
       return USER_NULL;

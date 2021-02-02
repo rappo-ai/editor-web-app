@@ -38,11 +38,9 @@ function* loadUser(action) {
 /**
  * Load the bots for the logged in user
  */
-function* loadBots(action) {
+function* loadBots() {
   try {
-    const { url, options } = apiBuilder(`/bots`, {
-      accessToken: action.accessToken,
-    });
+    const { url, options } = apiBuilder(`/bots`);
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);
     yield put({
@@ -68,7 +66,6 @@ function* createBot(action) {
       body: {
         name: action.name,
       },
-      accessToken: action.accessToken,
     });
     // Call our request helper (see 'utils/request')
     const response = yield call(request, url, options);

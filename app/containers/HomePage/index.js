@@ -27,7 +27,6 @@ import {
 } from 'components/TripleSection';
 import { Para } from 'components/common';
 
-import { getAccessToken } from 'utils/cookies';
 import history from 'utils/history';
 
 const HomePageSectionContainer = styled(TripleSectionContainer)`
@@ -54,11 +53,9 @@ export function HomePage({
   // useInjectReducer({ key, reducer });
   // useInjectSaga({ key, saga });
 
-  const accessToken = getAccessToken();
-
   useEffect(() => {
-    onLoadBots(accessToken);
-  }, [accessToken]);
+    onLoadBots();
+  }, []);
 
   useEffect(() => {
     const menuIcon = getObjectProperty(user, 'profiles.rappo.profilePic', '');
@@ -134,7 +131,7 @@ const mapStateToProps = createStructuredSelector({
 
 export function mapDispatchToProps(dispatch) {
   return {
-    onLoadBots: accessToken => dispatch(loadBots(accessToken)),
+    onLoadBots: () => dispatch(loadBots()),
     onSetupHeader: ({ title, menuIcon, menuItems, actionButtons }) =>
       dispatch(setupHeader({ title, menuIcon, menuItems, actionButtons })),
   };

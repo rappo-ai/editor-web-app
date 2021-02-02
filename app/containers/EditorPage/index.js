@@ -24,7 +24,6 @@ import ChatInputBar from 'components/ChatInputBar';
 import ChatView from 'components/ChatView';
 
 import { getTransition, hasOutTransition, isDirectAncestor } from 'utils/bot';
-import { getAccessToken } from 'utils/cookies';
 import {
   BOT_SEND_BUTTON_BACKGROUND_COLOR,
   BOT_SEND_BUTTON_ICON_COLOR,
@@ -94,7 +93,6 @@ export function EditorPage({
   useInjectSaga({ key: 'editorPage', saga });
 
   const { botId } = useParams();
-  const accessToken = getAccessToken();
 
   const [inputMode, setInputMode] = useState('bot');
   const [inputText, setInputText] = useState('');
@@ -140,7 +138,6 @@ export function EditorPage({
           onDeleteTransition({
             modelId: model.id,
             transitionId: previousTransition.id,
-            accessToken,
           });
           setInputMode('bot');
         }
@@ -175,10 +172,10 @@ export function EditorPage({
 
   // initialize state for a new botId, and clear state when component is unmounted
   useEffect(() => {
-    onLoadBot(botId, accessToken);
-    onLoadBotModel(botId, accessToken);
+    onLoadBot(botId);
+    onLoadBotModel(botId);
     return () => onClearChatHistory();
-  }, [botId, accessToken, onLoadBot, onLoadBotModel]);
+  }, [botId, onLoadBot, onLoadBotModel]);
 
   // print publish url to console whenever it changes from '' to some value
   useEffect(() => {
@@ -193,10 +190,9 @@ export function EditorPage({
         modelId: model.id,
         fromStateId: currentState.id,
         event: transitionEvent,
-        accessToken,
       });
     }
-  }, [model, accessToken, currentState, transitionEvent]);
+  }, [model, currentState, transitionEvent]);
 
   useEffect(() => {
     setInputText('');
@@ -247,7 +243,7 @@ export function EditorPage({
       {
         faClass: 'fa-share-square',
         click: () => {
-          onPublishBot({ botId, accessToken });
+          onPublishBot({ botId });
         },
         color: PUBLISH_BOT_ICON_COLOR,
       },
@@ -296,7 +292,6 @@ export function EditorPage({
                 fromStateId: currentState.id,
                 toStateId: s.id,
                 event: transitionEvent,
-                accessToken,
               });
               setInputText('');
               onPopupListClickOut();
@@ -372,7 +367,6 @@ export function EditorPage({
     }
   }, [
     model,
-    accessToken,
     currentState,
     popupListEnabled,
     inputMode,
@@ -479,7 +473,6 @@ export function EditorPage({
         responses,
         event: transitionEvent,
         fromStateId: currentState.id,
-        accessToken,
       });
     } else {
       // user response
@@ -538,10 +531,9 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch) {
   return {
-    onLoadBot: (id, accessToken) => dispatch(loadBot(id, accessToken)),
+    onLoadBot: id => dispatch(loadBot(id)),
     onSetupHeader: params => dispatch(setupHeader(params)),
-    onLoadBotModel: (id, accessToken) =>
-      dispatch(loadBotModel(id, true, accessToken)),
+    onLoadBotModel: id => dispatch(loadBotModel(id, true)),
     onAddStateWithTransition: params =>
       dispatch(addStateWithTransition(params)),
     onSetTransitionEvent: (event, modelId) =>

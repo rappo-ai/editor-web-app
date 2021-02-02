@@ -11,9 +11,11 @@ const {
 const {
   USER_ROLE_BOT_END_USER_CREATOR,
   USER_ROLE_END_USER,
-  TOKEN_EXPIRY_1_HOUR,
 } = require('../../../../utils/auth');
-const { generateAccessToken } = require('../../../../utils/token');
+const {
+  generateAccessToken,
+  TOKEN_EXPIRY_1_HOUR,
+} = require('../../../../utils/token');
 const { getUser } = require('../../../../utils/user');
 const router = express.Router();
 
@@ -62,6 +64,8 @@ router.post(
     const { ownerId, botId, userKey } = req.body;
     if (req.user.role === USER_ROLE_BOT_END_USER_CREATOR) {
       API_VALIDATE_REQUEST_BODY_PARAMETERS({ ownerId, botId, userKey });
+    } else {
+      API_VALIDATE_ADMIN(req.user);
     }
 
     const userData = {
@@ -80,9 +84,10 @@ router.post(
     const user = await db.create('users', userData);
     if (req.user.role === USER_ROLE_BOT_END_USER_CREATOR) {
       const accessToken = await generateAccessToken(
+        db,
         user,
         USER_ROLE_END_USER,
-        TOKEN_EXPIRY_1_HOUR(),
+        TOKEN_EXPIRY_1_HOUR,
       );
       await db.update(user, { accessToken });
     }
@@ -91,44 +96,6 @@ router.post(
       API_SUCCESS_RESPONSE({
         data: {
           user,
-        },
-      }),
-    );
-
-    return next();
-  }),
-);
-
-router.post(
-  '/:userId/endusertokens',
-  asyncHandler(async (req, res, next) => {
-    API_VALIDATE_AUTH_SCOPE(
-      req.authInfo,
-      'POST /api/v1/users/:userId/endusertokens',
-    );
-
-    const user = await db.get('users', req.params.userId);
-    if (req.user.id !== req.params.userId) {
-      if (req.user.role === USER_ROLE_BOT_END_USER_CREATOR) {
-        API_THROW_ERROR(
-          user.ownerId !== req.user.id,
-          403,
-          'Access denied - User does not have permission to modify this resource',
-        );
-      } else {
-        API_VALIDATE_ADMIN(req.user);
-      }
-    }
-    const accessToken = await generateAccessToken(
-      user,
-      USER_ROLE_END_USER,
-      TOKEN_EXPIRY_1_HOUR(),
-    );
-
-    res.json(
-      API_SUCCESS_RESPONSE({
-        data: {
-          accessToken,
         },
       }),
     );
@@ -147,7 +114,7 @@ router.get(
       API_VALIDATE_ADMIN(req.user);
     }
 
-    const user = await getUser(userId);
+    const user = await getUser(db, userId);
     API_THROW_ERROR(!user, 404, 'User not found');
 
     res.json(
@@ -173,7 +140,7 @@ router.put(
       API_VALIDATE_ADMIN(req.user);
     }
 
-    const user = await getUser(userId);
+    const user = await getUser(db, userId);
     API_THROW_ERROR(!user, 404, 'User not found');
 
     const { data } = req.body;
@@ -196,7 +163,7 @@ router.get(
   asyncHandler(async (req, res, next) => {
     API_VALIDATE_AUTH_SCOPE(req.authInfo, 'GET /api/v1/users/:userId/approve');
 
-    const user = await getUser(req.params.userId);
+    const user = await getUser(db, req.params.userId);
     API_THROW_ERROR(!user, 404, 'User not found');
 
     await db.update(user, { isActivated: true });

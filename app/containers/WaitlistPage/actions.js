@@ -10,10 +10,9 @@ import {
   UPDATE_USER_PROFILE_ERROR,
 } from '../App/constants';
 
-export function updateUserProfile({ accessToken, profileName, data }) {
+export function updateUserProfile({ profileName, data }) {
   return {
     type: UPDATE_USER_PROFILE,
-    accessToken,
     profileName,
     data,
   };

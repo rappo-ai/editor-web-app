@@ -11,6 +11,7 @@ export default function apiBuilder(
   const apiPrefix = '/api/v1';
   const url = `${domain}${apiPrefix}${apiEndpoint}`;
   const options = {
+    credentials: 'same-origin', // for sending cookies
     headers: {
       ...headers,
     },
