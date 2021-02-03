@@ -1,6 +1,6 @@
 /* eslint-disable func-names */
 const express = require('express');
-const { has: hasObjectProperty } = require('lodash/object');
+const { get: getObjectKey, has: hasObjectProperty } = require('lodash/object');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { sendTransactionalEmail } = require('../../utils/email');
@@ -8,12 +8,12 @@ const db = require('../../db');
 const {
   USER_SERVICE_ADMIN,
   USER_ROLE_SIGNUP_APPROVER,
-  USER_ROLE_BOT_DESIGNER,
+  USER_ROLE_WEB_APP_USER,
 } = require('../../utils/auth');
 const { getWebserverUrl } = require('../../utils/host');
 const {
   generateAccessToken,
-  generateBotDesignerAccessToken,
+  generateWebAppAccessToken,
   TOKEN_EXPIRY_1_WEEK,
 } = require('../../utils/token');
 const router = express.Router();
@@ -29,26 +29,20 @@ async function authenticateGoogleUser(profile) {
   if (!user) {
     user = await db.create('users', {
       isActivated: false,
-      role: USER_ROLE_BOT_DESIGNER,
+      role: USER_ROLE_WEB_APP_USER,
       profiles: {
         rappo: {
-          emailId:
-            profile.emails && profile.emails.length
-              ? profile.emails[0].value
-              : '',
-          displayName: profile.displayName,
-          givenName: profile.name.givenName,
-          familyName: profile.name.familyName,
-          profilePic:
-            profile.photos && profile.photos.length
-              ? profile.photos[0].value
-              : '',
+          emailId: getObjectKey(profile, 'emails[0].value', ''),
+          displayName: getObjectKey(profile, 'displayName', ''),
+          givenName: getObjectKey(profile, 'name.givenName', ''),
+          familyName: getObjectKey(profile, 'name.familyName', ''),
+          profilePic: getObjectKey(profile, 'photos[0].value', ''),
         },
         google: profile,
       },
     });
 
-    accessToken = await generateBotDesignerAccessToken(db, user);
+    accessToken = await generateWebAppAccessToken(db, user);
 
     const userApprovalAccessToken = await generateAccessToken(
       db,
@@ -67,11 +61,13 @@ async function authenticateGoogleUser(profile) {
     await sendTransactionalEmail(
       'no-reply@rappo.ai',
       'server-notifications@rappo.ai',
-      `New user sign up - ${profile.displayName}`,
+      `New user sign up - ${getObjectKey(profile, 'displayName', '?')}`,
       '',
-      `New user signed up through Google with the following details:\n\nName: ${
-        profile.displayName
-      }\nEmail: ${profile.emails[0].value}\nID: ${
+      `New user signed up through Google with the following details:\n\nName: ${getObjectKey(
+        profile,
+        'displayName',
+        '',
+      )}\nEmail: ${getObjectKey(profile, 'emails[0].value', '?')}\nID: ${
         user.id
       }\n\nClick to approve -> ${approvalLink}`,
     );
@@ -79,22 +75,16 @@ async function authenticateGoogleUser(profile) {
     // update rappo and google profiles (currently in sync)
     const profiles = Object.assign({}, user.profiles, {
       rappo: {
-        emailId:
-          profile.emails && profile.emails.length
-            ? profile.emails[0].value
-            : '',
-        displayName: profile.displayName,
-        givenName: profile.name.givenName,
-        familyName: profile.name.familyName,
-        profilePic:
-          profile.photos && profile.photos.length
-            ? profile.photos[0].value
-            : '',
+        emailId: getObjectKey(profile, 'emails[0].value', ''),
+        displayName: getObjectKey(profile, 'displayName', ''),
+        givenName: getObjectKey(profile, 'name.givenName', ''),
+        familyName: getObjectKey(profile, 'name.familyName', ''),
+        profilePic: getObjectKey(profile, 'photos[0].value', ''),
       },
       google: profile,
     });
     await db.update(user, { profiles });
-    accessToken = await generateBotDesignerAccessToken(db, user);
+    accessToken = await generateWebAppAccessToken(db, user);
   }
   return {
     user,
