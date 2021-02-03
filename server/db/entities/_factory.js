@@ -8,7 +8,12 @@ class Factory {
   }
 
   create(collection, data = {}) {
-    const entity = this.builders[collection]();
+    let entity;
+    try {
+      entity = this.builders[collection]();
+    } catch (err) {
+      entity = {};
+    }
     return Object.assign(entity, data);
   }
 }

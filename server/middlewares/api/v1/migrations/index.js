@@ -23,14 +23,13 @@ router.post('/', async (req, res, next) => {
   });
 
   getMigrationQueue().push(
-    { migration },
+    { db, migration },
     err => err && console.log(err.message),
   );
 
   res.json(
     API_SUCCESS_RESPONSE({
       migration,
-      db,
     }),
   );
 
