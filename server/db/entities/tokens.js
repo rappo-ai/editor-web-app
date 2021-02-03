@@ -7,7 +7,7 @@ class AccessToken extends Entity {
     super('tokens');
     this.token = nanoid();
     this.expiryTs = getTokenExpiryTs(TOKEN_EXPIRY_1_HOUR); // default expiry of 1 hour
-    this.isExpired = false;
+    this.isRevoked = false;
   }
 }
 

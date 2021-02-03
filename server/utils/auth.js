@@ -7,13 +7,13 @@ const USER_SERVICE_ADMIN = {
 
 const USER_ROLE_SUPER_ADMIN = 'super_admin';
 const USER_ROLE_SIGNUP_APPROVER = 'signup_approver';
-const USER_ROLE_BOT_DESIGNER = 'bot_designer';
+const USER_ROLE_WEB_APP_USER = 'web_app_user';
 const USER_ROLE_BOT_END_USER_CREATOR = 'bot_end_user_creator';
 const USER_ROLE_END_USER = 'end_user';
 
 const USER_SCOPES_SUPER_ADMIN = ['*'];
 const USER_SCOPES_SIGNUP_APPROVER = ['GET /api/v1/users/:userId/approve'];
-const USER_SCOPES_BOT_DESIGNER = [
+const USER_SCOPES_WEB_APP_USER = [
   'GET /api/v1/bots',
   'POST /api/v1/bots',
   'GET /api/v1/bots/:botId',
@@ -51,8 +51,8 @@ function getScopesForRole(role) {
       return USER_SCOPES_SUPER_ADMIN;
     case USER_ROLE_SIGNUP_APPROVER:
       return USER_SCOPES_SIGNUP_APPROVER;
-    case USER_ROLE_BOT_DESIGNER:
-      return USER_SCOPES_BOT_DESIGNER;
+    case USER_ROLE_WEB_APP_USER:
+      return USER_SCOPES_WEB_APP_USER;
     case USER_ROLE_BOT_END_USER_CREATOR:
       return USER_SCOPES_BOT_END_USER_CREATOR;
     case USER_ROLE_END_USER:
@@ -76,7 +76,7 @@ module.exports = {
   USER_SERVICE_ADMIN,
   USER_ROLE_SUPER_ADMIN,
   USER_ROLE_SIGNUP_APPROVER,
-  USER_ROLE_BOT_DESIGNER,
+  USER_ROLE_WEB_APP_USER,
   USER_ROLE_BOT_END_USER_CREATOR,
   USER_ROLE_END_USER,
   getScopesForRole,

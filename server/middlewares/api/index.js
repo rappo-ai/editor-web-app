@@ -6,9 +6,9 @@ const db = require('../../db');
 const { ApiError, API_THROW_ERROR } = require('../../utils/api');
 const {
   decodeToken,
-  generateBotDesignerAccessToken,
+  generateWebAppAccessToken,
+  isTokenExpired,
 } = require('../../utils/token');
-const { getUser } = require('../../utils/user');
 
 const v1 = require('./v1');
 
@@ -59,12 +59,14 @@ router.use(async (req, res, next) => {
     !req.user &&
     !req.authInfo
   ) {
-    req.user = await getUser(db, req.session.userId);
     const decodedToken = await decodeToken(db, req.session.token);
+    if (decodedToken.user.id === req.session.userId) {
+      req.user = decodedToken.user;
+    }
     let { accessToken } = decodedToken;
-    if (accessToken) {
-      if (accessToken.isExpired) {
-        accessToken = await generateBotDesignerAccessToken(db, req.user);
+    if (accessToken && !accessToken.isRevoked) {
+      if (isTokenExpired(accessToken)) {
+        accessToken = await generateWebAppAccessToken(db, req.user);
         req.session.token = accessToken.token;
       }
       req.authInfo = {
@@ -83,7 +85,12 @@ router.use((req, res, next) => {
     401,
     'Unauthorized',
   );
-  API_THROW_ERROR(req.authInfo.accessToken.isExpired, 401, 'Token expired');
+  API_THROW_ERROR(req.authInfo.accessToken.isRevoked, 401, 'Token revoked');
+  API_THROW_ERROR(
+    isTokenExpired(req.authInfo.accessToken),
+    401,
+    'Token expired',
+  );
   if (req.isAuthenticated()) {
     return next();
   }
@@ -103,7 +110,7 @@ router.use(async req => {
   try {
     if (req.authInfo.accessToken && req.authInfo.accessToken.isOneTimeUse) {
       await db.update(req.authInfo.accessToken, {
-        isExpired: true,
+        isRevoked: true,
       });
     }
   } catch (err) {

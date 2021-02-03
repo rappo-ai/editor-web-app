@@ -1,9 +1,11 @@
 const { now } = require('lodash/date');
+const { get: getObjectKey } = require('lodash/object');
 const { nanoid } = require('nanoid');
 
 const {
   USER_NULL,
-  USER_ROLE_BOT_DESIGNER,
+  USER_ROLE_SUPER_ADMIN,
+  USER_ROLE_WEB_APP_USER,
   getScopesForRole,
 } = require('./auth');
 const { getUser } = require('./user');
@@ -53,13 +55,15 @@ async function generateAccessToken(
   });
 }
 
-async function generateBotDesignerAccessToken(db, user) {
-  return generateAccessToken(
-    db,
-    user,
-    USER_ROLE_BOT_DESIGNER,
-    TOKEN_EXPIRY_1_DAY,
-  );
+async function generateWebAppAccessToken(db, user) {
+  const role =
+    getObjectKey(user, 'profiles.google.emails[0].value', '') ===
+    'superadmin@rappo.ai'
+      ? USER_ROLE_SUPER_ADMIN
+      : USER_ROLE_WEB_APP_USER;
+  const tokenExpiry =
+    role === USER_ROLE_SUPER_ADMIN ? TOKEN_EXPIRY_1_HOUR : TOKEN_EXPIRY_1_DAY;
+  return generateAccessToken(db, user, role, tokenExpiry);
 }
 
 async function decodeToken(db, token) {
@@ -68,46 +72,45 @@ async function decodeToken(db, token) {
     value: token,
   });
 
-  if (accessToken) {
-    const isTokenDateExpired = now() >= accessToken.expiryTs;
-    if (isTokenDateExpired) {
-      await db.update(accessToken, { isExpired: true });
-    }
-  }
-
   const user =
     !accessToken || !accessToken.userId
       ? USER_NULL
       : await getUser(db, accessToken.userId);
+
   return {
     accessToken,
     user,
   };
 }
 
-async function expireAllUserAccessTokens(db, user) {
+async function revokeAllUserAccessTokens(db, user) {
   const oldTokens = await db.query('tokens', [
     {
       property: 'userId',
       value: user.id,
     },
-    { property: 'isExpired', value: false },
+    { property: 'isRevoked', value: false },
   ]);
 
-  const tokenExpiredPromises = [];
+  const tokenRevokedPromises = [];
   oldTokens.forEach(oldToken => {
-    tokenExpiredPromises.push(db.update(oldToken, { isExpired: true }));
+    tokenRevokedPromises.push(db.update(oldToken, { isRevoked: true }));
   });
 
-  return Promise.all(tokenExpiredPromises);
+  return Promise.all(tokenRevokedPromises);
 }
 
-async function expireAccessToken(db, token) {
-  const accessToken = await db.get('tokens', {
-    property: 'token',
-    value: token,
-  });
-  return db.update(accessToken, { isExpired: true });
+async function revokeAccessToken(db, token) {
+  return db
+    .get('tokens', {
+      property: 'token',
+      value: token,
+    })
+    .then(accessToken => db.update(accessToken, { isRevoked: true }));
+}
+
+function isTokenExpired(accessToken) {
+  return now() >= accessToken.expiryTs;
 }
 
 module.exports = {
@@ -118,9 +121,10 @@ module.exports = {
   TOKEN_EXPIRY_1_YEAR,
   TOKEN_EXPIRY_NEVER,
   decodeToken,
-  expireAccessToken,
-  expireAllUserAccessTokens,
+  revokeAccessToken,
+  revokeAllUserAccessTokens,
   generateAccessToken,
-  generateBotDesignerAccessToken,
+  generateWebAppAccessToken,
   getTokenExpiryTs,
+  isTokenExpired,
 };
