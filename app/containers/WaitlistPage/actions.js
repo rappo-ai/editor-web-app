@@ -8,27 +8,20 @@ import {
   UPDATE_USER_PROFILE,
   UPDATE_USER_PROFILE_SUCCESS,
   UPDATE_USER_PROFILE_ERROR,
-} from './constants';
+} from '../App/constants';
 
-export function updateUserProfile({
-  accessToken,
-  phoneNumber,
-  linkedinUrl,
-  useCase,
-}) {
+export function updateUserProfile({ profileName, data }) {
   return {
     type: UPDATE_USER_PROFILE,
-    accessToken,
-    phoneNumber,
-    linkedinUrl,
-    useCase,
+    profileName,
+    data,
   };
 }
 
-export function updateUserProfileSuccess(profile) {
+export function updateUserProfileSuccess(user) {
   return {
     type: UPDATE_USER_PROFILE_SUCCESS,
-    profile,
+    user,
   };
 }
 

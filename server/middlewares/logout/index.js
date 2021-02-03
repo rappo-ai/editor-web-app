@@ -1,11 +1,14 @@
 const express = require('express');
-// const db = require('../../db');
+const db = require('../../db');
+const { revokeAccessToken } = require('../../utils/token');
+
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  // tbd clear db access token
-  req.session.destroy(function() {
-    res.clearCookie('at');
+router.get('/', async (req, res) => {
+  if (req.session.token) {
+    await revokeAccessToken(db, req.session.token);
+  }
+  req.session.destroy(() => {
     res.redirect('/');
   });
 });

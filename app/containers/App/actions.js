@@ -40,28 +40,24 @@ export function cookiesLoaded(cookies) {
  *
  * @return {object} An action object with a type of LOAD_USER
  */
-export function loadUser(accessToken, isEndUser, endUserId) {
+export function loadUser(accessToken) {
   return {
     type: LOAD_USER,
     accessToken,
-    isEndUser,
-    endUserId,
   };
 }
 
 /**
- * Dispatched when the user profile is loaded by the request saga
+ * Dispatched when the user is loaded by the request saga
  *
- * @param  {object} profile The user profile data
- * @param  {boolean} isActivated true if user is activated, false otherwise
+ * @param  {object} user The user data
  *
  * @return {object}      An action object with a type of LOAD_USER_SUCCESS passing the user data
  */
-export function userLoaded(profile, isActivated) {
+export function userLoaded(user) {
   return {
     type: LOAD_USER_SUCCESS,
-    profile,
-    isActivated,
+    user,
   };
 }
 
@@ -84,10 +80,9 @@ export function userLoadError(error) {
  *
  * @return {object} An action object with a type of LOAD_BOTS
  */
-export function loadBots(accessToken) {
+export function loadBots() {
   return {
     type: 'LOAD_BOTS',
-    accessToken,
   };
 }
 
@@ -96,11 +91,10 @@ export function loadBots(accessToken) {
  *
  * @return {object} An action object with a type of ADD_BOT
  */
-export function createBot(name = 'Untitled ...', accessToken) {
+export function createBot(name = 'Untitled ...') {
   return {
     type: 'CREATE_BOT',
     name,
-    accessToken,
   };
 }
 
@@ -109,11 +103,10 @@ export function createBot(name = 'Untitled ...', accessToken) {
  *
  * @return {object} An action object with a type of LOAD_BOT
  */
-export function loadBot(id, accessToken) {
+export function loadBot(botId) {
   return {
     type: 'LOAD_BOT',
-    id,
-    accessToken,
+    botId,
   };
 }
 

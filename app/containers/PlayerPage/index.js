@@ -12,6 +12,7 @@ import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
+import { has as hasObjectProperty } from 'lodash/object';
 
 import ChatInputBar from 'components/ChatInputBar';
 import ChatView from 'components/ChatView';
@@ -31,6 +32,8 @@ import {
   clearChatHistory,
   doTransitionToState,
   loadBotModel,
+  loadBotUser,
+  loadEndUser,
   loadPlayerBot,
   setTransitionEvent,
 } from './actions';
@@ -39,6 +42,8 @@ import saga from './saga';
 import {
   makeSelectBot,
   makeSelectChatHistory,
+  makeSelectBotUser,
+  makeSelectEndUser,
   makeSelectModel,
   makeSelectTransitionInProgress,
 } from './selectors';
@@ -51,6 +56,8 @@ const Container = styled.div`
 `;
 
 export function PlayerPage({
+  botUser,
+  endUser,
   bot,
   chatHistory,
   // eslint-disable-next-line no-unused-vars
@@ -60,6 +67,8 @@ export function PlayerPage({
   transitionInProgress,
   onClearChatHistory,
   onDoTransitionToState,
+  onLoadBotUser,
+  onLoadEndUser,
   onLoadPlayerBot,
   onLoadBotModel,
   onSetupHeader,
@@ -71,7 +80,8 @@ export function PlayerPage({
   const { botId } = useParams();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const accessToken = queryParams.get('accessToken');
+  const botUserAccessToken = queryParams.get('token');
+  const userKey = queryParams.get('userKey');
 
   const [inputText, setInputText] = useState('');
 
@@ -120,23 +130,40 @@ export function PlayerPage({
     });
   }
 
+  useEffect(() => {
+    onLoadBotUser(botUserAccessToken);
+  }, [botUserAccessToken]);
+
+  // create a new end user (or fetch existing from userKey)
+  useEffect(() => {
+    if (hasObjectProperty(botUser, 'id')) {
+      onLoadEndUser(botUser, botId, botUserAccessToken, userKey);
+    }
+  }, [botUser, botId, botUserAccessToken, userKey]);
+
   // initialize state for a new botId, and clear state when component is unmounted
   useEffect(() => {
-    onLoadPlayerBot(botId, accessToken);
-    onLoadBotModel(botId, accessToken);
+    if (hasObjectProperty(endUser, 'accessToken.token')) {
+      onLoadPlayerBot(botId, endUser.accessToken.token);
+      onLoadBotModel(botId, endUser.accessToken.token);
+    }
+
     return () => onClearChatHistory();
-  }, [botId, accessToken, onLoadPlayerBot, onLoadBotModel]);
+  }, [botId, endUser, onLoadPlayerBot, onLoadBotModel]);
 
   useEffect(() => {
-    if (model && model.id) {
+    if (
+      hasObjectProperty(model, 'id') &&
+      hasObjectProperty(endUser, 'accessToken.token')
+    ) {
       onDoTransitionToState({
         modelId: model.id,
         fromStateId: currentState.id,
         event: transitionEvent,
-        accessToken,
+        accessToken: endUser.accessToken.token,
       });
     }
-  }, [model, accessToken, currentState, transitionEvent]);
+  }, [model, endUser, currentState, transitionEvent]);
 
   useEffect(() => {
     const title = bot.name;
@@ -192,6 +219,8 @@ export function PlayerPage({
 }
 
 PlayerPage.propTypes = {
+  botUser: PropTypes.object,
+  endUser: PropTypes.object,
   bot: PropTypes.object,
   chatHistory: PropTypes.array,
   error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
@@ -200,6 +229,8 @@ PlayerPage.propTypes = {
   transitionInProgress: PropTypes.bool,
   onClearChatHistory: PropTypes.func,
   onDoTransitionToState: PropTypes.func,
+  onLoadBotUser: PropTypes.func,
+  onLoadEndUser: PropTypes.func,
   onLoadPlayerBot: PropTypes.func,
   onLoadBotModel: PropTypes.func,
   onSetupHeader: PropTypes.func,
@@ -207,6 +238,8 @@ PlayerPage.propTypes = {
 };
 
 const mapStateToProps = createStructuredSelector({
+  botUser: makeSelectBotUser(),
+  endUser: makeSelectEndUser(),
   bot: makeSelectBot(),
   chatHistory: makeSelectChatHistory(),
   error: makeSelectError(),
@@ -219,6 +252,10 @@ function mapDispatchToProps(dispatch) {
   return {
     onClearChatHistory: () => dispatch(clearChatHistory()),
     onDoTransitionToState: params => dispatch(doTransitionToState(params)),
+    onLoadBotUser: botUserAccessToken =>
+      dispatch(loadBotUser(botUserAccessToken)),
+    onLoadEndUser: (botUser, botId, botUserAccessToken, userKey) =>
+      dispatch(loadEndUser(botUser, botId, botUserAccessToken, userKey)),
     onLoadPlayerBot: (botId, accessToken) =>
       dispatch(loadPlayerBot(botId, accessToken)),
     onLoadBotModel: (botId, accessToken) =>

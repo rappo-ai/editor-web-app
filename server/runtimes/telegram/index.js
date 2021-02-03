@@ -1,5 +1,5 @@
 const axios = require('axios').default;
-const priorityQueue = require('async/priorityQueue');
+const queue = require('async/queue');
 const deepEqual = require('deep-equal');
 const { nanoid } = require('nanoid');
 const db = require('../../db');
@@ -10,10 +10,10 @@ const {
   hasNullOutTransition,
   TRANSITION_EVENT_TYPE_RESPONSE,
 } = require('../../utils/bot');
-const { getHttpsHost } = require('../../utils/host');
+const { getWebserverHost, getWebserverUrl } = require('../../utils/host');
 
 function getWebhookUrl(botId, botSecret) {
-  return `https://${getHttpsHost()}/webhooks/telegram/${botId}/${botSecret}`;
+  return getWebserverUrl(`/webhooks/telegram/${botId}/${botSecret}`);
 }
 
 async function callTelegramApi(endpoint, token, body = {}) {
@@ -91,41 +91,51 @@ async function removeDefaultCommands(token) {
 
 async function publishTelegram(bot, { botToken }) {
   API_VALIDATE_REQUEST_BODY_PARAMETERS({ botToken });
-  if (bot.telegrambottoken) {
-    await deleteWebhook(bot.telegrambottoken);
+
+  const { deployments } = bot;
+  if (deployments.telegram && deployments.telegram.token) {
+    await deleteWebhook(deployments.telegram.token);
   }
 
   const botSecret = nanoid();
   const apiResponse = await setWebhook(botToken, bot.id, botSecret);
-  await bot.set('telegrambottoken', botToken);
-  await bot.set('telegrambotsecret', botSecret);
+  deployments.telegram = {
+    token: botToken,
+    secret: botSecret,
+  };
+  await db.update('bots', bot.id, { deployments });
 
   await setDefaultCommands(botToken);
 
   return {
     apiResponse: apiResponse.data,
-    webhookHost: getHttpsHost(),
+    bot,
+    webhookHost: getWebserverHost(),
   };
 }
 
 async function unpublishTelegram(bot) {
   let apiResponse = null;
-  if (bot.telegrambottoken) {
-    await removeDefaultCommands(bot.telegrambottoken);
-    apiResponse = await deleteWebhook(bot.telegrambottoken);
+
+  const { deployments } = bot;
+  if (deployments.telegram && deployments.telegram.token) {
+    await removeDefaultCommands(deployments.telegram.token);
+    apiResponse = await deleteWebhook(deployments.telegram.token);
   }
 
-  await bot.set('telegrambottoken', '');
-  await bot.set('telegrambotsecret', '');
+  deployments.telegram = {};
+
+  await db.update('bots', bot.id, { deployments });
 
   return {
     apiResponse: apiResponse && apiResponse.data,
+    bot,
   };
 }
 
 const userQueueMap = {};
 function createUserQueue(telegramUserId) {
-  userQueueMap[telegramUserId] = priorityQueue(processUpdate, 1);
+  userQueueMap[telegramUserId] = queue(processUpdate, 1);
   return userQueueMap[telegramUserId];
 }
 function getUserQueue(telegramUser) {
@@ -134,7 +144,7 @@ function getUserQueue(telegramUser) {
 
 async function endConversation(chatsession, bot) {
   const sendMessageRequestBody = {
-    chat_id: chatsession.telegramchatid,
+    chat_id: chatsession.telegramChatId,
     text:
       'This conversation has ended. Click /restart to restart the conversation.',
     reply_markup: {
@@ -144,27 +154,28 @@ async function endConversation(chatsession, bot) {
   // eslint-disable-next-line no-unused-vars
   const sendMessageApiResponse = await callTelegramApi(
     'sendMessage',
-    bot.telegrambottoken,
+    bot.deployments.telegram.token,
     sendMessageRequestBody,
   );
 }
 async function processUpdate(task, callback) {
   try {
-    const bot = await db.get('bot', {
-      property: 'id',
-      value: task.botId,
-    });
+    const bot = await db.get('bots', task.botId);
 
     if (!bot) {
       throw new Error('bot not found');
     }
 
-    if (bot.telegrambotsecret !== task.botSecret) {
+    if (!bot.deployments || !bot.deployments.telegram) {
+      throw new Error('bot telegram deployment not found');
+    }
+
+    if (bot.deployments.telegram.secret !== task.botSecret) {
       throw new Error('bot secret mismatch');
     }
 
-    const model = await db.get('model', {
-      property: 'botid',
+    const model = await db.get('models', {
+      property: 'botId',
       value: bot.id,
     });
 
@@ -172,14 +183,15 @@ async function processUpdate(task, callback) {
       throw new Error('model not found');
     }
 
-    let chatsession = await db.get('chatsession', {
-      property: 'telegramchatid',
+    let chatsession = await db.get('chatsessions', {
+      property: 'telegramChatId',
       value: task.update.message.chat.id,
     });
 
     if (!chatsession) {
-      chatsession = await db.create('chatsession');
-      await chatsession.set('telegramchatid', task.update.message.chat.id);
+      chatsession = await db.create('chatsessions', {
+        telegramChatId: task.update.message.chat.id,
+      });
     }
 
     const transitionEventType = TRANSITION_EVENT_TYPE_RESPONSE;
@@ -190,12 +202,12 @@ async function processUpdate(task, callback) {
       transitionEventValue === '/start' ||
       transitionEventValue === '/restart'
     ) {
-      await chatsession.set('botstateid', 'START');
+      await db.update(chatsession, { botStateId: 'START' });
       transitionEventValue = '';
     }
     const getNextStateResponse = getNextState(
       model,
-      chatsession.botstateid,
+      chatsession.botStateId,
       transitionEventType,
       transitionEventValue,
     );
@@ -206,7 +218,7 @@ async function processUpdate(task, callback) {
     }
 
     const sendMessageRequestBody = {
-      chat_id: chatsession.telegramchatid,
+      chat_id: chatsession.telegramChatId,
       text: getNextStateResponse.state.message,
     };
     if (
@@ -229,7 +241,7 @@ async function processUpdate(task, callback) {
     // eslint-disable-next-line no-unused-vars
     const sendMessageApiResponse = await callTelegramApi(
       'sendMessage',
-      bot.telegrambottoken,
+      bot.deployments.telegram.token,
       sendMessageRequestBody,
     );
 
@@ -248,7 +260,7 @@ async function processUpdate(task, callback) {
       );
     }
 
-    await chatsession.set('botstateid', getNextStateResponse.state.id);
+    await db.update(chatsession, { botStateId: getNextStateResponse.state.id });
   } catch (err) {
     callback(err);
   }

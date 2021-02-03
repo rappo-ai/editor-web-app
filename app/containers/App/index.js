@@ -16,16 +16,16 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
-import { getAccessToken } from 'utils/cookies';
 import { useInjectSaga } from 'utils/injectSaga';
 
-import HomePage from 'containers/HomePage/Loadable';
-import LandingPage from 'containers/LandingPage/Loadable';
 import AddBotPage from 'containers/AddBotPage';
 import EditorPage from 'containers/EditorPage/Loadable';
-import PlayerPage from 'containers/PlayerPage/Loadable';
+import HomePage from 'containers/HomePage/Loadable';
+import LandingPage from 'containers/LandingPage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
+import PlayerPage from 'containers/PlayerPage/Loadable';
 import WaitlistPage from 'containers/WaitlistPage';
+
 import Header from 'components/Header';
 
 import {
@@ -60,19 +60,12 @@ export function App({
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  let accessToken = queryParams.get('accessToken');
-  const endUserId = queryParams.get('endUserId') || '';
-  let isEndUser = false;
-  if (accessToken) {
-    isEndUser = true;
-  } else {
-    accessToken = getAccessToken();
-  }
+  const accessToken = queryParams.get('token');
 
   useEffect(() => {
     onLoadCookies();
-    onLoadUser(accessToken, isEndUser, endUserId);
-  }, [accessToken, isEndUser, endUserId]);
+    onLoadUser(accessToken);
+  }, [accessToken]);
 
   return (
     <AppWrapper>
@@ -135,8 +128,7 @@ const mapStateToProps = createStructuredSelector({
 export function mapDispatchToProps(dispatch) {
   return {
     onLoadCookies: () => dispatch(loadCookies()),
-    onLoadUser: (accessToken, isEndUser, endUserId) =>
-      dispatch(loadUser(accessToken, isEndUser, endUserId)),
+    onLoadUser: accessToken => dispatch(loadUser(accessToken)),
   };
 }
 

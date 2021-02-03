@@ -11,6 +11,7 @@ import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import { get as getObjectProperty } from 'lodash/object';
 
 import { loadBots, setupHeader } from 'containers/App/actions';
 import {
@@ -26,7 +27,6 @@ import {
 } from 'components/TripleSection';
 import { Para } from 'components/common';
 
-import { getAccessToken } from 'utils/cookies';
 import history from 'utils/history';
 
 const HomePageSectionContainer = styled(TripleSectionContainer)`
@@ -53,14 +53,12 @@ export function HomePage({
   // useInjectReducer({ key, reducer });
   // useInjectSaga({ key, saga });
 
-  const accessToken = getAccessToken();
+  useEffect(() => {
+    onLoadBots();
+  }, []);
 
   useEffect(() => {
-    onLoadBots(accessToken);
-  }, [accessToken]);
-
-  useEffect(() => {
-    const menuIcon = user.profile.profilePic;
+    const menuIcon = getObjectProperty(user, 'profiles.rappo.profilePic', '');
     const menuItems = [
       {
         name: 'Home',
@@ -80,7 +78,7 @@ export function HomePage({
       },
     ];
     onSetupHeader({ title: headerTitle, menuIcon, menuItems, actionButtons });
-  }, []);
+  }, [user, headerTitle]);
 
   const botListProps = {
     loading,
@@ -133,7 +131,7 @@ const mapStateToProps = createStructuredSelector({
 
 export function mapDispatchToProps(dispatch) {
   return {
-    onLoadBots: accessToken => dispatch(loadBots(accessToken)),
+    onLoadBots: () => dispatch(loadBots()),
     onSetupHeader: ({ title, menuIcon, menuItems, actionButtons }) =>
       dispatch(setupHeader({ title, menuIcon, menuItems, actionButtons })),
   };

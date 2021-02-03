@@ -11,7 +11,6 @@ import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
-import { getAccessToken } from 'utils/cookies';
 import { PRIMARY_COLOR } from 'utils/constants';
 
 import {
@@ -58,8 +57,6 @@ const Button = styled.button`
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1.0)};
 `;
 export function AddBotPage({ onSetupHeader, onCreateBot }) {
-  const accessToken = getAccessToken();
-
   const [name, setName] = useState('');
   const inputRef = useRef(null);
 
@@ -88,9 +85,7 @@ export function AddBotPage({ onSetupHeader, onCreateBot }) {
               type="text"
               placeholder="Name"
               onChange={ev => setName(ev.target.value)}
-              onKeyPress={ev =>
-                ev.key === 'Enter' && onCreateBot(name, accessToken)
-              }
+              onKeyPress={ev => ev.key === 'Enter' && onCreateBot(name)}
             />
           </InputContainer>
         </AddBotPageSection>
@@ -98,10 +93,7 @@ export function AddBotPage({ onSetupHeader, onCreateBot }) {
           <Para>Please enter a name for the new bot.</Para>
         </AddBotPageSection>
         <AddBotPageSection direction="column" position="bottom">
-          <Button
-            disabled={!name.length}
-            onClick={() => onCreateBot(name, accessToken)}
-          >
+          <Button disabled={!name.length} onClick={() => onCreateBot(name)}>
             Create
           </Button>
         </AddBotPageSection>
@@ -119,7 +111,7 @@ function mapDispatchToProps(dispatch) {
   return {
     onSetupHeader: ({ title, showBackButton }) =>
       dispatch(setupHeader({ title, showBackButton })),
-    onCreateBot: (name, accessToken) => dispatch(createBot(name, accessToken)),
+    onCreateBot: name => dispatch(createBot(name)),
   };
 }
 

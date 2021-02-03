@@ -1,51 +1,15 @@
 const express = require('express');
-const passport = require('passport');
-const BearerStrategy = require('passport-http-bearer').Strategy;
 
-const db = require('../../../db');
-const { API_THROW_ERROR } = require('../../../utils/api');
-const bot = require('./bot');
-const model = require('./model');
-const user = require('./user');
+const bots = require('./bots');
+const models = require('./models');
+const tokens = require('./tokens');
+const users = require('./users');
 
 const router = express.Router();
 
-passport.use(
-  new BearerStrategy(async (token, done) => {
-    try {
-      const mytoken = await db.get('accesstoken', {
-        property: 'value',
-        value: token,
-      });
-      const dbuser =
-        mytoken && mytoken.userid ? await db.get('user', mytoken.userid) : null;
-      if (dbuser) {
-        return done(null, dbuser, { scope: '*' });
-      }
-      const botuser =
-        mytoken && mytoken.botid ? await db.get('bot', mytoken.botid) : null;
-      if (botuser) {
-        return done(null, botuser, { scope: '*' });
-      }
-    } catch (err) {
-      console.err(err);
-    }
-    return done(null, false);
-  }),
-);
-
-router.use(
-  passport.authenticate('bearer', { session: false }),
-  (req, res, next) => {
-    if (req.isAuthenticated()) {
-      return next();
-    }
-    return API_THROW_ERROR(true, 401, 'Authentication failed');
-  },
-);
-
-router.use('/bot', bot);
-router.use('/model', model);
-router.use('/user', user);
+router.use('/bots', bots);
+router.use('/models', models);
+router.use('/tokens', tokens);
+router.use('/users', users);
 
 module.exports = router;

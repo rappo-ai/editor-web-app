@@ -47,8 +47,8 @@ function init(options) {
 
   db.entities = loadEntities(path.resolve(__dirname, './entities'));
 
-  db.create = async function _create(collection) {
-    const entity = entityFactory.create(collection);
+  db.create = async function _create(collection, data = {}) {
+    const entity = entityFactory.create(collection, data);
     return db.engine.create(collection, entity);
   };
 
@@ -56,20 +56,16 @@ function init(options) {
     return db.engine.get(collection, query);
   };
 
+  db.update = async function _update(collection, query, data) {
+    return db.engine.update(collection, query, data);
+  };
+
   db.query = async function _query(collection, query) {
     return db.engine.query(collection, query);
   };
 
-  db.set = async function _set(collection, entity) {
-    return db.engine.set(collection, entity);
-  };
-
-  db.delete = async function _delete(collection, id) {
-    return db.engine.delete(collection, id);
-  };
-
-  db.deleteAll = async function _deleteAll(collection, query) {
-    return db.engine.deleteAll(collection, query);
+  db.delete = async function _delete(collection, query) {
+    return db.engine.delete(collection, query);
   };
 
   Entity.db = db;

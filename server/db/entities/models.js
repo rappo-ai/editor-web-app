@@ -1,12 +1,12 @@
 const { Entity } = require('./_base');
 
-class User extends Entity {
+class Model extends Entity {
   constructor() {
-    super('user');
+    super('models');
   }
 }
 
 module.exports = {
-  Class: User,
-  User,
+  Class: Model,
+  Model,
 };

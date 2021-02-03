@@ -119,7 +119,7 @@ const editorPageReducer = (state = initialState, action) =>
       case 'PUBLISH_BOT_SUCCESS':
         draft.publishUrl = `${window.location.origin}/play/bot/${
           action.botId
-        }?accessToken=${action.accessToken}`;
+        }?token=${action.accessToken}&userKey=default`;
         break;
       case 'PUBLISH_BOT_ERROR':
         draft.publishUrl = '';

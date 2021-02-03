@@ -8,7 +8,7 @@ import {
   UPDATE_USER_PROFILE,
   UPDATE_USER_PROFILE_SUCCESS,
   UPDATE_USER_PROFILE_ERROR,
-} from './constants';
+} from '../App/constants';
 
 export const initialState = {
   updateStatus: '',

@@ -17,6 +17,18 @@ const makeSelectBot = () =>
     substate => substate.bot,
   );
 
+const makeSelectBotUser = () =>
+  createSelector(
+    selectPlayerPageDomain,
+    substate => substate.botUser,
+  );
+
+const makeSelectEndUser = () =>
+  createSelector(
+    selectPlayerPageDomain,
+    substate => substate.endUser,
+  );
+
 const makeSelectChatHistory = () =>
   createSelector(
     selectPlayerPageDomain,
@@ -48,6 +60,8 @@ const makeSelectPlayerPage = () =>
 export default makeSelectPlayerPage;
 export {
   makeSelectBot,
+  makeSelectBotUser,
+  makeSelectEndUser,
   makeSelectChatHistory,
   makeSelectModel,
   makeSelectTransitionInProgress,

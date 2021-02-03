@@ -10,6 +10,10 @@ import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
+import {
+  get as getObjectProperty,
+  has as hasObjectProperty,
+} from 'lodash/object';
 
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -22,7 +26,6 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import MuiAlert from '@material-ui/lab/Alert';
 
-import { getAccessToken } from 'utils/cookies';
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
 import { setupHeader } from 'containers/App/actions';
@@ -76,9 +79,8 @@ export function WaitlistPage({
   useInjectReducer({ key: 'waitlistPage', reducer });
   useInjectSaga({ key: 'waitlistPage', saga });
 
-  const accessToken = getAccessToken();
   const classes = useStyles();
-  const firstName = user.profile.givenName;
+  const firstName = getObjectProperty(user, 'profiles.rappo.givenName', '');
 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [linkedinUrl, setLinkedinUrl] = useState('');
@@ -89,15 +91,15 @@ export function WaitlistPage({
   );
 
   useEffect(() => {
-    if (user && user.profile) {
-      setPhoneNumber(user.profile.phoneNumber || '');
-      setLinkedinUrl(user.profile.linkedinUrl || '');
-      setUseCase(user.profile.useCase || '');
+    if (hasObjectProperty(user, 'profiles.waitlist')) {
+      setPhoneNumber(user.profiles.waitlist.phoneNumber || '');
+      setLinkedinUrl(user.profiles.waitlist.linkedinUrl || '');
+      setUseCase(user.profiles.waitlist.useCase || '');
     }
   }, [user]);
 
   useEffect(() => {
-    const menuIcon = user.profile.profilePic;
+    const menuIcon = getObjectProperty(user, 'profiles.rappo.profilePic', '');
     const menuItems = [
       {
         name: 'Logout',
@@ -184,7 +186,6 @@ export function WaitlistPage({
               disabled={waitlistPage.updateStatus === 'updateInProgress'}
               onClick={() =>
                 onUpdateClick({
-                  accessToken,
                   phoneNumber,
                   linkedinUrl,
                   useCase,
@@ -233,13 +234,15 @@ function mapDispatchToProps(dispatch) {
   return {
     onSetupHeader: ({ title, menuIcon, menuItems, actionButtons }) =>
       dispatch(setupHeader({ title, menuIcon, menuItems, actionButtons })),
-    onUpdateClick: ({ accessToken, phoneNumber, linkedinUrl, useCase }) =>
+    onUpdateClick: ({ phoneNumber, linkedinUrl, useCase }) =>
       dispatch(
         updateUserProfile({
-          accessToken,
-          phoneNumber,
-          linkedinUrl,
-          useCase,
+          profileName: 'waitlist',
+          data: {
+            phoneNumber,
+            linkedinUrl,
+            useCase,
+          },
         }),
       ),
   };
