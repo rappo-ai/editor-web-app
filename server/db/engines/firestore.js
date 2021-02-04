@@ -140,6 +140,13 @@ class FirestoreDBEngine extends DBEngine {
       return firestoreQuery.get();
     }
 
+    if (!query) {
+      return this.firestore
+        .collection(collection)
+        .withConverter(this.converter)
+        .get();
+    }
+
     if (!query.condition) {
       query.condition = '==';
     }

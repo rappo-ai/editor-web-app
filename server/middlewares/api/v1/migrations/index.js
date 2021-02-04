@@ -6,20 +6,19 @@ const {
   API_VALIDATE_ADMIN,
   API_VALIDATE_REQUEST_BODY_PARAMETERS,
 } = require('../../../../utils/api');
-const { getMigrationQueue } = require('../../../../utils/migration');
+const { getMigrationQueue } = require('../../../../migrations');
 
 const router = express.Router();
 
 router.post('/', async (req, res, next) => {
   API_VALIDATE_ADMIN(req.user);
 
-  const { transforms, deletions } = req.body;
-  API_VALIDATE_REQUEST_BODY_PARAMETERS({ transforms, deletions });
+  const { taskName } = req.body;
+  API_VALIDATE_REQUEST_BODY_PARAMETERS({ taskName });
 
   const migration = await db.create('migrations', {
     ownerId: req.user.id,
-    transforms,
-    deletions,
+    taskName,
   });
 
   getMigrationQueue().push(

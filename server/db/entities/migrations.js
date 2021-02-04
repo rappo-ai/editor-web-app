@@ -1,5 +1,5 @@
 const { Entity } = require('./_base');
-const { MIGRATION_TASK_QUEUED } = require('../../utils/migration');
+const { MIGRATION_TASK_QUEUED } = require('../../migrations');
 
 class Migration extends Entity {
   constructor() {
