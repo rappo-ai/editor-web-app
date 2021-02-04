@@ -12,10 +12,6 @@ const {
   USER_ROLE_BOT_END_USER_CREATOR,
   USER_ROLE_END_USER,
 } = require('../../../../utils/auth');
-const {
-  generateAccessToken,
-  TOKEN_EXPIRY_1_HOUR,
-} = require('../../../../utils/token');
 const { getUser } = require('../../../../utils/user');
 const router = express.Router();
 
@@ -82,15 +78,6 @@ router.post(
       Object.assign(userData, { userKey });
     }
     const user = await db.create('users', userData);
-    if (req.user.role === USER_ROLE_BOT_END_USER_CREATOR) {
-      const accessToken = await generateAccessToken(
-        db,
-        user,
-        USER_ROLE_END_USER,
-        TOKEN_EXPIRY_1_HOUR,
-      );
-      await db.update(user, { accessToken });
-    }
 
     res.json(
       API_SUCCESS_RESPONSE({
