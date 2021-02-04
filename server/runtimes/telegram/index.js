@@ -262,7 +262,9 @@ async function processUpdate(task, callback) {
 
     await db.update(chatsession, { botStateId: getNextStateResponse.state.id });
   } catch (err) {
-    callback(err);
+    if (callback) {
+      callback(err);
+    }
   }
 }
 
