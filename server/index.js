@@ -49,7 +49,7 @@ app.use(
     },
     name: 'rsid',
     proxy: isProd,
-    resave: false,
+    resave: true,
     rolling: true,
     saveUninitialized: true,
     secret: process.env.SESSION_COOKIE_SECRET,

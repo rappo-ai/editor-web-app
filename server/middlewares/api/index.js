@@ -70,7 +70,7 @@ router.use(async (req, res, next) => {
         req.session.token = accessToken.token;
       }
       req.authInfo = {
-        accessToken: decodedToken.accessToken,
+        accessToken,
         type: 'session',
       };
     }

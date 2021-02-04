@@ -15,7 +15,9 @@ async function publishWeb(bot) {
     { property: 'role', value: USER_ROLE_BOT_END_USER_CREATOR },
   ]);
 
-  await revokeAllUserAccessTokens(db, botEndUserCreator);
+  await revokeAllUserAccessTokens(db, botEndUserCreator).catch(err =>
+    console.log(err),
+  );
 
   const accessToken = await generateAccessToken(
     db,
@@ -33,7 +35,9 @@ async function unpublishWeb(bot) {
     value: bot.id,
   });
 
-  await revokeAllUserAccessTokens(db, botEndUserCreator);
+  await revokeAllUserAccessTokens(db, botEndUserCreator).catch(err =>
+    console.log(err),
+  );
 
   return { accessToken: '', botId: bot.id };
 }

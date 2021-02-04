@@ -61,9 +61,15 @@ router.post(
     await db.create('users', {
       isActivated: true,
       role: USER_ROLE_BOT_END_USER_CREATOR,
-      profiles: {},
-      displayName: bot.name,
-      profilePic: '',
+      profiles: {
+        rappo: {
+          displayName: bot.name,
+          profilePic: '',
+          emailId: '',
+          givenName: '',
+          familyName: '',
+        },
+      },
       botId: bot.id,
     });
 
