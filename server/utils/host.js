@@ -1,5 +1,4 @@
 let webserverHost = process.env.WEBSERVER_HOST || 'localhost';
-let webserverPort = webserverHost === 'localhost' ? '3000' : 'auto';
 let webserverProtocol = webserverHost === 'localhost' ? 'http' : 'https';
 
 function getWebserverHost() {
@@ -10,16 +9,8 @@ function setWebserverHost(newHost) {
   webserverHost = newHost;
 }
 
-function getWebserverPort() {
-  return webserverPort;
-}
-
 function getFormattedWebserverPort() {
-  return webserverPort === 'auto' ? '' : `:${webserverPort}`;
-}
-
-function setWebserverPort(newPort) {
-  webserverPort = newPort;
+  return webserverHost === 'localhost' ? ':3000' : '';
 }
 
 function getWebserverProtocol() {
@@ -37,8 +28,6 @@ function getWebserverUrl(path) {
 module.exports = {
   getWebserverHost,
   setWebserverHost,
-  getWebserverPort,
-  setWebserverPort,
   getWebserverProtocol,
   setWebserverProtocol,
   getWebserverUrl,

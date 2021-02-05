@@ -261,7 +261,6 @@ async function processUpdate(task, callback) {
           ...task,
           isNullTransition: true,
         },
-        task.update.update_id,
         callback,
       );
     }
