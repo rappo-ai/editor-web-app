@@ -1,16 +1,16 @@
 const { hasAdminRole, hasSuperAdminRole } = require('./auth');
 
 class ApiError extends Error {
-  constructor(httpStatusCode, message) {
+  constructor(status, message) {
     super(message);
     this.name = 'ApiError';
-    this.httpStatusCode = httpStatusCode;
+    this.status = status;
   }
 }
 
-function API_THROW_ERROR(assertion, httpStatusCode, message) {
+function API_THROW_ERROR(assertion, status, message) {
   if (assertion) {
-    throw new ApiError(httpStatusCode, message);
+    throw new ApiError(status, message);
   }
 }
 
@@ -65,6 +65,13 @@ function API_SUCCESS_RESPONSE(customData) {
   };
 }
 
+function API_FAILURE_RESPONSE(customData) {
+  return {
+    ok: false,
+    ...customData,
+  };
+}
+
 const asyncHandler = fn => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
 
@@ -72,6 +79,7 @@ module.exports = {
   ApiError,
   API_THROW_ERROR,
   API_SUCCESS_RESPONSE,
+  API_FAILURE_RESPONSE,
   API_VALIDATE_ADMIN,
   API_VALIDATE_AUTH_SCOPE,
   API_VALIDATE_QUERY_PARAMETERS,

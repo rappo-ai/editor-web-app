@@ -94,7 +94,9 @@ async function publishTelegram(bot, { botToken }) {
 
   const { deployments } = bot;
   if (deployments.telegram && deployments.telegram.token) {
-    await deleteWebhook(deployments.telegram.token);
+    await deleteWebhook(deployments.telegram.token).catch(err =>
+      console.log(err),
+    );
   }
 
   const botSecret = nanoid();
@@ -105,7 +107,7 @@ async function publishTelegram(bot, { botToken }) {
   };
   await db.update('bots', bot.id, { deployments });
 
-  await setDefaultCommands(botToken);
+  await setDefaultCommands(botToken).catch(err => console.log(err));
 
   return {
     apiResponse: apiResponse.data,
@@ -119,8 +121,12 @@ async function unpublishTelegram(bot) {
 
   const { deployments } = bot;
   if (deployments.telegram && deployments.telegram.token) {
-    await removeDefaultCommands(deployments.telegram.token);
-    apiResponse = await deleteWebhook(deployments.telegram.token);
+    await removeDefaultCommands(deployments.telegram.token).catch(err =>
+      console.log(err),
+    );
+    apiResponse = await deleteWebhook(deployments.telegram.token).catch(err =>
+      console.log(err),
+    );
   }
 
   deployments.telegram = {};
@@ -128,7 +134,7 @@ async function unpublishTelegram(bot) {
   await db.update('bots', bot.id, { deployments });
 
   return {
-    apiResponse: apiResponse && apiResponse.data,
+    apiResponse: apiResponse && (apiResponse.data || apiResponse),
     bot,
   };
 }

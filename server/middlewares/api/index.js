@@ -3,7 +3,11 @@ const passport = require('passport');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 
 const db = require('../../db');
-const { ApiError, API_THROW_ERROR } = require('../../utils/api');
+const {
+  ApiError,
+  API_FAILURE_RESPONSE,
+  API_THROW_ERROR,
+} = require('../../utils/api');
 const {
   decodeToken,
   generateWebAppAccessToken,
@@ -121,11 +125,12 @@ router.use(async req => {
 // error case
 router.use((err, req, res, next) => {
   if (err instanceof ApiError) {
-    res.status(err.httpStatusCode);
-    res.json({
-      ok: false,
-      error: err.message,
-    });
+    res.status(err.status);
+    res.json(
+      API_FAILURE_RESPONSE({
+        error: err.message,
+      }),
+    );
     return res.end();
   }
   return next(err);

@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../../../../db');
 const {
+  ApiError,
   API_THROW_ERROR,
   API_SUCCESS_RESPONSE,
   API_VALIDATE_ADMIN,
@@ -56,6 +57,7 @@ router.post(
     const bot = await db.create('bots', {
       ownerId,
       name,
+      deployments: {},
     });
 
     await db.create('users', {
@@ -161,14 +163,18 @@ router.post(
       API_VALIDATE_ADMIN(req.user);
     }
 
-    const publishResponse = await publishRuntime(
-      bot,
-      req.params.runtime,
-      req.body,
-    );
+    await publishRuntime(bot, req.params.runtime, req.body)
+      .then(publishResponse => {
+        res.status(201);
+        res.json(API_SUCCESS_RESPONSE(publishResponse));
+      })
+      .catch(err => {
+        if (err instanceof ApiError) {
+          throw err;
+        }
 
-    res.status(201);
-    res.json(API_SUCCESS_RESPONSE(publishResponse));
+        API_THROW_ERROR(true, 500, 'Internal server error');
+      });
 
     return next();
   }),
@@ -193,13 +199,17 @@ router.delete(
       API_VALIDATE_ADMIN(req.user);
     }
 
-    const unpublishResponse = await unpublishRuntime(
-      bot,
-      req.params.runtime,
-      req.body,
-    );
+    await unpublishRuntime(bot, req.params.runtime, req.body)
+      .then(unpublishResponse => {
+        res.json(API_SUCCESS_RESPONSE(unpublishResponse));
+      })
+      .catch(err => {
+        if (err instanceof ApiError) {
+          throw err;
+        }
 
-    res.json(API_SUCCESS_RESPONSE(unpublishResponse));
+        API_THROW_ERROR(true, 500, 'Internal server error');
+      });
 
     return next();
   }),
