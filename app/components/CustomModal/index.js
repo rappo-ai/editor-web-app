@@ -1,25 +1,26 @@
-import React from 'react';
-import Button from '@material-ui/core/Button';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogActions from '@material-ui/core/DialogActions';
-import Dialog from '@material-ui/core/Dialog'; 
-import AddIcon from '@material-ui/icons';
+import React from "react";
+import PropTypes from "prop-types";
+import { makeStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
+import Avatar from "@material-ui/core/Avatar";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogActions from "@material-ui/core/DialogActions";
+import Dialog from "@material-ui/core/Dialog";
+import AddIcon from "@material-ui/icons/Add";
 
-import { makeStyles } from '@material-ui/core/styles';
-
-export default function CustomModalDemo() {
- 
-  const useStyles = makeStyles((theme) => ({
+const items = ["Welcome", "Order"];
+const useStyles = makeStyles({
   root: {
-    justifyContent: 'space-between'
+    justifyContent: "space-between"
   }
-}));
- 
-  const [fullWidth] = React.useState(true);
-  const [maxWidth] = React.useState('xl'); 
+});
+
+function SimpleModal(props) {
+  const classes = useStyles();
+  const { onClose, selectedValue, open } = props;
 
   const handleClose = () => {
     onClose(selectedValue);
@@ -28,15 +29,8 @@ export default function CustomModalDemo() {
   const handleListItemClick = (value) => {
     onClose(value);
   };
-  const classes = useStyles();
-
-   
-   
-  
- 
-
-  
-
+  const [fullWidth] = React.useState(true);
+  const [maxWidth] = React.useState("xl");
   return (
     <Dialog
       fullScreen
@@ -50,35 +44,38 @@ export default function CustomModalDemo() {
           borderTopRightRadius: 20,
           margin: 0,
           padding: 0,
-          display: 'flex'
+          display: "flex"
         }
       }}
     >
-      <DialogActions className={classes.root} >
-        <Button onClick={handleClose} color='primary'>
+      <DialogActions className={classes.root}>
+        <Button onClick={handleClose} color="primary">
           Cancel
         </Button>
-        <DialogTitle fontWeight='bold'>
-          Dialog Blocks
-        </DialogTitle>
-        <AddIcon fontSize='large' />
+        <DialogTitle fontWeight="bold">Dialog Blocks</DialogTitle>
+        <AddIcon fontSize="large" />
       </DialogActions>
+
       <List>
         {items.map((item) => (
-          <ListItem button onClick={() => handleListItemClick(email)} key={email}>
-           
+          <ListItem button onClick={() => handleListItemClick(item)} key={item}>
             <ListItemText primary={item} />
           </ListItem>
         ))}
-        </List>
-       
+      </List>
     </Dialog>
-    
   );
 }
+
+SimpleModal.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  selectedValue: PropTypes.string.isRequired
+};
+
 export default function CustomModal() {
   const [open, setOpen] = React.useState(false);
-  const [selectedValue, setSelectedValue] = React.useState(emails[1]);
+  const [selectedValue, setSelectedValue] = React.useState(items[1]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -91,13 +88,14 @@ export default function CustomModal() {
 
   return (
     <div>
-      <Typography variant="subtitle1">Selected: {selectedValue}</Typography>
-      <br />
       <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Open simple dialog
+        Open modal
       </Button>
-      <CustomModalDemo selectedValue={selectedValue} open={open} onClose={handleClose} />
+      <SimpleModal
+        selectedValue={selectedValue}
+        open={open}
+        onClose={handleClose}
+      />
     </div>
   );
-
-  }
+}
