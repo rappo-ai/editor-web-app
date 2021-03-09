@@ -7,11 +7,12 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
 
-export default function CustomDialog() {
-  const [open, setOpen] = React.useState(true);
-
-  const handleClose = () => {
-    setOpen(false);
+export default function ModalDialog(props) {
+  const handleClose = value => {
+    props.onClose(value);
+  };
+  const handleClick = value => {
+    props.onClick(value);
   };
 
   return (
@@ -24,11 +25,11 @@ export default function CustomDialog() {
         }}
         maxWidth="sm"
         fullWidth="true"
-        open={open}
+        open={props.open}
         onClose={handleClose}
-        aria-labelledby="form-dialog-title"
+        aria-labelledby="modal-dialog-title"
       >
-        <DialogTitle align="center" id="form-dialog-title">
+        <DialogTitle align="center" id="modal-dialog-title">
           Add Dialog Block
         </DialogTitle>
         <Divider variant="middle" />
@@ -37,17 +38,21 @@ export default function CustomDialog() {
             autoFocus
             margin="dense"
             id="name"
-            label="Block Name"
-            type="email"
+            label={props.label}
+            type="name"
             fullWidth
+            onChange={e => props.setBlockName(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
+          <Button onClick={() => handleClose(props.buttonLeft)} color="primary">
+            {props.buttonLeft}
           </Button>
-          <Button onClick={handleClose} color="primary">
-            Add
+          <Button
+            onClick={() => handleClick(props.buttonRight)}
+            color="primary"
+          >
+            {props.buttonRight}
           </Button>
         </DialogActions>
       </Dialog>

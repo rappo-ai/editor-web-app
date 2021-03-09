@@ -10,5 +10,8 @@ npm-debug.log
 .idea
 
 .env.server
-.env.webpack
+.env.webpacks
 gcloud-credentials.json
+
+._.env.server
+._gcloud-credentials.json
