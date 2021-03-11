@@ -30,7 +30,7 @@ export default function ModalDialog(props) {
         aria-labelledby="modal-dialog-title"
       >
         <DialogTitle align="center" id="modal-dialog-title">
-          Add Dialog Block
+         {props.title}
         </DialogTitle>
         <Divider variant="middle" />
         <DialogContent>
